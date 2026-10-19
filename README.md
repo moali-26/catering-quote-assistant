@@ -2,9 +2,7 @@
 
 ## Current project plan
 
-**Team handoff:** [Integration notes by teammate](docs/team-integration-notes.md). Selected deployment direction: **Supabase PostgreSQL + Auth**; implementation pending. Python quote logic stays shared, and SQLite remains local-only.
-
-See [Overall Project Plan](docs/project-plan.md) for the October 19 scope, five-person responsibilities, deadlines, and acceptance checks. The app uses **one shared login for customers and owners**, with account-based **My Quotes** for returning customers. See [Quote Engine](docs/quote-engine.md) for implemented Python interfaces and tests. An optional [SQLite quote storage adapter](docs/quote-storage.md) is available for local development. Authentication, hosted database integration, and UI integration are still pending.
+See [Overall Project Plan](docs/project-plan.md) for the October 19 scope, five-person responsibilities, deadlines, and acceptance checks. The app uses **one shared login for customers and owners**, with account-based **My Quotes** for returning customers. See [Quote Engine](docs/quote-engine.md) for implemented Python interfaces and tests. Authentication, persistence, and UI integration are still pending.
 
 The data inventory below records the October 18 data work. Its older rollout recommendations are superseded by the current plan.
 

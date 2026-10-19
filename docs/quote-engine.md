@@ -120,11 +120,3 @@ Validation: 50 local unit tests cover pricing/readiness plus approval and respon
 See the [Overall Project Plan](project-plan.md). Customers and owners use the same authentication system with server-enforced roles. `customer_id` is the stable authenticated account ID, not a browser-session ID; customers return to My Quotes after closing the page or signing out. `owner_id` must identify the trusted owning account consistently; if the app uses separate business IDs, resolve membership server-side before invoking these functions.
 
 D implements persistent account-filtered quote queries and authenticated action endpoints; C supplies these workflow functions and assists integration. Read access needs authorization as well as write access. Never trust a customer ID, owner ID, or role from the browser. Save returned records transactionally, preserving version history. No guest-link authentication is planned. These are integration requirements, not implemented login or storage features.
-
-
-## Optional persistence adapter
-
-See [Persistent Quotes](quote-storage.md) for the SQLite adapter, server-side action integration, and deployment limits. The adapter adds account-filtered reads and atomic saves of workflow results; total tests now number 61. Authentication and browser integration remain pending.
-
-
-Review update (October 19): three edge cases fixed; all 65 tests pass. See [review notes](review-notes.md) for findings, evidence, and remaining integration requirements. Unrecognized customer allergen names now block approval until clarified; unknown menu allergen information still requires owner review.
