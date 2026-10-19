@@ -1,6 +1,12 @@
-# Catering Quote Assistant — Data Layer
+# Catering Quote Assistant
 
-**Status: Oct 18, 2026.** Data workstream is on track for the Monday deliverable. The repo now has **two real caterers**: a full primary dataset and a simplified Korean dataset. Keep the repo private because it contains real source names and provenance.
+## Current project plan
+
+See [Overall Project Plan](docs/project-plan.md) for the October 19 scope, five-person responsibilities, deadlines, and acceptance checks. The app uses **one shared login for customers and owners**, with account-based **My Quotes** for returning customers. See [Quote Engine](docs/quote-engine.md) for implemented Python interfaces and tests. Authentication, persistence, and UI integration are still pending.
+
+The data inventory below records the October 18 data work. Its older rollout recommendations are superseded by the current plan.
+
+**Data status: Oct 18, 2026.** Data workstream is on track for the Monday deliverable. The repo now has **two real caterers**: a full primary dataset and a simplified Korean dataset. Keep the repo private because it contains real source names and provenance.
 
 ## What was done
 
@@ -65,17 +71,11 @@ Load `data/menu.json` and `data/rules.json` for the primary dataset. Load `data/
 
 ## How we go from here
 
-| When | Owner | Task |
-| --- | --- | --- |
-| Mon | Data | Freeze the menu/rules schema for both datasets |
-| Mon night | Pricing | Build the deterministic engine against the primary dataset; add a caterer switch |
-| Tue midday | Agent | Extraction schema, clarification logic, and menu-selection tool calls |
-| Tue | Data | Draft 30–50 synthetic inquiries with answer keys |
-| Wed night | UI + eval | Streamlit approve/edit step, eval run, results table, slides |
+Follow the [current build sequence and responsibilities](docs/project-plan.md). Start with one validated menu subset; a caterer switch is not required for the minimum build.
 
 ## Cuisine coverage
 
-Current coverage is **American/BBQ + Korean**. That is enough variety for Thursday. Adding more cuisines means another transcription pass, another rule set, and more eval cases. Recommendation: freeze these two for the demo and add a third after Thursday if the group wants to keep building.
+Current coverage is **American/BBQ + Korean**. That is enough variety for Thursday. Adding more cuisines means another transcription pass, another rule set, and more eval cases. These datasets are available references. The current plan selects one supported subset for the minimum demo; a second cuisine is optional future work.
 
 ## Files
 

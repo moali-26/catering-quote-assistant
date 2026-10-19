@@ -1,5 +1,7 @@
 # Catering Quote Assistant — Handoff
 
+> **Historical handoff (October 18).** The [Overall Project Plan](docs/project-plan.md), updated October 19, supersedes the scope, roles, schedule, and stack assumptions below. Shared customer/owner login, persistent My Quotes, owner menu updates, and owner Stripe test software checkout are now in the plan. The original text is preserved as background.
+
 Oct 18, 2026 · @Mo
 
 ## TL;DR
