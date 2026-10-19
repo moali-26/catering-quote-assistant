@@ -1,0 +1,279 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "sample-catering-co-torrance-ca",
+    "captured_at": "2026-10-18",
+    "currency": "USD",
+    "display_name": "Sample Catering Co.",
+    "source": {
+      "business_name": "Stonefire Grill",
+      "location": "Torrance, CA",
+      "catering_url": "https://www.stonefiregrill.com/catering/",
+      "faq_url": "https://www.stonefiregrill.com/contact/faqs/?faq_cat=catering",
+      "menu_url": "https://www.stonefiregrill.com/location/torrance/ca/catering-menu/",
+      "snapshots": [
+        "data/raw/stonefire-catering-faq-2026-10-18.pdf",
+        "data/raw/stonefire-torrance-catering-menu-2026-10-18.pdf"
+      ]
+    },
+    "legend": {
+      "published": "Stated on the caterer's public site.",
+      "assumption": "Not published; a documented classroom assumption.",
+      "synthetic": "Invented for the demo; not from the caterer."
+    }
+  },
+  "service_modes": {
+    "pickup": {
+      "label": "Pick Up",
+      "order_minimum": {
+        "guest_count": 10,
+        "subtotal": null,
+        "source": "published"
+      },
+      "lead_time_hours": 24,
+      "lead_time_source": "assumption",
+      "notes": [
+        "Published: for orders of 10 guests or more.",
+        "Pickup lead time is not published; 24 hours is assumed."
+      ]
+    },
+    "delivery": {
+      "label": "Delivery Service",
+      "order_minimum": {
+        "guest_count": 20,
+        "subtotal": 400.0,
+        "source": "published",
+        "note": "The FAQ states a 20-guest minimum; the catering page states a $400 order minimum. Both are enforced."
+      },
+      "lead_time_hours": 48,
+      "lead_time_source": "published",
+      "included": [
+        "Light setup",
+        "Complimentary paper goods and plastic cutlery on request"
+      ],
+      "notes": [
+        "Published: for delivery orders of $400 or more.",
+        "Published: minimum 48 hours notice.",
+        "Delivery fee and radius are not published; see delivery below."
+      ]
+    },
+    "full_service": {
+      "label": "Full Service",
+      "order_minimum": {
+        "guest_count": 30,
+        "subtotal": null,
+        "source": "published"
+      },
+      "booking_lead_time_hours": 168,
+      "final_confirmation_lead_time_hours": 48,
+      "lead_time_source": "published",
+      "included": [
+        "One or more dedicated Catering Team Members for three hours",
+        "Choice of black or white linens",
+        "Chafing dishes and pewter serving bowls",
+        "Stainless steel serving utensils",
+        "Quality plates and cutlery",
+        "Buffet-style service, setup, serving, and breakdown"
+      ],
+      "customer_provides": [
+        "Two 6-8 foot tables, or similar space, for each buffet line requested"
+      ],
+      "notes": [
+        "Published: for orders of 30 guests or more.",
+        "Published: one week notice, with the final order confirmed no later than 48 hours before the event."
+      ]
+    },
+    "dine_in": {
+      "label": "Dine-In Catering",
+      "order_minimum": {
+        "guest_count": 20,
+        "subtotal": null,
+        "source": "published"
+      },
+      "notes": [
+        "Published: for orders of 20 guests or more.",
+        "Hosted at a Stonefire Grill location, buffet-style, with a dedicated server."
+      ]
+    }
+  },
+  "delivery": {
+    "fee": {
+      "type": "flat_plus_mileage",
+      "flat_fee": 65.0,
+      "included_miles": 15.0,
+      "per_mile_beyond_included": 2.5,
+      "currency": "USD",
+      "source": "assumption",
+      "reason": "The caterer does not publish a delivery fee. A flat $65 within 15 miles plus $2.50 per mile beyond that is a simple, defensible LA-area model."
+    },
+    "radius": {
+      "max_miles": 25.0,
+      "source": "assumption",
+      "reason": "No published radius. The caterer is in Torrance; 25 miles covers the core LA basin including Culver City.",
+      "outside_radius_action": "return_not_deliverable"
+    },
+    "origin": {
+      "city": "Torrance",
+      "state": "CA",
+      "source": "published",
+      "note": "Prices are valid for the Torrance location only."
+    }
+  },
+  "staffing": {
+    "full_service": {
+      "type": "percent_of_food_subtotal",
+      "rate": 0.18,
+      "source": "assumption",
+      "reason": "Full-service pricing is quote-based and not published. 18% is a common LA catering service charge."
+    },
+    "attendants": {
+      "rate_per_hour": 35.0,
+      "minimum_hours": 3,
+      "guests_per_attendant": 30,
+      "rounding": "ceiling",
+      "source": "assumption",
+      "reason": "The caterer includes a team member for three hours but does not publish labor rates. One attendant per 30 guests at $35/hour with a three-hour minimum is a defensible model."
+    },
+    "gratuity": {
+      "customary_percent_min": 0.15,
+      "customary_percent_max": 0.20,
+      "included_in_quote": false,
+      "source": "published",
+      "note": "Gratuity is optional and not required. If added, keep it separate from the tax base."
+    }
+  },
+  "tax": {
+    "basis": "delivery_address",
+    "default_location": "Culver City",
+    "default_rate": 0.1125,
+    "rates": {
+      "Culver City": 0.1125,
+      "Torrance": 0.1075
+    },
+    "effective_date": "2026-10-01",
+    "source": "published",
+    "source_url": "https://www.cdtfa.ca.gov/taxes-and-fees/rates.aspx",
+    "taxable_base": [
+      "food_subtotal",
+      "delivery_fee",
+      "service_charge",
+      "staffing_fee"
+    ],
+    "taxable_base_source": "assumption",
+    "taxable_base_reason": "Mandatory delivery and service charges are treated as taxable. Gratuity is excluded. Confirm with the caterer or a CPA for production use.",
+    "notes": [
+      "The rate follows the delivery address, not the caterer's city.",
+      "Culver City and Torrance rates are from the CDTFA table effective October 1, 2026."
+    ]
+  },
+  "packages": {
+    "pricing": "per_person",
+    "service_style": "buffet",
+    "includes_breadsticks": true,
+    "signature_sides": [
+      "garden salad",
+      "caesar salad",
+      "garlic mashed potatoes",
+      "stonefire's beans",
+      "nutty coleslaw",
+      "potato salad",
+      "pesto pasta",
+      "tomesto pasta",
+      "marinara pasta"
+    ],
+    "premium_sides": [
+      "bbq chopped salad",
+      "cobb salad",
+      "superfood fiesta bowl",
+      "south of the border salad",
+      "macaroni & cheese",
+      "rigatoni with meat sauce",
+      "alfredo pasta",
+      "alfresto pasta",
+      "creamed corn",
+      "roasted vegetables",
+      "bacon cheddar loaded mashed potatoes"
+    ],
+    "protein_choices": [
+      "tri tip",
+      "chicken breast",
+      "pulled pork",
+      "baby back pork ribs",
+      "fresh salmon"
+    ],
+    "salmon_upgrade_per_person": 2.0,
+    "notes": [
+      "Catering packages are served buffet style with freshly baked breadsticks and priced per person.",
+      "Signature selections are served with breadsticks and choice of two signature sides.",
+      "SFG Best includes any four signature or premium salads, sides, or pastas."
+    ]
+  },
+  "boxed_meals": {
+    "minimum_per_selection": 10,
+    "lead_time_hours": 48,
+    "source": "published",
+    "includes": [
+      "Garden salad",
+      "Garlic mashed potatoes",
+      "Freshly baked breadstick"
+    ],
+    "notes": [
+      "Minimum order of 10 for each boxed meal selection.",
+      "Allow 48 hours advanced notice."
+    ]
+  },
+  "children": {
+    "age_threshold": 10,
+    "counting_rule": "two children under 10 count as one adult",
+    "source": "published",
+    "reason": "Published in the catering FAQ as a headcount suggestion."
+  },
+  "policies": {
+    "payment": {
+      "source": "published",
+      "requirements": [
+        "Signed catering contract",
+        "Credit card on file"
+      ],
+      "charge_timing": "The card on file is charged the full amount the day before the event."
+    },
+    "cancellation": {
+      "source": "unknown",
+      "policy": "Not published. Confirm with the caterer before sending a quote."
+    },
+    "allergens": {
+      "source": "published",
+      "notes": [
+        "The caterer warns that any item may come into contact with animal products during preparation.",
+        "GF on the menu means gluten-sensitive, not gluten-free.",
+        "Allergen data is per the public allergen table; items without a match are marked unknown."
+      ]
+    },
+    "capacity": {
+      "source": "synthetic",
+      "note": "The capacity calendar is invented for the demo and is not part of the caterer's published rules."
+    }
+  },
+  "validation": {
+    "delivery_requires_both_minimums": true,
+    "block_quote_on_unknown_allergen_match": false,
+    "unknown_allergen_action": "flag_for_caterer_review",
+    "gluten_free_request_action": "offer_gluten_sensitive_and_flag_risk",
+    "rounding": "half_up_to_cents"
+  },
+  "assumptions": [
+    "Display name is anonymized to 'Sample Catering Co.'; prices and items remain real.",
+    "Delivery fee: $65 flat within 15 miles, then $2.50 per mile to a 25-mile maximum.",
+    "Full-service service charge: 18% of food subtotal.",
+    "Full-service staffing: $35 per attendant-hour, 3-hour minimum, 1 attendant per 30 guests.",
+    "Pickup lead time: 24 hours.",
+    "Delivery minimum: enforce both the published 20-guest minimum and the published $400 subtotal minimum.",
+    "Tax base includes food, delivery, service charge, and staffing; gratuity is excluded.",
+    "Package side upgrades and extra sides are priced per person.",
+    "Serving counts for piece-count items are estimated at 2-3 pieces per guest.",
+    "GF is treated as gluten-sensitive, not gluten-free.",
+    "Missing allergen rows are unknown, never none.",
+    "Package and boxed-meal allergens depend on selections and require caterer confirmation.",
+    "Capacity calendar is synthetic."
+  ]
+}

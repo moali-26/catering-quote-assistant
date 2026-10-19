@@ -1,0 +1,87 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "sample-catering-co-torrance-ca",
+    "generated_at": "2026-10-18",
+    "synthetic": true,
+    "note": "Invented capacity for the demo. Not the caterer's real availability. Resolve a date by applying defaults, then closed_dates, then exceptions."
+  },
+  "defaults": {
+    "max_events_per_day": 3,
+    "max_guests_per_day": 150,
+    "max_guests_per_event": 150,
+    "status": "open"
+  },
+  "closed_dates": {
+    "2026-11-26": "Thanksgiving Day",
+    "2026-12-25": "Christmas Day"
+  },
+  "exceptions": {
+    "2026-10-23": {
+      "booked_events": 2,
+      "booked_guests": 80,
+      "status": "open",
+      "note": "One event slot remains."
+    },
+    "2026-10-24": {
+      "booked_events": 3,
+      "booked_guests": 150,
+      "status": "full",
+      "note": "Fully booked."
+    },
+    "2026-10-30": {
+      "booked_events": 2,
+      "booked_guests": 100,
+      "status": "open",
+      "note": "One event slot remains."
+    },
+    "2026-10-31": {
+      "booked_events": 3,
+      "booked_guests": 150,
+      "status": "full",
+      "note": "Fully booked for Halloween."
+    },
+    "2026-11-06": {
+      "booked_events": 1,
+      "booked_guests": 40,
+      "status": "open",
+      "note": "Two event slots remain."
+    },
+    "2026-11-13": {
+      "booked_events": 2,
+      "booked_guests": 90,
+      "status": "open",
+      "note": "One event slot remains."
+    },
+    "2026-11-20": {
+      "booked_events": 3,
+      "booked_guests": 150,
+      "status": "full",
+      "note": "Fully booked."
+    },
+    "2026-12-04": {
+      "booked_events": 2,
+      "booked_guests": 120,
+      "status": "open",
+      "note": "One event slot remains."
+    },
+    "2026-12-11": {
+      "booked_events": 3,
+      "booked_guests": 140,
+      "status": "full",
+      "note": "Fully booked."
+    },
+    "2026-12-18": {
+      "booked_events": 3,
+      "booked_guests": 150,
+      "status": "full",
+      "note": "Fully booked."
+    },
+    "2026-12-31": {
+      "booked_events": 3,
+      "booked_guests": 150,
+      "status": "full",
+      "note": "Fully booked for New Year's Eve."
+    }
+  }
+}

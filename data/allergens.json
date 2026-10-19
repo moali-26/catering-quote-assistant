@@ -1,0 +1,884 @@
+{
+  "Stonefire Grill BBQ Sauce *Manufactured in a facility that processes Egg, Milk, Soy, Tree-Nut, & Wheat Ingredients.": {
+    "category": "BBQ Sauce",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Mediterranean Market Salad with Chicken (Contains Sesame)": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Mediterranean Market Salad with Tri Tip (Contains Sesame)": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Mediterranean Market Salad with Quinoa (Contains Sesame)": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Garden Salad": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Caesar Salad": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "fish",
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Caesar with Grilled Chicken Breast": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "fish",
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Stonefire's BBQ Chopped with Chicken": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Stonefire's BBQ Chopped with Tri Tip": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Stonefire's BBQ Chopped with Quinoa": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Cobb Salad with Chicken": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy"
+    ]
+  },
+  "Cobb Salad with Quinoa": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy"
+    ]
+  },
+  "South of the Border with Chicken": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "South of the Border with Tri Tip": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "South of the Border with Quinoa": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Superfood Fiesta Bowl": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Harvest Salad": {
+    "category": "Fresh Salads *analysis includes dressing",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "tree_nuts"
+    ]
+  },
+  "Lemon Herb Greek Dressing (Contains Sesame)": {
+    "category": "Dressings",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Balsamic Vinaigrette": {
+    "category": "Dressings",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Buttermilk Ranch": {
+    "category": "Dressings",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy"
+    ]
+  },
+  "Caesar": {
+    "category": "Dressings",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "fish",
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Chilli Lime Vinaigrette": {
+    "category": "Dressings",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy"
+    ]
+  },
+  "Lemon Tahini": {
+    "category": "Dressings",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Olive Oil Vinaigrette": {
+    "category": "Dressings",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Sesame Ginger": {
+    "category": "Dressings",
+    "listed_none": false,
+    "allergens": [
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Lemon Garlic": {
+    "category": "Dressings",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Sriracha Ranch": {
+    "category": "Dressings",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy"
+    ]
+  },
+  "Maple Vinaigrette": {
+    "category": "Dressings",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Bleu Cheese": {
+    "category": "Dressings",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Chicken Tortilla Soup": {
+    "category": "Soups & Snacks",
+    "listed_none": false,
+    "allergens": [
+      "gluten"
+    ]
+  },
+  "Baked Potato Soup": {
+    "category": "Soups & Snacks",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "House Made Chilli": {
+    "category": "Soups & Snacks",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Traditional Hummus (Contains Sesame)": {
+    "category": "Soups & Snacks",
+    "listed_none": false,
+    "allergens": []
+  },
+  "Hummus Pita Bread": {
+    "category": "Soups & Snacks",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Whole Roasted Cauliflower": {
+    "category": "Soups & Snacks",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Freshly Baked Breadsticks": {
+    "category": "Soups & Snacks",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Mesquite BBQ Chicken": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Lemon Garlic Chicken": {
+    "category": "From the Grill",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Mesquite BBQ Tri Tip": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Pepper Garlic Tri Tip": {
+    "category": "From the Grill",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Baby Back Ribs": {
+    "category": "From the Grill",
+    "listed_none": false,
+    "allergens": [
+      "soy"
+    ]
+  },
+  "Lemon Garlic Salmon": {
+    "category": "From the Grill",
+    "listed_none": false,
+    "allergens": [
+      "fish"
+    ]
+  },
+  "Sesame Glazed Salmon": {
+    "category": "From the Grill",
+    "listed_none": false,
+    "allergens": [
+      "fish",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Pulled Pork": {
+    "category": "From the Grill",
+    "listed_none": false,
+    "allergens": [
+      "soy"
+    ]
+  },
+  "Lemon Garlic Shrimp": {
+    "category": "From the Grill",
+    "listed_none": false,
+    "allergens": [
+      "fish",
+      "soy"
+    ]
+  },
+  "Garlic Mashed Potatoes": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Stonefire Grill Beans": {
+    "category": "Sides",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Nutty Coleslaw": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "peanut"
+    ]
+  },
+  "Potato Salad": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk"
+    ]
+  },
+  "Roasted Vegetables": {
+    "category": "Sides",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Creamed Corn": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Cornbread Casseole": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "gluten"
+    ]
+  },
+  "Cilantro Lime Rice": {
+    "category": "Sides",
+    "listed_none": true,
+    "allergens": []
+  },
+  "White Rice": {
+    "category": "Sides",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Fresh Roasted Corn On The Cob": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Bacon Cheddar Loaded Mashed Potatoes": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Chili Loaded Mashed Potatoes": {
+    "category": "Sides",
+    "listed_none": false,
+    "allergens": [
+      "milk"
+    ]
+  },
+  "Marinara": {
+    "category": "Pastas",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Pesto": {
+    "category": "Pastas",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Tomesto": {
+    "category": "Pastas",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Baked Rigatoni with Meat Sauce": {
+    "category": "Pastas",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Macaroni & Cheese": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Alfredo": {
+    "category": "Pastas",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Chicken Alfredo": {
+    "category": "Pastas",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Alfresto\u2122": {
+    "category": "Pastas",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Classic Cheeseburger": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "BBQ Bacon Cheddar Burger": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "BBQ Tri Tip": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "California Chicken Club": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "gluten"
+    ]
+  },
+  "French Dip": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Pulled Pork Sandwich": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Caprese Sandwich": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "BBQ Tri Tip Sandwich Sliders": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Pulled Pork Sandwich Sliders": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "soy",
+      "gluten"
+    ]
+  },
+  "Nashville Hot Chicken Tenders": {
+    "category": "Burgers, Sandwiches, & Tenders",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Traditional Cheese": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Pepperoni": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "The Works": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "The Favorite": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Hawaiian": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Meat Lover's Pizza": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Margherita": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Italian Sausage": {
+    "category": "Pizza",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "7 Inch Cheese Pizza": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "7 Inch Pepperoni Pizza": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Pasta with Butter & Cheese": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Pesto Pasta": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Alfredo Pasta": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Rigatoni Pasta": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Marinara Pasta": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Tomesto Pasta": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Alfresto\u2122 Pasta": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Boneless Chicken Breast - BBQ": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "soy"
+    ]
+  },
+  "Boneless Chicken Breast - Lemon Garlic": {
+    "category": "Kid's Menu",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Boneless Chicken Breast - Plain": {
+    "category": "Kid's Menu",
+    "listed_none": true,
+    "allergens": []
+  },
+  "Kids Baby Back Ribs": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "soy"
+    ]
+  },
+  "Chicken Strips": {
+    "category": "Kid's Menu",
+    "listed_none": false,
+    "allergens": [
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Our Incredible Carrot Cake": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "tree_nuts",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Famous Fudge Brownies*  \n       *The unsweetened chocolate in this recipe was manufactured in a facility that also manufactures these allergens.": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Original Cheesecake": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Chocolate Chunk Cookie": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Lemon Cookie": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "White Chocolate Macadamia Cookie": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "peanut",
+      "soy",
+      "tree_nuts",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Oatmeal Raisin Cookie": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "egg",
+      "milk",
+      "soy",
+      "wheat",
+      "gluten"
+    ]
+  },
+  "Cinna-Dunks \u2122": {
+    "category": "Freshly Baked Desserts",
+    "listed_none": false,
+    "allergens": [
+      "milk",
+      "gluten"
+    ]
+  }
+}
