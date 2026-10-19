@@ -1,0 +1,2 @@
+# Optional server dependency; core pricing and SQLite tests do not require it.
+psycopg[binary]>=3.2,<4

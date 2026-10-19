@@ -84,3 +84,19 @@ All times are team-local (Los Angeles). Finish Wednesday October 21; Thursday Oc
 ## Minimum-build exclusions
 
 No guest secret links, automatic email/SMS notifications, multiple-caterer marketplace, live food payments, automatic reservation confirmation, or full-service staffing calculations. Use existing authentication infrastructure rather than building custom credential handling. Framework/provider choice remains a team integration decision; the Python quote module does not impose it.
+<<<<<<< Updated upstream
+=======
+
+
+Review update (October 19): three edge cases fixed; all 65 tests pass. See [review notes](review-notes.md) for findings, evidence, and remaining integration requirements. Unrecognized customer allergen names now block approval until clarified; unknown menu allergen information still requires owner review.
+
+
+## Supabase connection draft update
+
+A server-only Postgres adapter and SQL migration are now prepared. See [Supabase setup and handoff](supabase-setup.md). They have **not** been applied to a shared project. Current validation: **75 local tests pass**; the live Postgres integration test is skipped without a configured development DB. D/C still need to align account IDs/schema, apply the migration, and connect verified Supabase Auth to Python actions.
+
+
+## Quote integration handoff completed locally
+
+QuoteService now orchestrates submission, lookup, approval, revision and customer response through a supplied storage adapter. UI-ready detail/list data includes formatted amounts, status, history and advisory button flags. See [screen/server action guide](quote-ui-handoff.md) and [demo scenarios with expected results](quote-demo-checklist.md). **101 local tests pass**, and the offline persisted journey runs successfully. Actual Auth, Supabase, model and browser integration remain pending; these components are not a deployed app.
+>>>>>>> Stashed changes

@@ -8,3 +8,17 @@ env/
 Thumbs.db
 .vscode/
 .idea/
+<<<<<<< Updated upstream
+=======
+
+# Local quote storage (never commit customer records)
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
+
+# Local secrets
+.env
+.env.*
+!.env.example
+>>>>>>> Stashed changes
