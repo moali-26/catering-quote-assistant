@@ -8,3 +8,9 @@ env/
 Thumbs.db
 .vscode/
 .idea/
+
+# Local quote storage (never commit customer records)
+*.sqlite3
+*.sqlite3-journal
+*.sqlite3-wal
+*.sqlite3-shm
