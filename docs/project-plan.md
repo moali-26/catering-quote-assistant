@@ -10,6 +10,10 @@ Use one shared authentication system and login page for customers and owners. Af
 
 Start with one supported caterer and a manageable menu subset. Existing datasets remain source material; multiple datasets in the repo do not require a caterer marketplace. A owns simplifying and validating the active menu/rules. The sample fixture is for development, not the final evaluation dataset.
 
+## Selected database and authentication
+
+Use **Supabase PostgreSQL + Supabase Auth** for the deployed application. D owns setup, schema coordination, and auth; C adapts quote persistence to the agreed schema. SQLite remains a local development/test adapter. Supabase integration is not yet implemented. The shared quote logic is Python; D/B/C must connect it through the chosen app backend or Python API. See [Team Integration Notes](team-integration-notes.md) for the concise handoff.
+
 ## End-to-end journey
 
 1. Customer signs up or logs in, then starts an AI inquiry for the supported business.
@@ -34,7 +38,7 @@ Approval notifications are out of scope for the minimum build: customers check M
 | Menu management | No edit access | Edit own business menu and availability |
 | Software billing | Not required | Stripe test checkout for the software product |
 
-The server must enforce access on every read/write, not just hide buttons. Public signup must not grant owner privileges based on a submitted role field. Derive customer and actor IDs from authenticated accounts; derive business ownership from trusted server records. A URL containing a quote ID is not authorization. No custom password storage is required: use the team's chosen authentication library/provider.
+The server must enforce access on every read/write, not just hide buttons. Public signup must not grant owner privileges based on a submitted role field. Derive customer and actor IDs from authenticated accounts; derive business ownership from trusted server records. A URL containing a quote ID is not authorization. No custom password storage is required: use Supabase Auth.
 
 ## Five-person responsibilities
 
@@ -52,7 +56,8 @@ D owns the app foundation, not every feature's implementation: A builds menu fun
 
 - Existing data: primary, Korean, and lightweight sample datasets; active final subset still needs team confirmation.
 - Implemented locally: Python pricing, readiness checks, draft/revision/approval/customer-response functions and 50 passing unit tests. See [quote-engine.md](quote-engine.md).
-- Not implemented by those functions: actual authentication, persistent database, AI conversation, browser screens, Stripe, or hosting.
+- Added locally: optional SQLite quote storage with account-filtered reads and atomic revision checks; 61 total tests pass. See [storage integration guide](quote-storage.md).
+- Not yet connected: actual authentication, hosted persistent database, AI conversation, browser screens, Stripe, or hosting. Local storage is not a deployed My Quotes feature.
 - Current work is local; this document does not imply changes have been committed, pushed, or deployed.
 
 ## Build sequence and deadlines
@@ -84,3 +89,6 @@ All times are team-local (Los Angeles). Finish Wednesday October 21; Thursday Oc
 ## Minimum-build exclusions
 
 No guest secret links, automatic email/SMS notifications, multiple-caterer marketplace, live food payments, automatic reservation confirmation, or full-service staffing calculations. Use existing authentication infrastructure rather than building custom credential handling. Framework/provider choice remains a team integration decision; the Python quote module does not impose it.
+
+
+Review update (October 19): three edge cases fixed; all 65 tests pass. See [review notes](review-notes.md) for findings, evidence, and remaining integration requirements. Unrecognized customer allergen names now block approval until clarified; unknown menu allergen information still requires owner review.
