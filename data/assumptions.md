@@ -2,9 +2,11 @@
 
 Every non-published value used by the pricing engine or constraint checks. Each line names the reason so it can be defended in Q&A.
 
+This file covers the **primary Stonefire dataset**. The simplified Korean dataset has its own assumptions in `data/gokjee/assumptions.md`.
+
 ## Data provenance
 
-- **One real caterer is the source of truth.** Stonefire Grill's Torrance catering menu is real and captured 2026-10-18. The app displays the alias **Sample Catering Co.**; the real business name and source URLs stay in `menu.json` and `source-log.md` for provenance. Reason: the handoff requires one real menu, not a synthetic blend.
+- **One real caterer is the primary source of truth.** Stonefire Grill's Torrance catering menu is real and captured 2026-10-18. The app displays the alias **Sample Catering Co.**; the real business name and source URLs stay in `menu.json` and `source-log.md` for provenance. Reason: the handoff requires one real menu, not a synthetic blend.
 - **Prices are Torrance-only.** The source menu explicitly says "Menu pricing is valid for Torrance only." Reason: using another location's prices would be invented data.
 - **Menu prices can change.** The dataset is a snapshot, not a live price feed. Reason: the source has no API and the project deadline is four days.
 

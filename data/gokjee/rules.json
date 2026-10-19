@@ -1,0 +1,157 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "gokjee-korean-catering-los-angeles",
+    "captured_at": "2026-10-18",
+    "currency": "USD",
+    "display_name": "Koreatown Catering Co.",
+    "source": {
+      "business_name": "Gok Jee Foods",
+      "location": "170 S Western Ave # A, Los Angeles, CA 90004",
+      "neighborhood": "Koreatown",
+      "cuisine": "Korean",
+      "phone": "213-480-1800",
+      "menu_url": "http://www.gokjee.com/menulist.jsp?_pageid=P_E3MtzJaRCarlf1X8IAu0g",
+      "set_menu_pdf_url": "http://www.gokjee.com/2026-catering-set-menu_list.pdf",
+      "snapshots": [
+        "data/raw/gokjee-catering-menu-list-2026-10-18.pdf",
+        "data/raw/gokjee-menuform-2026-10-18.html",
+        "data/raw/gokjee-2026-catering-set-menu-2026-10-18.pdf"
+      ]
+    },
+    "legend": {
+      "published": "Stated on the caterer's public menu or PDF.",
+      "assumption": "Not published; a documented classroom assumption.",
+      "synthetic": "Invented for the demo; not from the caterer."
+    }
+  },
+  "service_modes": {
+    "pickup": {
+      "label": "Pick Up",
+      "order_minimum": {
+        "guest_count": 5,
+        "subtotal": null,
+        "source": "assumption",
+        "reason": "The smallest published set menu serves 5 people. A la carte trays typically serve 10."
+      },
+      "lead_time_hours": 48,
+      "lead_time_source": "assumption"
+    },
+    "delivery": {
+      "label": "Delivery",
+      "order_minimum": {
+        "guest_count": 5,
+        "subtotal": null,
+        "source": "assumption",
+        "reason": "No published delivery minimum. The 5-person set menu minimum is used."
+      },
+      "lead_time_hours": 48,
+      "lead_time_source": "assumption",
+      "notes": [
+        "Third-party listings say delivery and pickup are available.",
+        "The caterer does not publish a delivery fee, radius, or order cutoff."
+      ]
+    }
+  },
+  "delivery": {
+    "fee": {
+      "type": "flat_plus_mileage",
+      "flat_fee": 50.0,
+      "included_miles": 15.0,
+      "per_mile_beyond_included": 2.5,
+      "currency": "USD",
+      "source": "assumption",
+      "reason": "No published delivery fee. A flat $50 within 15 miles plus $2.50 per mile is a simple LA-area model."
+    },
+    "radius": {
+      "max_miles": 25.0,
+      "source": "assumption",
+      "reason": "No published radius. 25 miles from Koreatown covers Culver City and the core LA basin."
+    },
+    "origin": {
+      "city": "Los Angeles",
+      "state": "CA",
+      "neighborhood": "Koreatown",
+      "source": "published"
+    }
+  },
+  "service_charge": {
+    "type": "none",
+    "rate": 0.0,
+    "source": "assumption",
+    "reason": "The menu is drop-off catering and publishes no service charge."
+  },
+  "tax": {
+    "basis": "delivery_address",
+    "default_location": "Culver City",
+    "default_rate": 0.1125,
+    "rates": {
+      "Culver City": 0.1125,
+      "Torrance": 0.1075
+    },
+    "effective_date": "2026-10-01",
+    "source": "published",
+    "source_url": "https://www.cdtfa.ca.gov/taxes-and-fees/rates.aspx",
+    "taxable_base": [
+      "food_subtotal",
+      "delivery_fee"
+    ],
+    "taxable_base_source": "assumption",
+    "notes": [
+      "The source PDF marks set-menu prices as '+ tax'.",
+      "The rate follows the delivery address, not the caterer's neighborhood."
+    ]
+  },
+  "add_ons": {
+    "utensils": {
+      "item_id": "gok-utensil",
+      "price": 5.0,
+      "pricing_unit": "per_tray",
+      "serves": 10,
+      "source": "published",
+      "note": "Plate, napkin, and chopsticks."
+    }
+  },
+  "policies": {
+    "allergens": {
+      "source": "unknown",
+      "note": "No published allergen table. Every menu item is marked unknown. Flag any allergy request for caterer confirmation."
+    },
+    "dietary": {
+      "source": "unknown",
+      "note": "Only items explicitly labeled veg. are tagged vegetarian. Confirm all other dietary requests."
+    },
+    "payment": {
+      "source": "unknown",
+      "policy": "Not published."
+    },
+    "cancellation": {
+      "source": "unknown",
+      "policy": "Not published."
+    },
+    "capacity": {
+      "source": "synthetic",
+      "note": "The capacity calendar is invented for the demo and is not part of the caterer's published rules."
+    }
+  },
+  "validation": {
+    "unknown_allergen_action": "flag_for_caterer_review",
+    "block_quote_on_unknown_allergen_match": false,
+    "gluten_free_request_action": "flag_for_caterer_review",
+    "rounding": "half_up_to_cents"
+  },
+  "assumptions": [
+    "Display name is anonymized to 'Koreatown Catering Co.'; prices and items remain real.",
+    "Minimum order is 5 guests, based on the smallest published set menu.",
+    "Delivery lead time is 48 hours.",
+    "Delivery fee is $50 flat within 15 miles, then $2.50 per mile to a 25-mile maximum.",
+    "No service charge is applied.",
+    "Tax follows the delivery address: Culver City 11.25%, Torrance 10.75%.",
+    "Tax base includes food and delivery; gratuity is excluded.",
+    "Piece-count items assume 2-3 pieces per guest.",
+    "One pound of raw LA galbi assumes 3-4 servings.",
+    "All allergens are unknown because the caterer publishes no allergen table.",
+    "Dietary tags are limited to items explicitly labeled veg.",
+    "Capacity calendar is synthetic."
+  ]
+}

@@ -1,0 +1,153 @@
+
+
+
+
+
+
+
+<html>
+<head>
+<meta http-equiv="content-type" content="text/html; charset=utf-8"/>
+<title>Catering | Gok Jee Foods</title>
+<link type="text/css" href="/inc/box.css" rel="stylesheet"/>
+<link rel="stylesheet" href="flexslider/flexslider.css" type="text/css">
+<script type="text/javascript" src="/inc/mylist.js"></script>
+<script type="text/javascript" src="/inc/datetimepicker_css.js"></script>
+<script type="text/javascript" src="/inc/jscolor.js"></script>
+</head>
+<body>
+<!-- page anchor -->
+<div id="anchoruIThHmj" class="anchor"></div>
+
+
+<div class="sitehead">
+  <div class="headmenu">
+    <div id="h_spacer_3"></div>
+    <p style="float:left;">
+      <span style="margin-left:0;" onclick="window.location='/gokjeeadmin1'"><img src="/download?filename=UGokjeeAdm_S080IeOYWCZg_20181231172450_gokjee_logo.png" class="usericon"/></span>
+
+      <span class='picked' onclick="window.location='/menulist.jsp?_pageid=P_E3MtzJaRCarlf1X8IAu0g&amp;_userid=UGokjeeAdm_S080IeOYWCZg'">Catering</span>
+
+      <span onclick="window.location='/sidelist.jsp?_pageid=PSideDish_LWk_H$oAx0TsA&amp;_userid=UGokjeeAdm_S080IeOYWCZg'">Side Dish</span>
+
+    </p>
+    <!-- My Account -->
+    <div class="menudiv" style="float:right;width:1px;height:0;">
+      <div id="h_spacer_28"></div>
+
+      <ul id="signdiv" class="menulist">
+        <li onclick="window.location='/login.jsp?_userid=UGokjeeAdm_S080IeOYWCZg'">Account Login</li>
+        <li onclick="window.location='/?_userid=UGokjeeAdm_S080IeOYWCZg&_pageid=P_4EFO1b$Rd25KGD_PrE4Dw'">Create an Account</li>
+      </ul>
+
+    </div>
+    <p style="float:right;">
+      <span style="margin-left:10px;"><img src="images/sitemenu_spacer.png" class="usericon"/></span>
+      <a onmouseover="if($id('signdiv')){hideDivClass('menulist');showAndHideDiv('signdiv',this);}" onclick="window.location='/myacct.jsp?_userid=UGokjeeAdm_S080IeOYWCZg'">
+        <span style="margin-left:10px;"><img src="images/sitemenu_myacct.png"/></span>
+        <span class='' style="margin-left:3px;">Sign In</span>
+        <span style="margin-left:0;"><img src="images/sitemenu_dropdown.png" class="dropdown"/></span>
+      </a>
+    </p>
+
+  </div>
+</div>
+
+
+
+<div id="h_spacer_10"></div>
+<div class="pbwrap" style="width:95%;margin-top:0;border:0;">
+  <div class="popwrap" style="background:url(/download?filename=UGokjeeAdm_S080IeOYWCZg_20180101200109_banner_gokjee.gif);">
+    <img class="banner" src="/download?filename=UGokjeeAdm_S080IeOYWCZg_20180101202556_gokjee_front_sign.png"/>
+  </div>
+</div>
+
+
+
+<div id="h_spacer_0"></div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
+<script>window.jQuery || document.write('<script src="flexslider/jquery-1.10.2.min.js">\x3C/script>')</script>
+<script src="flexslider/jquery.flexslider.js"></script>
+<div id="h_spacer_0"></div>
+<div id="form_pb260_menu_popdiv_pbwarp" class="pbwrap" style="min-width:1260px;width:95%;border:0;margin-top:11px;">
+  <div id="form_pb260_menu_popdiv" class="popwrap" style="display:block;clear:none;float:left;width:845px;min-width:845px;border:1px solid #aeaeae;"></div>
+  <div id="form_pb260_menu_sidediv" class="popwrap" style="display:block;clear:none;float:left;width:405px;margin-left:3px;border:1px solid #aeaeae;"></div>
+  <script type="text/javascript" id="form_pb260_menu_script">
+  var form_pb260_menu_xmlHttp = null;
+  function form_pb260_menu_getTabForm ()
+  {
+    if ($id("form_pb260_menu_popdiv"))
+    {
+      form_pb260_menu_xmlHttp = getXmlHttpObject();
+      if (form_pb260_menu_xmlHttp == null)
+      {
+        alert ("Your browser does not support AJAX!");
+        return;
+      }
+      var sURL = "menuform.jsp?_userid=UGokjeeAdm_S080IeOYWCZg&_tabid=TGokJeeIte_Co1zJuBigbog&_formname=form_pb260_menu&_formtype=L&_itemid=&_pageid=P_E3MtzJaRCarlf1X8IAu0g&_returnurl=/menulist.jsp&_anchorid=anchoruIThHmj"+
+        "&_itemcnt=&_ordersel=&_cat=&_filtercnt=&_filter1=&_filter2=&_filter3=&_filter4=&_filter5=";
+      form_pb260_menu_xmlHttp.onreadystatechange = function ()
+      {
+        if (form_pb260_menu_xmlHttp.readyState == 4)
+        {
+          if ($id("form_pb260_menu_popdiv")) $id("form_pb260_menu_popdiv").innerHTML = form_pb260_menu_xmlHttp.responseText;
+          if ($id("logincheck_script")) { eval($id("logincheck_script").innerHTML); goLoginPage(); }
+          if ($id("form_pb260_menu_popform_script")) { eval($id('form_pb260_menu_popform_script').innerHTML); form_pb260_menu_popform_onLoad(); }
+        }        
+      }
+      form_pb260_menu_xmlHttp.open("GET", sURL, true);
+      form_pb260_menu_xmlHttp.send(null);
+      $id("form_pb260_menu_popdiv").innerHTML = "<div id=\"h_spacer_11\"></div><img src=\"/images/processing.gif\" class=\"wait\">";
+      $id("form_pb260_menu_popdiv").style.display = "block";
+    }
+  }
+
+  </script>
+  <div id="h_spacer_0"></div>
+</div>
+ 
+<script type="text/javascript">
+window.onload = function() 
+{
+  form_pb260_menu_getTabForm();
+
+  getDivPxWidth("form_pb260_menu_popdiv", "form_pb260_menu_popdiv_pbwarp", "form_pb260_menu_sidediv", 7);
+  if ($id('_actmsgdiv')) showAndHideMsgDiv('_actmsgdiv', 7);
+}
+document.getElementsByTagName("BODY")[0].onresize = function() { getDivPxWidth("form_pb260_menu_popdiv", "form_pb260_menu_popdiv_pbwarp", "form_pb260_menu_sidediv", 7); }
+</script>
+
+<div id="h_spacer_10"></div>
+
+<div id="h_spacer_0"></div>
+<div class="pagefoot">
+  <div id="h_spacer_7"></div>
+  <p class="half">
+    <span>Order to &nbsp;<a href="/menulist.jsp?_pageid=P_E3MtzJaRCarlf1X8IAu0g&amp;_userid=UGokjeeAdm_S080IeOYWCZg#anchorFKxtXIb" class="infolink">Gok Jee Foods</a>&nbsp; (Phone:213.480.1800)</span>
+  </p>
+  <p class="half" style="float:right;">
+
+    <span class="fr"><a href="/gokjee.admin.1" class="infolink">About Gok Jee Foods</a></span>
+
+    <span class="vliner" style="float:right;"></span>
+
+    <span class="fr"><a href="/gokjee.admin.1" class="infolink">Contact Us</a></span>
+
+  </p>
+  <div id="h_spacer_7"></div>
+</div>
+<div class="pagefoot">
+  <div id="h_spacer_7"></div>
+  <p class="half" style="width:70%;">
+    <span>Copyright &copy; <script>document.write(curYear);</script>&nbsp;&nbsp;Gok Jee Foods&nbsp;&nbsp;All rights reserved.&nbsp;&nbsp;&nbsp;&nbsp;</span><span><a href="/terms.pdf" class="infolink">Terms of Use</a></span><span class="vline"></span><span><a href="/privacy.pdf" class="infolink">Privacy Policy</a></span>
+  </p>
+  <p class="half" style="width:30%;float:right;">
+    <span class="fr"><a href="https://apiace.com/" class="infolink1" style="color:#555;text-decoration:none;">Powered by APIACE</a></span>
+  </p>
+  <div id="h_spacer_7"></div>
+</div>
+
+<div id="h_spacer_10"></div>
+</body>
+</html>

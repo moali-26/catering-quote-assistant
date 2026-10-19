@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0.0",
+  "updated_at": "2026-10-18",
+  "note": "Use display_name in the app. business_name is retained for provenance only.",
+  "caterers": [
+    {
+      "dataset_id": "sample-catering-co-torrance-ca",
+      "display_name": "Sample Catering Co.",
+      "business_name": "Stonefire Grill",
+      "cuisine": "American / BBQ",
+      "location": "Torrance, CA",
+      "depth": "full",
+      "menu_path": "data/menu.json",
+      "rules_path": "data/rules.json",
+      "capacity_path": "data/capacity.json",
+      "validator": "data/validate_dataset.py"
+    },
+    {
+      "dataset_id": "gokjee-korean-catering-los-angeles",
+      "display_name": "Koreatown Catering Co.",
+      "business_name": "Gok Jee Foods",
+      "cuisine": "Korean",
+      "location": "Los Angeles, CA",
+      "depth": "simplified",
+      "menu_path": "data/gokjee/menu.json",
+      "rules_path": "data/gokjee/rules.json",
+      "capacity_path": "data/gokjee/capacity.json",
+      "validator": "data/gokjee/validate_gokjee.py"
+    }
+  ]
+}

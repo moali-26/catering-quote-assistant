@@ -1,0 +1,2572 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "gokjee-korean-catering-los-angeles",
+    "captured_at": "2026-10-18",
+    "currency": "USD",
+    "source": {
+      "business_name": "Gok Jee Foods",
+      "location": "170 S Western Ave # A, Los Angeles, CA 90004",
+      "cuisine": "Korean",
+      "phone": "213-480-1800",
+      "menu_url": "http://www.gokjee.com/menulist.jsp?_pageid=P_E3MtzJaRCarlf1X8IAu0g",
+      "menu_form_url": "http://www.gokjee.com/menuform.jsp",
+      "set_menu_pdf_url": "http://www.gokjee.com/2026-catering-set-menu_list.pdf",
+      "snapshots": [
+        "data/raw/gokjee-catering-menu-list-2026-10-18.html",
+        "data/raw/gokjee-catering-menu-list-2026-10-18.pdf",
+        "data/raw/gokjee-menuform-2026-10-18.html",
+        "data/raw/gokjee-2026-catering-set-menu-2026-10-18.pdf"
+      ]
+    },
+    "branding": {
+      "display_name": "Koreatown Catering Co.",
+      "anonymized": true,
+      "note": "Display alias only. Real source retained in meta.source and data/gokjee/source-log.md."
+    },
+    "notes": [
+      "Prices are transcribed from the online catering menu captured 2026-10-18.",
+      "The source does not publish an allergen table; every item is marked unknown.",
+      "Dietary tags are not published except for items explicitly labeled veg.",
+      "Prices exclude tax. Set menus include plate, napkin, and chopsticks."
+    ]
+  },
+  "categories": [
+    {
+      "id": "add-ons",
+      "name": "Add-ons"
+    },
+    {
+      "id": "beef-pork",
+      "name": "Beef & Pork"
+    },
+    {
+      "id": "chicken",
+      "name": "Chicken"
+    },
+    {
+      "id": "cold-dishes",
+      "name": "Cold Dishes"
+    },
+    {
+      "id": "dessert",
+      "name": "Dessert"
+    },
+    {
+      "id": "fish",
+      "name": "Fish"
+    },
+    {
+      "id": "fried",
+      "name": "Fried"
+    },
+    {
+      "id": "kimbab-rice",
+      "name": "Kimbab & Rice"
+    },
+    {
+      "id": "kimchi",
+      "name": "Kimchi"
+    },
+    {
+      "id": "noodles-rice-cakes",
+      "name": "Noodles & Rice Cakes"
+    },
+    {
+      "id": "pancakes",
+      "name": "Pancakes"
+    },
+    {
+      "id": "salads",
+      "name": "Salads"
+    },
+    {
+      "id": "seafood",
+      "name": "Seafood"
+    },
+    {
+      "id": "set-menus",
+      "name": "Set Menus"
+    },
+    {
+      "id": "signature-lite",
+      "name": "Signature Lite"
+    },
+    {
+      "id": "skewers-rolls",
+      "name": "Skewers & Rolls"
+    },
+    {
+      "id": "soups",
+      "name": "Soups"
+    },
+    {
+      "id": "vegetables",
+      "name": "Vegetables"
+    }
+  ],
+  "items": [
+    {
+      "id": "gok-galbi-jim",
+      "name": "Galbi Jim",
+      "korean_name": "갈비찜",
+      "category": "Beef & Pork",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "1",
+      "variants": [
+        {
+          "id": "gok-galbi-jim-tray",
+          "label": "Tray (serves 10)",
+          "price": 180.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-la-galbi-grilled",
+      "name": "LA Galbi (grilled)",
+      "korean_name": "LA갈비",
+      "category": "Beef & Pork",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "2",
+      "variants": [
+        {
+          "id": "gok-la-galbi-grilled-tray",
+          "label": "Tray (serves 10)",
+          "price": 200.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-la-galbi-raw",
+      "name": "LA Galbi (raw)",
+      "korean_name": "LA갈비",
+      "category": "Beef & Pork",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "3",
+      "variants": [
+        {
+          "id": "gok-la-galbi-raw-tray",
+          "label": "Tray (1 lb (assumed 3-4 servings))",
+          "price": 22.0,
+          "pricing_unit": "each",
+          "serves": {
+            "min": 3,
+            "max": 4
+          },
+          "serves_text": "1 lb (assumed 3-4 servings)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-bulgogi-beef",
+      "name": "Bulgogi (beef)",
+      "korean_name": "불고기",
+      "category": "Beef & Pork",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "4",
+      "variants": [
+        {
+          "id": "gok-bulgogi-beef-tray",
+          "label": "Tray (serves 10)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-deji-bulgogi-pork",
+      "name": "Deji Bulgogi (pork)",
+      "korean_name": "돼지불고기",
+      "category": "Beef & Pork",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "5",
+      "variants": [
+        {
+          "id": "gok-deji-bulgogi-pork-tray",
+          "label": "Tray (serves 10)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-deji-samgub-pork",
+      "name": "Deji Samgub (pork)",
+      "korean_name": "돼지삼겹",
+      "category": "Beef & Pork",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "6",
+      "variants": [
+        {
+          "id": "gok-deji-samgub-pork-tray",
+          "label": "Tray (serves 10)",
+          "price": 100.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-sweet-spicy-chicken-wings",
+      "name": "Sweet & Spicy Chicken wings",
+      "korean_name": "닭강정",
+      "category": "Chicken",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "7",
+      "variants": [
+        {
+          "id": "gok-sweet-spicy-chicken-wings-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-sweet-spicy-chicken",
+      "name": "Sweet & Spicy Chicken",
+      "korean_name": "뼈없는 닭강정",
+      "category": "Chicken",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "8",
+      "variants": [
+        {
+          "id": "gok-sweet-spicy-chicken-tray",
+          "label": "Tray (serves 10)",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-fried-chicken-wings",
+      "name": "Fried Chicken Wings",
+      "korean_name": "프라이드치킨",
+      "category": "Chicken",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "9",
+      "variants": [
+        {
+          "id": "gok-fried-chicken-wings-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-fried-chicken",
+      "name": "Fried Chicken",
+      "korean_name": "뼈없는 프라이드치킨",
+      "category": "Chicken",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "10",
+      "variants": [
+        {
+          "id": "gok-fried-chicken-tray",
+          "label": "Tray (serves 10)",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-myungtae-kodari-jim",
+      "name": "Myungtae Kodari Jim",
+      "korean_name": "명태코다리찜",
+      "category": "Fish",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "12",
+      "variants": [
+        {
+          "id": "gok-myungtae-kodari-jim-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-go-dung-uh-jorim",
+      "name": "Go dung uh Jorim",
+      "korean_name": "고등어조림",
+      "category": "Fish",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "13",
+      "variants": [
+        {
+          "id": "gok-go-dung-uh-jorim-tray",
+          "label": "Tray (10 pieces (assumed 2-3 per guest))",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 4,
+            "max": 5
+          },
+          "serves_text": "10 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-gajaemi",
+      "name": "Gajaemi",
+      "korean_name": "가재미구이",
+      "category": "Fish",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "14",
+      "variants": [
+        {
+          "id": "gok-gajaemi-tray",
+          "label": "Tray (10 pieces (assumed 2-3 per guest))",
+          "price": 80.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 4,
+            "max": 5
+          },
+          "serves_text": "10 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-squid-bokem",
+      "name": "Squid Bokem",
+      "korean_name": "오징어볶음",
+      "category": "Seafood",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "16",
+      "variants": [
+        {
+          "id": "gok-squid-bokem-tray",
+          "label": "Tray (serves 10)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-seafood-bokem",
+      "name": "Seafood Bokem",
+      "korean_name": "새우해물볶음",
+      "category": "Seafood",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "17",
+      "variants": [
+        {
+          "id": "gok-seafood-bokem-tray",
+          "label": "Tray (serves 10)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-konpon-shrimp",
+      "name": "Konpon Shrimp",
+      "korean_name": "칸풍새우",
+      "category": "Seafood",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "18",
+      "variants": [
+        {
+          "id": "gok-konpon-shrimp-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-shrimp",
+      "name": "Shrimp",
+      "korean_name": "새우튀김",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "20",
+      "variants": [
+        {
+          "id": "gok-shrimp-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-squid",
+      "name": "Squid",
+      "korean_name": "오징어튀김",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "21",
+      "variants": [
+        {
+          "id": "gok-squid-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-sweet-potato",
+      "name": "Sweet Potato",
+      "korean_name": "고구마튀김",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "22",
+      "variants": [
+        {
+          "id": "gok-sweet-potato-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-dried-seaweed",
+      "name": "Dried Seaweed",
+      "korean_name": "김말이튀김",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "23",
+      "variants": [
+        {
+          "id": "gok-dried-seaweed-tray",
+          "label": "Tray (25 pieces (assumed 2-3 per guest))",
+          "price": 25.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "25 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-fish-cutlet",
+      "name": "Fish Cutlet",
+      "korean_name": "생선까스",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "24",
+      "variants": [
+        {
+          "id": "gok-fish-cutlet-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-pork-cutlet",
+      "name": "Pork Cutlet",
+      "korean_name": "돈까스",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "25",
+      "variants": [
+        {
+          "id": "gok-pork-cutlet-tray",
+          "label": "Tray (serves 10)",
+          "price": 80.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-mushroom",
+      "name": "Mushroom",
+      "korean_name": "버섯튀김",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "26",
+      "variants": [
+        {
+          "id": "gok-mushroom-tray",
+          "label": "Tray (25 pieces (assumed 2-3 per guest))",
+          "price": 25.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "25 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-dumplings-veg",
+      "name": "Dumplings (Veg.)",
+      "korean_name": "만두튀김",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "dietary_note": "Explicitly labeled veg. on the source menu.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "27",
+      "variants": [
+        {
+          "id": "gok-dumplings-veg-tray",
+          "label": "Tray (25 pieces (assumed 2-3 per guest))",
+          "price": 25.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "25 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-mattang-sweet-potato",
+      "name": "Mattang (sweet potato)",
+      "korean_name": "맛탕",
+      "category": "Fried",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "28",
+      "variants": [
+        {
+          "id": "gok-mattang-sweet-potato-tray",
+          "label": "Tray (25 pieces (assumed 2-3 per guest))",
+          "price": 35.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "25 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-duk-boke",
+      "name": "Duk Boke",
+      "korean_name": "떡볶기(매운맛)",
+      "category": "Noodles & Rice Cakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "29",
+      "variants": [
+        {
+          "id": "gok-duk-boke-tray",
+          "label": "Tray (serves 10)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-duk-boke-soy-sauce",
+      "name": "Duk Boke (soy sauce)",
+      "korean_name": "떡볶기(간장)",
+      "category": "Noodles & Rice Cakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "30",
+      "variants": [
+        {
+          "id": "gok-duk-boke-soy-sauce-tray",
+          "label": "Tray (serves 10)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-jobche",
+      "name": "Jobche",
+      "korean_name": "잡채",
+      "category": "Noodles & Rice Cakes",
+      "description": null,
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "dietary_note": "Set menu description calls it veg. glass noodle; confirm the a la carte version.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "31",
+      "variants": [
+        {
+          "id": "gok-jobche-tray",
+          "label": "Tray (serves 10)",
+          "price": 35.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-dotori-mook",
+      "name": "Dotori Mook",
+      "korean_name": "도토리묵",
+      "category": "Cold Dishes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "32",
+      "variants": [
+        {
+          "id": "gok-dotori-mook-tray",
+          "label": "Tray (serves 20)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 20,
+            "max": 20
+          },
+          "serves_text": "Serves 20",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-chungpo-mook",
+      "name": "Chungpo Mook",
+      "korean_name": "청포묵",
+      "category": "Cold Dishes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "33",
+      "variants": [
+        {
+          "id": "gok-chungpo-mook-tray",
+          "label": "Tray (serves 20)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 20,
+            "max": 20
+          },
+          "serves_text": "Serves 20",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-chwinamul",
+      "name": "Chwinamul",
+      "korean_name": "취나물",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "34",
+      "variants": [
+        {
+          "id": "gok-chwinamul-tray",
+          "label": "Tray (serves 10)",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-gosari",
+      "name": "Gosari",
+      "korean_name": "물고사리",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "35",
+      "variants": [
+        {
+          "id": "gok-gosari-tray",
+          "label": "Tray (serves 10)",
+          "price": 45.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-doraji",
+      "name": "Doraji",
+      "korean_name": "물도라지",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "36",
+      "variants": [
+        {
+          "id": "gok-doraji-tray",
+          "label": "Tray (serves 10)",
+          "price": 60.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-mushroom-mix",
+      "name": "Mushroom mix",
+      "korean_name": "버섯볶음",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "37",
+      "variants": [
+        {
+          "id": "gok-mushroom-mix-tray",
+          "label": "Tray (serves 10)",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-zuchinni",
+      "name": "Zuchinni",
+      "korean_name": "호박",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "39",
+      "variants": [
+        {
+          "id": "gok-zuchinni-tray",
+          "label": "Tray (serves 10)",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-spinach-denjang",
+      "name": "Spinach/Denjang",
+      "korean_name": "시금치",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "42",
+      "variants": [
+        {
+          "id": "gok-spinach-denjang-tray",
+          "label": "Tray (serves 10)",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-musangche",
+      "name": "Musangche",
+      "korean_name": "무생채",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "45",
+      "variants": [
+        {
+          "id": "gok-musangche-tray",
+          "label": "Tray (serves 10)",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-cucumber",
+      "name": "Cucumber",
+      "korean_name": "오이무침",
+      "category": "Vegetables",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "46",
+      "variants": [
+        {
+          "id": "gok-cucumber-tray",
+          "label": "Tray (serves 10)",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-ojing-uh-muchim",
+      "name": "Ojing-uh Muchim",
+      "korean_name": "오징어무침",
+      "category": "Cold Dishes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "48",
+      "variants": [
+        {
+          "id": "gok-ojing-uh-muchim-tray",
+          "label": "Tray (serves 10)",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-hapari-nengche",
+      "name": "Hapari Nengche",
+      "korean_name": "해파리냉채",
+      "category": "Cold Dishes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "49",
+      "variants": [
+        {
+          "id": "gok-hapari-nengche-tray",
+          "label": "Tray (serves 10)",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-sawoo-nengche",
+      "name": "Sawoo Nengche",
+      "korean_name": "새우냉채",
+      "category": "Cold Dishes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "50",
+      "variants": [
+        {
+          "id": "gok-sawoo-nengche-tray",
+          "label": "Tray (serves 10)",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-ge-muchim",
+      "name": "Ge Muchim",
+      "korean_name": "꽃게무침",
+      "category": "Cold Dishes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "52",
+      "variants": [
+        {
+          "id": "gok-ge-muchim-tray",
+          "label": "Tray (serves 10)",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-golbange-muchim",
+      "name": "Golbange Muchim",
+      "korean_name": "골뱅이 무침",
+      "category": "Cold Dishes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "53",
+      "variants": [
+        {
+          "id": "gok-golbange-muchim-tray",
+          "label": "Tray (serves 10)",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-sangsun-jun",
+      "name": "Sangsun Jun",
+      "korean_name": "생선전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "54",
+      "variants": [
+        {
+          "id": "gok-sangsun-jun-tray",
+          "label": "Tray (25 pieces (assumed 2-3 per guest))",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "25 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-vegetable-shrimp",
+      "name": "Vegetable Shrimp",
+      "korean_name": "야채새우전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "55",
+      "variants": [
+        {
+          "id": "gok-vegetable-shrimp-tray",
+          "label": "Tray (25 pieces (assumed 2-3 per guest))",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "25 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-kimchi-jun",
+      "name": "Kimchi Jun",
+      "korean_name": "김치전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "56",
+      "variants": [
+        {
+          "id": "gok-kimchi-jun-tray",
+          "label": "Tray (25 pieces (assumed 2-3 per guest))",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "25 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-zucchini",
+      "name": "Zucchini",
+      "korean_name": "호박전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "57",
+      "variants": [
+        {
+          "id": "gok-zucchini-tray",
+          "label": "Tray (30 pieces (assumed 2-3 per guest))",
+          "price": 30.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 15
+          },
+          "serves_text": "30 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-kenip-jun",
+      "name": "Kenip Jun",
+      "korean_name": "깻잎전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "60",
+      "variants": [
+        {
+          "id": "gok-kenip-jun-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-gochu-jun",
+      "name": "Gochu Jun",
+      "korean_name": "고추전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "61",
+      "variants": [
+        {
+          "id": "gok-gochu-jun-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-dongurang-tang",
+      "name": "Dongurang Tang",
+      "korean_name": "동그랑땡",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "62",
+      "variants": [
+        {
+          "id": "gok-dongurang-tang-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-sanjuk",
+      "name": "Sanjuk",
+      "korean_name": "산적",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "63",
+      "variants": [
+        {
+          "id": "gok-sanjuk-tray",
+          "label": "Tray (15 pieces (assumed 2-3 per guest))",
+          "price": 45.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 5,
+            "max": 8
+          },
+          "serves_text": "15 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-shrimp-jun",
+      "name": "Shrimp Jun",
+      "korean_name": "통새우전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "64",
+      "variants": [
+        {
+          "id": "gok-shrimp-jun-tray",
+          "label": "Tray (22 pieces (assumed 2-3 per guest))",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 8,
+            "max": 11
+          },
+          "serves_text": "22 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-tofu-jun",
+      "name": "Tofu Jun",
+      "korean_name": "두부전",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "65",
+      "variants": [
+        {
+          "id": "gok-tofu-jun-tray",
+          "label": "Tray (30 pieces (assumed 2-3 per guest))",
+          "price": 35.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 15
+          },
+          "serves_text": "30 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-mung-bean-jun",
+      "name": "Mung Bean Jun",
+      "korean_name": "녹두빈대떡",
+      "category": "Pancakes",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "66",
+      "variants": [
+        {
+          "id": "gok-mung-bean-jun-tray",
+          "label": "Tray (20 pieces (assumed 2-3 per guest))",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 7,
+            "max": 10
+          },
+          "serves_text": "20 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-shrimp-and-vegetable-kochi",
+      "name": "Shrimp and Vegetable Kochi",
+      "korean_name": "새우해물꼬치",
+      "category": "Skewers & Rolls",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "68",
+      "variants": [
+        {
+          "id": "gok-shrimp-and-vegetable-kochi-tray",
+          "label": "Tray (10 pieces (assumed 2-3 per guest))",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 4,
+            "max": 5
+          },
+          "serves_text": "10 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-mussam-mari",
+      "name": "Mussam Mari",
+      "korean_name": "무쌈말이",
+      "category": "Skewers & Rolls",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "70",
+      "variants": [
+        {
+          "id": "gok-mussam-mari-tray",
+          "label": "Tray (30 pieces (assumed 2-3 per guest))",
+          "price": 50.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 15
+          },
+          "serves_text": "30 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-fruit-vegetables-salad",
+      "name": "Fruit & Vegetables Salad",
+      "korean_name": "과일야채사라다",
+      "category": "Salads",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "74",
+      "variants": [
+        {
+          "id": "gok-fruit-vegetables-salad-tray",
+          "label": "Tray (serves 10)",
+          "price": 35.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-broccoli-salad",
+      "name": "Broccoli Salad",
+      "korean_name": "브로콜리 샐러드",
+      "category": "Salads",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "75",
+      "variants": [
+        {
+          "id": "gok-broccoli-salad-tray",
+          "label": "Tray (serves 10)",
+          "price": 35.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-kimchi",
+      "name": "Kimchi",
+      "korean_name": "김치",
+      "category": "Kimchi",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "79",
+      "variants": [
+        {
+          "id": "gok-kimchi-tray",
+          "label": "Tray (serves 10)",
+          "price": 20.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-cucumber-2",
+      "name": "Cucumber",
+      "korean_name": "오이김치",
+      "category": "Kimchi",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "80",
+      "variants": [
+        {
+          "id": "gok-cucumber-2-tray",
+          "label": "Tray (serves 10)",
+          "price": 35.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-kimchi-and-cucumber-kimchi",
+      "name": "Kimchi and Cucumber Kimchi",
+      "korean_name": "김치와 오이김치",
+      "category": "Kimchi",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "81",
+      "variants": [
+        {
+          "id": "gok-kimchi-and-cucumber-kimchi-tray",
+          "label": "Tray (serves 10)",
+          "price": 25.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-gutjule",
+      "name": "Gutjule",
+      "korean_name": "겉절이",
+      "category": "Kimchi",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "82",
+      "variants": [
+        {
+          "id": "gok-gutjule-tray",
+          "label": "Tray (serves 10)",
+          "price": 20.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-california-roll",
+      "name": "California Roll",
+      "korean_name": "캘리포니아롤",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "83",
+      "variants": [
+        {
+          "id": "gok-california-roll-tray",
+          "label": "Tray (22 pieces (assumed 2-3 per guest))",
+          "price": 44.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 8,
+            "max": 11
+          },
+          "serves_text": "22 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-bulgogi-sam-kimbab",
+      "name": "Bulgogi Sam Kimbab",
+      "korean_name": "불고기쌈 김밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "84",
+      "variants": [
+        {
+          "id": "gok-bulgogi-sam-kimbab-tray",
+          "label": "Tray (26 pieces (assumed 2-3 per guest))",
+          "price": 38.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "26 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-ueong-kenip-kimbab",
+      "name": "Ueong Kenip Kimbab",
+      "korean_name": "우엉깻잎쌈 김밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "85",
+      "variants": [
+        {
+          "id": "gok-ueong-kenip-kimbab-tray",
+          "label": "Tray (26 pieces (assumed 2-3 per guest))",
+          "price": 36.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "26 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-vegetable-kimbab",
+      "name": "Vegetable Kimbab",
+      "korean_name": "야채쌈김밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "86",
+      "variants": [
+        {
+          "id": "gok-vegetable-kimbab-tray",
+          "label": "Tray (26 pieces (assumed 2-3 per guest))",
+          "price": 34.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "26 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-small-uh-mook-kimbab",
+      "name": "Small Uh Mook Kimbab",
+      "korean_name": "작은김밥 (어묵)",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "87",
+      "variants": [
+        {
+          "id": "gok-small-uh-mook-kimbab-tray",
+          "label": "Tray (26 pieces (assumed 2-3 per guest))",
+          "price": 24.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "26 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-small-sausage-kimbab",
+      "name": "Small Sausage Kimbab",
+      "korean_name": "작은김밥 (소세지)",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "88",
+      "variants": [
+        {
+          "id": "gok-small-sausage-kimbab-tray",
+          "label": "Tray (26 pieces (assumed 2-3 per guest))",
+          "price": 24.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 9,
+            "max": 13
+          },
+          "serves_text": "26 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-yubu",
+      "name": "Yubu",
+      "korean_name": "유부",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "89",
+      "variants": [
+        {
+          "id": "gok-yubu-tray",
+          "label": "Tray (10 pieces (assumed 2-3 per guest))",
+          "price": 25.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 4,
+            "max": 5
+          },
+          "serves_text": "10 pieces (assumed 2-3 per guest)",
+          "serves_basis": "assumption"
+        }
+      ]
+    },
+    {
+      "id": "gok-kimchi-bokem-bab",
+      "name": "Kimchi Bokem Bab",
+      "korean_name": "김치볶음밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "90",
+      "variants": [
+        {
+          "id": "gok-kimchi-bokem-bab-tray",
+          "label": "Tray (serves 10)",
+          "price": 70.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-sawoo-bokem-bab",
+      "name": "Sawoo Bokem Bab",
+      "korean_name": "새우볶음밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "91",
+      "variants": [
+        {
+          "id": "gok-sawoo-bokem-bab-tray",
+          "label": "Tray (serves 10)",
+          "price": 100.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-yache-bokem-bab",
+      "name": "Yache Bokem Bab",
+      "korean_name": "야채볶음밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "92",
+      "variants": [
+        {
+          "id": "gok-yache-bokem-bab-tray",
+          "label": "Tray (serves 10)",
+          "price": 70.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-bap",
+      "name": "Bap",
+      "korean_name": "밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "93",
+      "variants": [
+        {
+          "id": "gok-bap-tray",
+          "label": "Tray (serves 10)",
+          "price": 18.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-mix-rice",
+      "name": "Mix Rice",
+      "korean_name": "잡곡밥",
+      "category": "Kimbab & Rice",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "94",
+      "variants": [
+        {
+          "id": "gok-mix-rice-tray",
+          "label": "Tray (serves 10)",
+          "price": 20.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-fruit",
+      "name": "Fruit",
+      "korean_name": "신선한 과일",
+      "category": "Dessert",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "95",
+      "variants": [
+        {
+          "id": "gok-fruit-tray",
+          "label": "Tray (serves 10)",
+          "price": 40.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-utensil",
+      "name": "Utensil",
+      "korean_name": "접시/냅킨/젓가락",
+      "category": "Add-ons",
+      "description": "Plate, napkin, and chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "100",
+      "variants": [
+        {
+          "id": "gok-utensil-tray",
+          "label": "Tray (serves 10)",
+          "price": 5.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ],
+      "is_addon": true
+    },
+    {
+      "id": "gok-miyeok-guk-beef-seaweed-soup",
+      "name": "Miyeok-guk (Beef Seaweed Soup)",
+      "korean_name": "고기미역국",
+      "category": "Soups",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "205",
+      "variants": [
+        {
+          "id": "gok-miyeok-guk-beef-seaweed-soup-tray",
+          "label": "Tray (10 x 16 oz)",
+          "price": 80.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "10 x 16 oz",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-kimchi-jim",
+      "name": "Kimchi Jim",
+      "korean_name": "묵은지김치찜",
+      "category": "Soups",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "206",
+      "variants": [
+        {
+          "id": "gok-kimchi-jim-tray",
+          "label": "Tray (10 x 16 oz)",
+          "price": 100.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "10 x 16 oz",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-yukgejang-spicy-korean-beef-soup",
+      "name": "Yukgejang (spicy korean Beef soup)",
+      "korean_name": "육개장",
+      "category": "Soups",
+      "description": null,
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "207",
+      "variants": [
+        {
+          "id": "gok-yukgejang-spicy-korean-beef-soup-tray",
+          "label": "Tray (10 x 16 oz)",
+          "price": 100.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "10 x 16 oz",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-5a",
+      "name": "Set Menu 5A",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "Bulgogi, sweet spicy chicken, fried shrimp, jobche (veg. glass noodle), tofu pancake, veg. kimbab, kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "214",
+      "variants": [
+        {
+          "id": "gok-set-menu-5a-tray",
+          "label": "Set (serves 5)",
+          "price": 185.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 5,
+            "max": 5
+          },
+          "serves_text": "Serves 5",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-5b",
+      "name": "Set Menu 5B",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "Galbijim, sweet spicy chicken, fried shrimp, jobche (veg. glass noodle), tofu pancake, bulgogi kimbab, kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "215",
+      "variants": [
+        {
+          "id": "gok-set-menu-5b-tray",
+          "label": "Set (serves 5)",
+          "price": 255.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 5,
+            "max": 5
+          },
+          "serves_text": "Serves 5",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-5c",
+      "name": "Set Menu 5C",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "LA galbi (grilled), pork belly (sam set), kanpon shrimp, jobche (veg. glass noodle), fish and veg shrimp pancake, California roll and bulgogi kimbab, kimchi and cucumber kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "216",
+      "variants": [
+        {
+          "id": "gok-set-menu-5c-tray",
+          "label": "Set (serves 5)",
+          "price": 300.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 5,
+            "max": 5
+          },
+          "serves_text": "Serves 5",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-10a",
+      "name": "Set Menu 10A",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "Bulgogi, sweet spicy chicken, fried shrimp, jobche (veg. glass noodle), tofu pancake, veg. kimbab, kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "217",
+      "variants": [
+        {
+          "id": "gok-set-menu-10a-tray",
+          "label": "Set (serves 10)",
+          "price": 330.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-10b",
+      "name": "Set Menu 10B",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "Galbijim, sweet spicy chicken, fried shrimp, jobche (veg. glass noodle), tofu pancake, bulgogi kimbab, kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "218",
+      "variants": [
+        {
+          "id": "gok-set-menu-10b-tray",
+          "label": "Set (serves 10)",
+          "price": 450.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-10c",
+      "name": "Set Menu 10C",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "LA galbi (grilled), pork belly (sam set), kanpon shrimp, jobche (veg. glass noodle), fish and veg shrimp pancake, California roll and bulgogi kimbab, kimchi and cucumber kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "219",
+      "variants": [
+        {
+          "id": "gok-set-menu-10c-tray",
+          "label": "Set (serves 10)",
+          "price": 545.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-20a",
+      "name": "Set Menu 20A",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "Bulgogi, sweet spicy chicken, fried shrimp, jobche (veg. glass noodle), tofu pancake, veg. kimbab, kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "220",
+      "variants": [
+        {
+          "id": "gok-set-menu-20a-tray",
+          "label": "Set (serves 20)",
+          "price": 660.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 20,
+            "max": 20
+          },
+          "serves_text": "Serves 20",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-20b",
+      "name": "Set Menu 20B",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "Galbijim, sweet spicy chicken, fried shrimp, jobche (veg. glass noodle), tofu pancake, bulgogi kimbab, kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "221",
+      "variants": [
+        {
+          "id": "gok-set-menu-20b-tray",
+          "label": "Set (serves 20)",
+          "price": 900.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 20,
+            "max": 20
+          },
+          "serves_text": "Serves 20",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-set-menu-20c",
+      "name": "Set Menu 20C",
+      "korean_name": "",
+      "category": "Set Menus",
+      "description": "LA galbi (grilled), pork belly (sam set), kanpon shrimp, jobche (veg. glass noodle), fish and veg shrimp pancake, California roll and bulgogi kimbab, kimchi and cucumber kimchi, rice, plate/napkin/chopsticks.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "222",
+      "variants": [
+        {
+          "id": "gok-set-menu-20c-tray",
+          "label": "Set (serves 20)",
+          "price": 1090.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 20,
+            "max": 20
+          },
+          "serves_text": "Serves 20",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-signature-lite-10a",
+      "name": "Signature Lite 10A",
+      "korean_name": "",
+      "category": "Signature Lite",
+      "description": "Signature Lite set; contents are not published on the online menu.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "253",
+      "variants": [
+        {
+          "id": "gok-signature-lite-10a-tray",
+          "label": "Tray (serves 10)",
+          "price": 200.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-signature-lite-10b",
+      "name": "Signature Lite 10B",
+      "korean_name": "",
+      "category": "Signature Lite",
+      "description": "Signature Lite set; contents are not published on the online menu.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "254",
+      "variants": [
+        {
+          "id": "gok-signature-lite-10b-tray",
+          "label": "Tray (serves 10)",
+          "price": 200.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    },
+    {
+      "id": "gok-signature-lite-10c",
+      "name": "Signature Lite 10C",
+      "korean_name": "",
+      "category": "Signature Lite",
+      "description": "Signature Lite set; contents are not published on the online menu.",
+      "dietary_tags": [],
+      "dietary_note": "Dietary tags are not published on the online menu; confirm with the caterer.",
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_note": "No published allergen table; confirm with the caterer.",
+      "source_item_id": "255",
+      "variants": [
+        {
+          "id": "gok-signature-lite-10c-tray",
+          "label": "Tray (serves 10)",
+          "price": 200.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "Serves 10",
+          "serves_basis": "published"
+        }
+      ]
+    }
+  ]
+}

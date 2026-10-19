@@ -4,67 +4,81 @@
 
 ## TL;DR
 
-The data layer is ready for the pricing engine and agent work. One real caterer's menu and rules are transcribed, anonymized in the UI, and validated.
+The data layer is ready for the pricing engine and agent work. There are now **two real caterers**: a full primary dataset (American/BBQ) and a simplified second dataset (Korean). Both are anonymized in the UI and validated.
 
-**Status: on track for the Monday data deliverable.** One open decision remains: whether to add more cuisines before Thursday.
+**Status: on track for the Monday data deliverable.** Cuisine coverage is now American/BBQ + Korean. Two is enough for Thursday; more can be added later.
 
 ## Snapshot
 
-| Metric | Value |
-| --- | --- |
-| Menu items | 67 |
-| Priced variants | 98 |
-| Categories | 12 |
-| Price range | $1.99 – $255.00 |
-| Vegan items | 5 |
-| Vegetarian items | 15 |
-| Gluten-sensitive items | 9 |
-| Allergens listed | 34 items |
-| Allergens none listed | 4 items |
-| Allergens unknown | 9 items |
-| Allergens depend on selection | 20 items |
-| Validation | Passing (`python data/validate_dataset.py`) |
+| Metric | Primary: Stonefire | Second: Gok Jee |
+| --- | --- | --- |
+| Cuisine | American / BBQ | Korean |
+| Depth | Full | Simplified |
+| Menu items | 67 | 91 |
+| Priced variants | 98 | 91 |
+| Categories | 12 | 18 |
+| Price range | $1.99 – $255.00 | $5.00 – $1,090.00 |
+| Vegan / vegetarian / gluten-sensitive | 5 / 15 / 9 | 0 / 2 / 0 |
+| Allergens | 34 listed, 4 none, 9 unknown, 20 depends | All unknown |
+| Validation | Passing | Passing |
 
 ## What is done
 
 | File | What it is |
 | --- | --- |
-| `data/menu.json` | 67 items with prices, serving sizes, dietary tags, allergens, and source provenance |
-| `data/rules.json` | Minimums, lead times, tax, delivery, staffing, package rules, assumptions |
-| `data/assumptions.md` | Every invented value with a one-line reason |
-| `data/source-log.md` | Candidate caterers, selected source, real vs. assumed data |
-| `data/capacity.json` | Synthetic capacity calendar with open/full/closed dates |
-| `data/raw/` | PDF and HTML proof snapshots of the menu, FAQ, and allergen table |
-| `data/parse_allergens.py` | Rebuilds `allergens.json` from the saved allergen page |
-| `data/validate_dataset.py` | Checks JSON structure, pricing fields, allergens, rules, and capacity |
+| `data/caterers.json` | Index of both caterer datasets for the app |
+| `data/menu.json` | Primary 67 items with prices, serving sizes, dietary tags, allergens |
+| `data/rules.json` | Primary minimums, lead times, tax, delivery, staffing, package rules |
+| `data/assumptions.md` | Every primary assumption with a reason |
+| `data/source-log.md` | Primary candidate caterers and provenance |
+| `data/capacity.json` | Primary synthetic capacity calendar |
+| `data/validate_dataset.py` | Primary dataset validator |
+| `data/gokjee/menu.json` | Korean 91-item menu with tray prices and set menus |
+| `data/gokjee/rules.json` | Korean minimums, tax, delivery, assumptions |
+| `data/gokjee/assumptions.md` | Every Korean assumption with a reason |
+| `data/gokjee/source-log.md` | Korean source and provenance |
+| `data/gokjee/capacity.json` | Korean synthetic capacity calendar |
+| `data/gokjee/validate_gokjee.py` | Korean dataset validator |
+| `data/raw/` | PDF and HTML proof for both sources |
 
-## Source decision
+## Sources
 
-**Selected:** Stonefire Grill, Torrance, CA. Displayed in the app as **Sample Catering Co.**
+### Primary: Stonefire Grill, Torrance, CA
 
-**Why:** it publishes everything the quote needs: item prices, serving sizes, per-person packages, vegan/vegetarian/gluten-sensitive markers, an allergen table, order minimums, and lead times. It is about 15 miles from the Culver City scenario, so delivery is plausible.
+**Display name:** Sample Catering Co.
 
-**Other candidates**
+**Why:** publishes item prices, serving sizes, per-person packages, vegan/vegetarian/gluten-sensitive markers, an allergen table, minimums, and lead times. About 15 miles from Culver City.
 
-- **Brent's Deli** — real LA deli with serving sizes and minimums, but no public catering prices. Rejected.
-- **Mendocino Farms** — catering page returned HTTP 403 during capture. Could not verify prices. Rejected.
-- **ezCater / Zerocater** — ordering platforms, not one caterer's published menu. Rejected.
+**Rejected candidates**
+
+- **Brent's Deli** — real LA deli with serving sizes and minimums, but no public catering prices.
+- **Mendocino Farms** — catering page returned HTTP 403 during capture; prices could not be verified.
+- **ezCater / Zerocater** — ordering platforms, not one caterer's published menu.
+
+### Second: Gok Jee Foods, Koreatown, Los Angeles
+
+**Display name:** Koreatown Catering Co.
+
+**Why:** real Korean caterer with public tray prices, set menus for 5/10/20 people, and a downloadable PDF. Adds cuisine variety without changing the primary quote flow.
+
+**Source access:** the site is HTTP-only and loads the menu through an AJAX endpoint. The saved `menuform` HTML is the parsing source; the rendered PDF is the visual proof.
 
 ## What is real vs. assumed
 
-| Data | Status |
-| --- | --- |
-| Item names, descriptions, prices, serving sizes | Real, captured 2026-10-18 |
-| Dietary tags | Real (V, VT, GF) |
-| Allergens | Real where the allergen table has a row |
-| Order minimums and lead times | Real, published |
-| Tax rates | Real (CDTFA, effective 2026-10-01) |
-| Delivery fee and radius | Assumption |
-| Full-service service charge and staffing | Assumption |
-| Pickup lead time | Assumption |
-| Capacity calendar | Synthetic |
+| Data | Primary | Second |
+| --- | --- | --- |
+| Item names, prices, serving sizes | Real, captured 2026-10-18 | Real, captured 2026-10-18 |
+| Dietary tags | Real (V, VT, GF) | Only explicit veg. items |
+| Allergens | Real where the table has a row | Unknown, no table published |
+| Order minimums and lead times | Real, published | Assumed |
+| Tax rates | Real (CDTFA, effective 2026-10-01) | Same rates, by delivery address |
+| Delivery fee and radius | Assumption | Assumption |
+| Service charge and staffing | Assumption | None / assumed |
+| Capacity calendar | Synthetic | Synthetic |
 
 ## Rules captured
+
+### Primary
 
 - Pickup: 10-guest minimum.
 - Delivery: 20-guest minimum **and** $400 subtotal minimum.
@@ -76,48 +90,48 @@ The data layer is ready for the pricing engine and agent work. One real caterer'
 - Tax: Culver City 11.25%, Torrance 10.75%.
 - Children under 10: two children count as one adult.
 
+### Second
+
+- Set menus: 5, 10, and 20 people.
+- Minimum: 5 guests (assumption based on the smallest set menu).
+- Lead time: 48 hours (assumption).
+- Delivery fee: $50 flat within 15 miles, then $2.50/mile to 25 miles (assumption).
+- No service charge.
+- Utensils: $5 per 10 people (published).
+- Tax: same delivery-address rates as the primary dataset.
+
 ## Caveats the group must know
 
-1. **GF means gluten-sensitive, not gluten-free.** The caterer says it has no gluten-free items. The code should never promise gluten-free.
-2. **Package and boxed-meal allergens depend on selections.** They are marked `depends_on_selection` and need confirmation.
-3. **Unknown allergens stay unknown.** Nine items have no matching allergen row; never treat them as allergen-free.
-4. **Delivery fee, service charge, staffing, and pickup lead time are assumptions.** They are documented and easy to challenge.
-5. **Prices are Torrance-only and snapshot-dated.** The source says pricing is valid for Torrance; prices can change.
-6. **One caterer, not a multi-cuisine database.** See the decision below.
+1. **GF means gluten-sensitive, not gluten-free.** The primary caterer says it has no gluten-free items.
+2. **Gok Jee publishes no allergen table.** Every item is unknown; any allergy request must be flagged for caterer confirmation.
+3. **Gok Jee dietary tags are minimal.** Only two items are explicitly vegetarian.
+4. **Package and boxed-meal allergens depend on selections.** They need confirmation.
+5. **Unknown allergens are not “none.”** Nine primary items and all Korean items are unknown.
+6. **Assumptions are documented.** See both `assumptions.md` files.
+7. **Prices are snapshot-dated.** They can change.
 
-## Open decision: cuisine variety
+## Cuisine coverage
 
-**Current state:** one caterer. That follows the handoff's data plan and keeps the "real data" story clean.
+**Current:** American/BBQ + Korean. That is enough variety for Thursday.
 
-**Your preference:** a few different cuisine genres. That is reasonable, but it changes scope. Here are the options.
+**Recommendation:** freeze these two for the demo. Adding a third cuisine means another transcription pass, another rule set, and more eval cases. If the group wants more, add it after Thursday.
 
-### Option A — One primary caterer (recommended)
-
-Keep Stonefire for the end-to-end quote and eval. Add cuisine variety later as a read-only "menu showcase" if time allows. Lowest risk, strongest provenance.
-
-### Option B — Add 2–3 real caterers now
-
-Add one menu per cuisine, each with its own `meta.source`, prices, allergens, and rules. The user or agent must choose a caterer first. This needs 2–3 more transcription passes and a caterer-selection step. Realistic cuisines to verify: Mexican, Italian, Mediterranean, Chinese, Indian.
-
-**Cost:** several hours, more eval cases, more edge cases. **Risk:** medium.
-
-### Option C — Synthetic cuisine variants
-
-Change names or invent dishes to fake variety. **Not recommended.** It weakens the "is this fake data?" answer and creates work without real provenance.
-
-**Recommendation:** Option A for Thursday; Option B after the demo if the group wants to keep building.
+Possible next cuisines: Mexican, Italian, Mediterranean, Chinese, Indian. Chains are more likely to publish prices and serving sizes; local one-location caterers often hide them.
 
 ## Review in 10 minutes
 
-1. Open `data/menu.json` and spot-check five prices against `data/raw/stonefire-torrance-catering-menu-2026-10-18.pdf`.
-2. Open `data/rules.json` and confirm the minimums and lead times.
-3. Read `data/assumptions.md`.
-4. Run `python data/validate_dataset.py`.
-5. Decide Option A, B, or C above.
+1. Spot-check five Stonefire prices against `data/raw/stonefire-torrance-catering-menu-2026-10-18.pdf`.
+2. Spot-check five Gok Jee prices against `data/raw/gokjee-catering-menu-list-2026-10-18.pdf`.
+3. Read both `assumptions.md` files.
+4. Run:
+   ```powershell
+   python data/validate_dataset.py
+   python data/gokjee/validate_gokjee.py
+   ```
+5. Confirm the two-dataset decision.
 
 ## How to share this
 
-- Share this file plus the `data/` folder.
-- Or push the repo to GitHub and send the link.
-- Or paste this file into Slack/Notion.
-- A ready-to-send zip is at `Catering-Data-Package-2026-10-18.zip`.
+- Share the private GitHub repo: https://github.com/moali-26/catering-quote-assistant
+- Or share this file plus the `data/` folder.
+- Or use the zip at `Catering-Data-Package-2026-10-18.zip`.

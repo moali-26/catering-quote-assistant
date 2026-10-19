@@ -1,0 +1,57 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "gokjee-korean-catering-los-angeles",
+    "generated_at": "2026-10-18",
+    "synthetic": true,
+    "note": "Invented capacity for the demo. Not the caterer's real availability. Resolve a date by applying defaults, then closed_dates, then exceptions."
+  },
+  "defaults": {
+    "max_events_per_day": 2,
+    "max_guests_per_day": 100,
+    "max_guests_per_event": 100,
+    "status": "open"
+  },
+  "closed_dates": {
+    "2026-11-26": "Thanksgiving Day",
+    "2026-12-25": "Christmas Day"
+  },
+  "exceptions": {
+    "2026-10-24": {
+      "booked_events": 2,
+      "booked_guests": 100,
+      "status": "full",
+      "note": "Fully booked."
+    },
+    "2026-10-31": {
+      "booked_events": 2,
+      "booked_guests": 80,
+      "status": "full",
+      "note": "Both event slots are booked."
+    },
+    "2026-11-07": {
+      "booked_events": 1,
+      "booked_guests": 40,
+      "status": "open",
+      "note": "One event slot remains."
+    },
+    "2026-11-20": {
+      "booked_events": 2,
+      "booked_guests": 100,
+      "status": "full",
+      "note": "Fully booked."
+    },
+    "2026-12-11": {
+      "booked_events": 2,
+      "booked_guests": 90,
+      "status": "full",
+      "note": "Both event slots are booked."
+    },
+    "2026-12-31": {
+      "booked_events": 2,
+      "booked_guests": 100,
+      "status": "full",
+      "note": "Fully booked for New Year's Eve."
+    }
+  }
+}
