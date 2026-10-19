@@ -39,6 +39,7 @@ The data layer is ready for the pricing engine and agent work. There are now **t
 | `data/gokjee/source-log.md` | Korean source and provenance |
 | `data/gokjee/capacity.json` | Korean synthetic capacity calendar |
 | `data/gokjee/validate_gokjee.py` | Korean dataset validator |
+| `data/sample/` | Lightweight 9-item fixture with 5 test inquiries and a hand-checked quote |
 | `data/raw/` | PDF and HTML proof for both sources |
 
 ## Sources
@@ -127,6 +128,7 @@ Possible next cuisines: Mexican, Italian, Mediterranean, Chinese, Indian. Chains
    ```powershell
    python data/validate_dataset.py
    python data/gokjee/validate_gokjee.py
+   python data/sample/validate_sample.py
    ```
 5. Confirm the two-dataset decision.
 

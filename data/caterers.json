@@ -2,6 +2,13 @@
   "schema_version": "1.0.0",
   "updated_at": "2026-10-18",
   "note": "Use display_name in the app. business_name is retained for provenance only.",
+  "sample_fixture": {
+    "menu_path": "data/sample/menu.json",
+    "rules_path": "data/sample/rules.json",
+    "capacity_path": "data/sample/capacity.json",
+    "inquiries_path": "data/sample/inquiries.json",
+    "validator": "data/sample/validate_sample.py"
+  },
   "caterers": [
     {
       "dataset_id": "sample-catering-co-torrance-ca",

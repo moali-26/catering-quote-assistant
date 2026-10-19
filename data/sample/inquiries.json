@@ -1,0 +1,93 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "sample-catering-co-torrance-ca",
+    "created_at": "2026-10-18",
+    "note": "Five synthetic inquiries for fast tests. Expected values are assertions, not the only valid quote."
+  },
+  "inquiries": [
+    {
+      "id": "sample-inq-001",
+      "text": "Lunch for 40 people next Friday at our Culver City office. A few vegetarians, one nut allergy. Budget around $800. Please deliver.",
+      "expected": {
+        "status": "quote",
+        "headcount": 40,
+        "date": "2026-10-23",
+        "city": "Culver City",
+        "service_mode": "delivery",
+        "dietary": ["vegetarian"],
+        "allergens": ["peanut", "tree_nuts"],
+        "budget": 800.0,
+        "must_flag": ["pkg-pasta-duo:allergens_depend_on_selection"],
+        "must_avoid": ["side-coleslaw", "dessert-cookie-platter"],
+        "max_total": 800.0
+      }
+    },
+    {
+      "id": "sample-inq-002",
+      "text": "Need lunch for 30 people in Culver City, about $600, a few vegetarians.",
+      "expected": {
+        "status": "clarify",
+        "missing": ["date"],
+        "headcount": 30,
+        "city": "Culver City",
+        "dietary": ["vegetarian"],
+        "budget": 600.0
+      }
+    },
+    {
+      "id": "sample-inq-003",
+      "text": "Office lunch next Friday in Culver City, budget $500.",
+      "expected": {
+        "status": "clarify",
+        "missing": ["headcount"],
+        "date": "2026-10-23",
+        "city": "Culver City",
+        "budget": 500.0
+      }
+    },
+    {
+      "id": "sample-inq-004",
+      "text": "Dinner for 50 on October 24 at our Culver City office. Budget $1,200.",
+      "expected": {
+        "status": "capacity_conflict",
+        "headcount": 50,
+        "date": "2026-10-24",
+        "city": "Culver City",
+        "budget": 1200.0
+      }
+    },
+    {
+      "id": "sample-inq-005",
+      "text": "Lunch for 20 tomorrow at our Culver City office. Budget $500.",
+      "expected": {
+        "status": "lead_time_conflict",
+        "headcount": 20,
+        "date": "2026-10-19",
+        "city": "Culver City",
+        "budget": 500.0
+      }
+    }
+  ],
+  "pricing_example": {
+    "inquiry_id": "sample-inq-001",
+    "note": "One valid selection, not the only correct quote. Use it to test the pricing engine.",
+    "service_mode": "delivery",
+    "delivery_miles": 15.0,
+    "tax_location": "Culver City",
+    "selections": [
+      { "item_id": "pkg-pasta-duo", "variant_id": "pkg-pasta-duo-pp", "quantity": 40 },
+      { "item_id": "side-garlic-mashed", "variant_id": "side-garlic-mashed-full", "quantity": 1 }
+    ],
+    "expected": {
+      "food_subtotal": 623.29,
+      "delivery_fee": 50.0,
+      "service_charge": 0.0,
+      "staffing_fee": 0.0,
+      "taxable_subtotal": 673.29,
+      "tax": 75.75,
+      "total": 749.04,
+      "flags": ["allergen_depends_on_selection:pkg-pasta-duo"]
+    }
+  }
+}

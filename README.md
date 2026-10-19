@@ -54,9 +54,14 @@
 ```powershell
 python data/validate_dataset.py
 python data/gokjee/validate_gokjee.py
+python data/sample/validate_sample.py
 ```
 
 Load `data/menu.json` and `data/rules.json` for the primary dataset. Load `data/gokjee/menu.json` and `data/gokjee/rules.json` for the Korean dataset. Use `meta.branding.display_name` in the UI, not `source.business_name`.
+
+### Lightweight sample fixture
+
+`data/sample/` is a fast test version of the primary dataset: 9 items, 15 variants, simplified rules, a 3-date capacity calendar, 5 inquiries, and one hand-checked expected quote. It uses the same item/variant IDs as the full dataset, so tests can switch between them. Use it for unit tests and demos; use the full dataset for the final eval.
 
 ## How we go from here
 
@@ -86,6 +91,11 @@ Current coverage is **American/BBQ + Korean**. That is enough variety for Thursd
 - `data/gokjee/source-log.md` — Korean source and provenance
 - `data/gokjee/capacity.json` — Korean synthetic availability
 - `data/raw/` — PDF/HTML proof for both sources
+- `data/sample/menu.json` — 9-item lightweight fixture
+- `data/sample/rules.json` — simplified test rules
+- `data/sample/capacity.json` — 3-date test calendar
+- `data/sample/inquiries.json` — 5 test inquiries + expected quote
+- `data/sample/validate_sample.py` — fixture validator
 - `data/validate_dataset.py` — primary validator
 - `data/gokjee/validate_gokjee.py` — Korean validator
 - `DATA_STATUS.md` — longer status writeup

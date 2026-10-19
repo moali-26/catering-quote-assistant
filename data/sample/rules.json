@@ -1,0 +1,95 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "sample-catering-co-torrance-ca",
+    "captured_at": "2026-10-18",
+    "currency": "USD",
+    "sample": true,
+    "source": {
+      "business_name": "Stonefire Grill",
+      "location": "Torrance, CA",
+      "note": "Simplified rules for tests. Derived from data/rules.json; not every production rule is included."
+    },
+    "legend": {
+      "published": "Stated on the caterer's public site.",
+      "assumption": "Not published; a documented classroom assumption.",
+      "synthetic": "Invented for the demo; not from the caterer."
+    }
+  },
+  "service_modes": {
+    "pickup": {
+      "label": "Pick Up",
+      "order_minimum": { "guest_count": 10, "subtotal": null, "source": "published" },
+      "lead_time_hours": 24,
+      "lead_time_source": "assumption"
+    },
+    "delivery": {
+      "label": "Delivery",
+      "order_minimum": { "guest_count": 20, "subtotal": 300.0, "source": "published" },
+      "lead_time_hours": 48,
+      "lead_time_source": "published",
+      "included": ["Light setup", "Paper goods and plastic cutlery on request"]
+    },
+    "full_service": {
+      "label": "Full Service",
+      "order_minimum": { "guest_count": 30, "subtotal": null, "source": "published" },
+      "booking_lead_time_hours": 168,
+      "final_confirmation_lead_time_hours": 48,
+      "lead_time_source": "published"
+    }
+  },
+  "delivery": {
+    "fee": {
+      "type": "flat_plus_mileage",
+      "flat_fee": 50.0,
+      "included_miles": 15.0,
+      "per_mile_beyond_included": 2.5,
+      "currency": "USD",
+      "source": "assumption"
+    },
+    "radius": { "max_miles": 25.0, "source": "assumption" },
+    "origin": { "city": "Torrance", "state": "CA", "source": "published" }
+  },
+  "service_charge": {
+    "full_service": { "type": "percent_of_food_subtotal", "rate": 0.18, "source": "assumption" },
+    "attendants": {
+      "rate_per_hour": 35.0,
+      "minimum_hours": 3,
+      "guests_per_attendant": 30,
+      "rounding": "ceiling",
+      "source": "assumption"
+    },
+    "gratuity": { "customary_percent_min": 0.15, "customary_percent_max": 0.20, "included_in_quote": false, "source": "published" }
+  },
+  "tax": {
+    "basis": "delivery_address",
+    "default_location": "Culver City",
+    "default_rate": 0.1125,
+    "rates": { "Culver City": 0.1125, "Torrance": 0.1075 },
+    "effective_date": "2026-10-01",
+    "source": "published",
+    "source_url": "https://www.cdtfa.ca.gov/taxes-and-fees/rates.aspx",
+    "taxable_base": ["food_subtotal", "delivery_fee", "service_charge", "staffing_fee"],
+    "taxable_base_source": "assumption"
+  },
+  "children": {
+    "age_threshold": 10,
+    "counting_rule": "two children under 10 count as one adult",
+    "source": "published"
+  },
+  "validation": {
+    "delivery_requires_both_minimums": true,
+    "unknown_allergen_action": "flag_for_caterer_review",
+    "gluten_free_request_action": "offer_gluten_sensitive_and_flag_risk",
+    "rounding": "half_up_to_cents"
+  },
+  "assumptions": [
+    "This is a test fixture derived from the primary dataset.",
+    "Only the rules needed for the sample inquiries are included.",
+    "Delivery fee is $50 flat within 15 miles, then $2.50 per mile to 25 miles.",
+    "Full-service service charge is 18%; staffing is $35/hour with a 3-hour minimum and one attendant per 30 guests.",
+    "Pickup lead time is 24 hours.",
+    "Tax follows the delivery address: Culver City 11.25%, Torrance 10.75%.",
+    "Tax base includes food, delivery, service charge, and staffing; gratuity is excluded."
+  ]
+}

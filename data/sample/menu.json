@@ -1,0 +1,177 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "sample-catering-co-torrance-ca",
+    "captured_at": "2026-10-18",
+    "currency": "USD",
+    "sample": true,
+    "source": {
+      "business_name": "Stonefire Grill",
+      "location": "Torrance, CA",
+      "menu_url": "https://www.stonefiregrill.com/location/torrance/ca/catering-menu/",
+      "note": "Lightweight subset of data/menu.json. IDs match the full primary dataset."
+    },
+    "branding": {
+      "display_name": "Sample Catering Co.",
+      "anonymized": true
+    },
+    "notes": [
+      "This fixture is for unit tests and demos, not production.",
+      "Every item and variant is copied from data/menu.json so tests can move between the sample and the full dataset."
+    ]
+  },
+  "categories": [
+    { "id": "appetizers", "name": "Appetizers" },
+    { "id": "catering-packages", "name": "Catering Packages" },
+    { "id": "salads", "name": "Salads" },
+    { "id": "sides", "name": "Sides" },
+    { "id": "desserts", "name": "Desserts" },
+    { "id": "a-la-carte-pans", "name": "A La Carte Pans" }
+  ],
+  "dietary_tag_definitions": {
+    "vegan": "Source menu marks the item V.",
+    "vegetarian": "Source menu marks the item VT.",
+    "gluten_sensitive": "Source menu marks the item GF. This is not a gluten-free certification."
+  },
+  "allergen_definitions": [
+    "egg",
+    "fish",
+    "milk",
+    "peanut",
+    "soy",
+    "tree_nuts",
+    "wheat",
+    "gluten",
+    "sesame",
+    "shellfish"
+  ],
+  "items": [
+    {
+      "id": "app-hummus",
+      "name": "Hummus",
+      "category": "Appetizers",
+      "description": "Served with grilled pita, celery, carrots, cucumber, and red bell pepper.",
+      "dietary_tags": ["vegan"],
+      "allergens": ["sesame", "milk", "soy", "wheat", "gluten"],
+      "allergen_status": "listed",
+      "allergen_source_rows": ["Traditional Hummus (Contains Sesame)", "Hummus Pita Bread"],
+      "variants": [
+        { "id": "app-hummus-small", "label": "Small", "price": 25.0, "pricing_unit": "per_tray", "serves": { "min": 10, "max": null }, "serves_text": "Serves 10+", "serves_basis": "published" },
+        { "id": "app-hummus-large", "label": "Large", "price": 56.0, "pricing_unit": "per_tray", "serves": { "min": 25, "max": 25 }, "serves_text": "Serves 25", "serves_basis": "published" }
+      ]
+    },
+    {
+      "id": "app-chicken-tenders",
+      "name": "Chicken Tenders",
+      "category": "Appetizers",
+      "description": "With ranch and BBQ sauce.",
+      "dietary_tags": [],
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_source_rows": [],
+      "allergen_note": "Plain tenders have no exact allergen row. Do not treat as allergen-free.",
+      "variants": [
+        { "id": "app-chicken-tenders-half", "label": "Half Pan", "price": 52.0, "pricing_unit": "per_tray", "serves": { "min": 10, "max": 10 }, "serves_text": "20 tenders (assumed 2 per guest)", "serves_basis": "assumption" }
+      ]
+    },
+    {
+      "id": "pkg-pasta-duo",
+      "name": "The Pasta Duo",
+      "category": "Catering Packages",
+      "description": "Includes two pastas and a Caesar or garden salad. Served buffet style with freshly baked breadsticks.",
+      "dietary_tags": ["vegetarian"],
+      "dietary_note": "Vegetarian only if vegetarian pastas and the garden salad are selected. Caesar salad contains fish.",
+      "allergens": [],
+      "allergen_status": "depends_on_selection",
+      "allergen_source_rows": [],
+      "allergen_note": "Depends on the two pastas and salad selected. Confirm with the caterer.",
+      "variants": [
+        { "id": "pkg-pasta-duo-pp", "label": "Per person", "price": 13.49, "pricing_unit": "per_person", "serves": { "min": 1, "max": 1 }, "serves_text": "Per person", "serves_basis": "published" }
+      ]
+    },
+    {
+      "id": "salad-garden",
+      "name": "Garden",
+      "category": "Salads",
+      "description": "Garden salad.",
+      "dietary_tags": ["vegan", "gluten_sensitive"],
+      "allergens": [],
+      "allergen_status": "listed_none",
+      "allergen_source_rows": ["Garden Salad"],
+      "variants": [
+        { "id": "salad-garden-half", "label": "Half", "price": 39.49, "pricing_unit": "per_tray", "serves": { "min": 12, "max": 14 }, "serves_text": "Serves 12-14", "serves_basis": "published" },
+        { "id": "salad-garden-full", "label": "Full", "price": 68.99, "pricing_unit": "per_tray", "serves": { "min": 36, "max": 40 }, "serves_text": "Serves 36-40", "serves_basis": "published" }
+      ]
+    },
+    {
+      "id": "salad-caesar",
+      "name": "Caesar",
+      "category": "Salads",
+      "description": "Caesar salad.",
+      "dietary_tags": [],
+      "allergens": ["egg", "fish", "milk", "soy", "wheat", "gluten"],
+      "allergen_status": "listed",
+      "allergen_source_rows": ["Caesar Salad"],
+      "variants": [
+        { "id": "salad-caesar-half", "label": "Half", "price": 39.49, "pricing_unit": "per_tray", "serves": { "min": 8, "max": 10 }, "serves_text": "Serves 8-10", "serves_basis": "published" },
+        { "id": "salad-caesar-full", "label": "Full", "price": 68.99, "pricing_unit": "per_tray", "serves": { "min": 20, "max": 25 }, "serves_text": "Serves 20-25", "serves_basis": "published" }
+      ]
+    },
+    {
+      "id": "side-garlic-mashed",
+      "name": "Garlic Mashed Potatoes",
+      "category": "Sides",
+      "description": "Garlic mashed potatoes.",
+      "dietary_tags": ["vegetarian", "gluten_sensitive"],
+      "allergens": ["milk"],
+      "allergen_status": "listed",
+      "allergen_source_rows": ["Garlic Mashed Potatoes"],
+      "variants": [
+        { "id": "side-garlic-mashed-half", "label": "Half", "price": 41.49, "pricing_unit": "per_tray", "serves": { "min": 12, "max": 14 }, "serves_text": "Serves 12-14", "serves_basis": "published" },
+        { "id": "side-garlic-mashed-full", "label": "Full", "price": 83.69, "pricing_unit": "per_tray", "serves": { "min": 36, "max": 40 }, "serves_text": "Serves 36-40", "serves_basis": "published" }
+      ]
+    },
+    {
+      "id": "side-coleslaw",
+      "name": "Nutty Coleslaw",
+      "category": "Sides",
+      "description": "Nutty coleslaw.",
+      "dietary_tags": ["vegan", "gluten_sensitive"],
+      "allergens": ["peanut"],
+      "allergen_status": "listed",
+      "allergen_source_rows": ["Nutty Coleslaw"],
+      "variants": [
+        { "id": "side-coleslaw-half", "label": "Half", "price": 41.49, "pricing_unit": "per_tray", "serves": { "min": 12, "max": 14 }, "serves_text": "Serves 12-14", "serves_basis": "published" },
+        { "id": "side-coleslaw-full", "label": "Full", "price": 83.69, "pricing_unit": "per_tray", "serves": { "min": 36, "max": 40 }, "serves_text": "Serves 36-40", "serves_basis": "published" }
+      ]
+    },
+    {
+      "id": "dessert-cookie-platter",
+      "name": "Freshly Baked Cookie Platter",
+      "category": "Desserts",
+      "description": "Four dozen freshly baked cookies. One dozen each of chocolate chip, oatmeal raisin, white chocolate macadamia nut, and lemon.",
+      "dietary_tags": [],
+      "allergens": ["egg", "milk", "peanut", "soy", "tree_nuts", "wheat", "gluten"],
+      "allergen_status": "listed",
+      "allergen_source_rows": ["Chocolate Chunk Cookie", "Oatmeal Raisin Cookie", "White Chocolate Macadamia Cookie", "Lemon Cookie"],
+      "allergen_note": "Union of the four cookie allergen rows. Peanut is listed on the white chocolate macadamia row; tree nuts include macadamia.",
+      "variants": [
+        { "id": "dessert-cookie-platter-48", "label": "Platter", "price": 50.0, "pricing_unit": "per_platter", "serves": { "min": 24, "max": 24 }, "serves_text": "48 cookies (assumed 2 per guest)", "serves_basis": "assumption" }
+      ]
+    },
+    {
+      "id": "pan-breadsticks",
+      "name": "Freshly Baked Breadsticks",
+      "category": "A La Carte Pans",
+      "description": "Freshly baked breadsticks.",
+      "dietary_tags": [],
+      "allergens": ["milk", "soy", "wheat", "gluten"],
+      "allergen_status": "listed",
+      "allergen_source_rows": ["Freshly Baked Breadsticks"],
+      "variants": [
+        { "id": "pan-breadsticks-half", "label": "Half", "price": 15.0, "pricing_unit": "per_tray", "serves": { "min": 12, "max": 12 }, "serves_text": "24 pieces (assumed 2 per guest)", "serves_basis": "assumption" },
+        { "id": "pan-breadsticks-full", "label": "Full", "price": 36.0, "pricing_unit": "per_tray", "serves": { "min": 30, "max": 30 }, "serves_text": "60 pieces (assumed 2 per guest)", "serves_basis": "assumption" }
+      ]
+    }
+  ]
+}
