@@ -1,0 +1,277 @@
+{
+  "meta": {
+    "dataset": "demo",
+    "now": "2026-10-20T10:00:00-07:00",
+    "note": "Held-out evaluation set. Written for evaluation only: none of these inquiries were used while developing prompts (data/sample/inquiries.json, the CLI scenario tests and scripts/live_chat_check.py are the development set). Do not tune prompts against these cases; if a case changes, record why in evaluation/README.md.",
+    "clock_note": "The frozen clock is Tuesday Oct 20, 2026, 10:00 AM Pacific. Daylight saving time ends Sunday Nov 1, so November events are UTC-08:00.",
+    "oracle_note": "Each 'oracle' is a request a correct assistant could send. tests/test_eval.py runs it through the real quote engine to prove the answer key is right (e.g. the date really is full, the budget really is reachable)."
+  },
+  "provider": "openai",
+  "model": "gpt-5.5",
+  "web_limits": true,
+  "summary": {
+    "cases": {
+      "passed": 2,
+      "total": 2,
+      "rate": 1.0
+    },
+    "by_category": {
+      "blocked": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      },
+      "complete": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      }
+    },
+    "by_check_group": {
+      "budget": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      },
+      "extraction": {
+        "passed": 6,
+        "total": 6,
+        "rate": 1.0
+      },
+      "menu": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      },
+      "outcome": {
+        "passed": 4,
+        "total": 4,
+        "rate": 1.0
+      },
+      "reliability": {
+        "passed": 2,
+        "total": 2,
+        "rate": 1.0
+      },
+      "safety": {
+        "passed": 1,
+        "total": 1,
+        "rate": 1.0
+      }
+    },
+    "avg_model_calls_per_case": 3.0,
+    "avg_seconds_per_case": 12.8,
+    "price_guard_rejections": 0,
+    "over_budget_retries": 0,
+    "model_failures": 0
+  },
+  "results": [
+    {
+      "case": {
+        "id": "E01",
+        "category": "complete",
+        "title": "Complete delivery request, vegetarians",
+        "turns": [
+          "Team lunch for 35 on Thursday Oct 29 at 11:30am, delivered to 4100 Overland Ave, Culver City. Around 6 vegetarians, no allergies. Total budget $750."
+        ],
+        "expect": {
+          "ready": true,
+          "status": [
+            "needs_owner_review"
+          ],
+          "within_budget": true,
+          "fields": {
+            "headcount": 35,
+            "date": "2026-10-29",
+            "time": "11:30",
+            "service_mode": "delivery",
+            "allergens_exact": [],
+            "tax_location": "Culver City"
+          },
+          "selection_has_tag": "vegetarian"
+        },
+        "oracle": {
+          "headcount": 35,
+          "event_at": "2026-10-29T11:30:00-07:00",
+          "service_mode": "delivery",
+          "address": "4100 Overland Ave, Culver City",
+          "allergens": [],
+          "budget_usd": "750.00",
+          "selections": [
+            {
+              "item_id": "pan-pulled-pork",
+              "variant_id": "pan-pulled-pork-full",
+              "quantity": 2
+            },
+            {
+              "item_id": "salad-garden",
+              "variant_id": "salad-garden-full",
+              "quantity": 1
+            },
+            {
+              "item_id": "pasta-marinara",
+              "variant_id": "pasta-marinara-half",
+              "quantity": 1
+            }
+          ]
+        }
+      },
+      "attempt": 1,
+      "pass": true,
+      "checks": {
+        "ready": true,
+        "status": true,
+        "headcount": true,
+        "date": true,
+        "time": true,
+        "service_mode": true,
+        "allergens": true,
+        "tax_location": true,
+        "within_budget": true,
+        "menu_has_tag": true,
+        "no_failures": true
+      },
+      "failed_checks": [],
+      "ready": true,
+      "status": "needs_owner_review",
+      "total": "$640.15",
+      "calls_used": 3,
+      "seconds": 16.8,
+      "warnings": [],
+      "replies": [
+        "Here\u2019s a draft delivery quote for Thursday, October 29 at 11:30 AM for 35 guests, delivered to 4100 Overland Ave, Culver City.\n\nMenu draft:\n- Boneless Chicken Breast, Full \u00d7 1 \u2014 $106.00\n- Boneless Chicken Breast, Half \u00d7 1 \u2014 $45.00\n- Marinara Pasta, Half \u00d7 1 \u2014 $41.99\n- Garden Salad, Full \u00d7 1 \u2014 $68.99\n- Roasted Vegetables, Full \u00d7 1 \u2014 $83.69\n- Freshly Baked Breadsticks, Full \u00d7 1 \u2014 $36.00\n- Freshly Baked Cookie Platter \u00d7 1 \u2014 $50.00\n- Assorted Sodas & Bottled Water \u00d7 35 \u2014 $78.75\n\nTotals:\n- Food subtotal: $510.42\n- Delivery fee: $65.00\n- Tax: $64.73\n- Total: $640.15\n\nThis is within your $750.00 budget.\n\nNotes for owner review: the owner needs to confirm portions, dietary fit for the vegetarian guests, and allergen/menu details for the chicken and beverages. No allergies are listed on the request.\n\nYou can submit this draft request for owner review; it is not final until the owner reviews it."
+      ],
+      "last_arguments": {
+        "headcount": 35,
+        "event_at": "2026-10-29T11:30:00-07:00",
+        "service_mode": "delivery",
+        "address": "4100 Overland Ave, Culver City",
+        "allergens": [],
+        "budget_usd": "750.00",
+        "selections": [
+          {
+            "item_id": "pan-chicken-breast",
+            "variant_id": "pan-chicken-breast-full",
+            "quantity": 1
+          },
+          {
+            "item_id": "pan-chicken-breast",
+            "variant_id": "pan-chicken-breast-half",
+            "quantity": 1
+          },
+          {
+            "item_id": "pasta-marinara",
+            "variant_id": "pasta-marinara-half",
+            "quantity": 1
+          },
+          {
+            "item_id": "salad-garden",
+            "variant_id": "salad-garden-full",
+            "quantity": 1
+          },
+          {
+            "item_id": "side-roasted-vegetables",
+            "variant_id": "side-roasted-vegetables-full",
+            "quantity": 1
+          },
+          {
+            "item_id": "pan-breadsticks",
+            "variant_id": "pan-breadsticks-full",
+            "quantity": 1
+          },
+          {
+            "item_id": "dessert-cookie-platter",
+            "variant_id": "dessert-cookie-platter-48",
+            "quantity": 1
+          },
+          {
+            "item_id": "bev-sodas-water",
+            "variant_id": "bev-sodas-water-pp",
+            "quantity": 35
+          }
+        ]
+      }
+    },
+    {
+      "case": {
+        "id": "E12",
+        "category": "blocked",
+        "title": "Fully booked date",
+        "turns": [
+          "Lunch for 30 on Saturday Oct 31 at noon, delivery to 9300 Culver Blvd, Culver City. No allergies. Budget $800."
+        ],
+        "expect": {
+          "ready": false,
+          "blocking_includes": [
+            "capacity_conflict"
+          ],
+          "reply_any": [
+            [
+              "another date",
+              "different date",
+              "other date",
+              "another day",
+              "different day",
+              "alternative date"
+            ]
+          ]
+        },
+        "oracle": {
+          "headcount": 30,
+          "event_at": "2026-10-31T12:00:00-07:00",
+          "service_mode": "delivery",
+          "address": "9300 Culver Blvd, Culver City",
+          "allergens": [],
+          "selections": [
+            {
+              "item_id": "pan-pulled-pork",
+              "variant_id": "pan-pulled-pork-full",
+              "quantity": 2
+            },
+            {
+              "item_id": "salad-garden",
+              "variant_id": "salad-garden-full",
+              "quantity": 1
+            }
+          ]
+        },
+        "oracle_blocking": [
+          "capacity_conflict"
+        ]
+      },
+      "attempt": 1,
+      "pass": true,
+      "checks": {
+        "ready": true,
+        "blocking": true,
+        "reply_mentions": true,
+        "no_failures": true
+      },
+      "failed_checks": [],
+      "ready": false,
+      "status": "blocked",
+      "total": "$772.85",
+      "calls_used": 3,
+      "seconds": 8.8,
+      "warnings": [],
+      "replies": [
+        "Thanks \u2014 I checked Saturday, October 31 at 12:00 PM for delivery to Culver City.\n\nUnfortunately, that date is fully booked for every service type, so this request can\u2019t be submitted for that day. Switching to pickup would not fix a capacity conflict.\n\nWould you like me to check a different date for the same lunch?"
+      ],
+      "last_arguments": {
+        "headcount": 30,
+        "event_at": "2026-10-31T12:00:00-07:00",
+        "service_mode": "delivery",
+        "address": "9300 Culver Blvd, Culver City",
+        "allergens": [],
+        "budget_usd": "800.00",
+        "selections": [
+          {
+            "item_id": "pkg-sfg-classic",
+            "variant_id": "pkg-sfg-classic-pp",
+            "quantity": 30
+          }
+        ]
+      }
+    }
+  ]
+}
