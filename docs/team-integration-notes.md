@@ -41,3 +41,15 @@ Updated October 19, 2026 — handoff from the pricing/workflow workstream.
 3. **Everyone:** One working end-to-end journey before expanding scope. Finish implementation and testing Wednesday; Thursday is presentation.
 
 Details: [Overall plan](project-plan.md) · [Python interfaces](quote-engine.md) · [Storage contract](quote-storage.md) · [Review findings](review-notes.md)
+
+## Supabase connection draft update
+
+A server-only Postgres adapter and SQL migration are now prepared. See [Supabase setup and handoff](supabase-setup.md). They have **not** been applied to a shared project. Current validation: **75 local tests pass**; the live Postgres integration test is skipped without a configured development DB. D/C still need to align account IDs/schema, apply the migration, and connect verified Supabase Auth to Python actions.
+
+## AI tool handoff update
+
+B can now connect the read-only `evaluate_catering_quote` wrapper. It accepts partial customer details, returns clarification/blocking/review results, and compares the total against an optional budget. See [AI tool handoff and offline demo](ai-tool-handoff.md). **89 local tests pass**; live model tool calling and Supabase integration remain pending.
+
+## Quote integration handoff completed locally
+
+QuoteService now orchestrates submission, lookup, approval, revision and customer response through a supplied storage adapter. UI-ready detail/list data includes formatted amounts, status, history and advisory button flags. See [screen/server action guide](quote-ui-handoff.md) and [demo scenarios with expected results](quote-demo-checklist.md). **101 local tests pass**, and the offline persisted journey runs successfully. Actual Auth, Supabase, model and browser integration remain pending; these components are not a deployed app.

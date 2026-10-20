@@ -42,21 +42,4 @@ updated = approve_quote(
 store.save(updated, actor_id=actor_id, expected_revision=expected_revision)
 ```
 
-Creation follows `create_quote(...)` then `insert(...)`. Customer response follows `get(...)`, `respond_to_quote(...)`, then `save(...)`. Revision follows `get(...)`, `revise_quote(...)`, then `save(...)`. Keep the browser's expected revision so an already stale UI cannot inadvertently act on a newer quote. Workflow validation may reject stale input before the database write; either way show a reload message.
-
-Use `list_quotes(actor_id=session_account_id, workspace="customer")` for My Quotes. The owner inbox uses `workspace="owner"`. Each list entry includes the current version at `record["versions"][-1]`; display its workflow status, not the inner pricing status. The list currently returns full records (including history), paginated to at most 100; a later API can return smaller summaries.
-
-## Persistence and concurrency
-
-The adapter uses one connection per operation and closes it afterwards. Writes lock before checking the stored revision and preserve participants and historical versions. Two writes from the same revision cannot both succeed. There is no booking/capacity reservation or atomic transaction with menu edits: the approval service checks the supplied current menu/calendar snapshot. If the team requires consistency across concurrent menu edits and approval, include menu versions in the final database transaction.
-
-SQLite requires a durable local disk on the hosting service. An ephemeral/serverless filesystem (including typical Vercel function storage) is not sufficient. Do not deploy this adapter on a network-shared SQLite file or assume it supports multiple app instances. For hosted Postgres or another database, implement the same operations with ownership filters and atomic revision checks. This module does not create accounts, implement password handling, or provision hosting/storage.
-
-## Verification and remaining work
-
-61 tests pass: 50 calculation/readiness/workflow tests and 11 storage tests. Storage tests cover a saved approval/customer acceptance across fresh store instances, account isolation, competing writes, revisions/history, duplicate creation, immutable participants, and pagination. All tests use temporary databases; no customer data is committed.
-
-D still needs to connect actual authentication, business membership, persistent deployment storage, endpoints, and screens. C assists with the quote action integration. A/B integrations still supply current data and validated AI requests. A browser-level test of logout/login and My Quotes remains required after those integrations exist.
-
-
-Review update (October 19): three edge cases fixed; all 65 tests pass. See [review notes](review-notes.md) for findings, evidence, and remaining integration requirements. Unrecognized customer allergen names now block approval until clarified; unknown menu allergen information still requires owner review.
+Creation follows `create_quote(...)`

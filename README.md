@@ -101,3 +101,13 @@ Current coverage is **American/BBQ + Korean**. That is enough variety for Thursd
 - `data/validate_dataset.py` — primary validator
 - `data/gokjee/validate_gokjee.py` — Korean validator
 - `DATA_STATUS.md` — longer status writeup
+
+
+## Quote integration handoff
+
+- [AI tool interface and examples](docs/ai-tool-handoff.md)
+- [Quote screen data and server actions](docs/quote-ui-handoff.md)
+- [Offline demos and expected results](docs/quote-demo-checklist.md)
+- [Supabase setup draft](docs/supabase-setup.md)
+
+Run `python3 -m examples.quote_journey_demo` for the offline saved-quote journey. Current local test count: 101 passing. Actual model/Auth/Supabase/browser integration remains pending.

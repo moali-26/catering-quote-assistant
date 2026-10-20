@@ -14,3 +14,8 @@ Thumbs.db
 *.sqlite3-journal
 *.sqlite3-wal
 *.sqlite3-shm
+
+# Local secrets
+.env
+.env.*
+!.env.example
