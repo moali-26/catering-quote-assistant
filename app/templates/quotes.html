@@ -6,8 +6,9 @@
   <div class="wrap">
     <header class="workspace-head">
       <div>
-        <p class="eyebrow">Signed in as {{ user.email }}</p>
+        <p class="eyebrow">Your requests</p>
         <h1 class="section-title">My Quotes</h1>
+        <p class="signed-in">Signed in as {{ user.email }}</p>
       </div>
       {% if requests_open and quotes %}<a class="btn btn-primary" href="/chat"><span aria-hidden="true">+</span> New request</a>{% endif %}
     </header>

@@ -1,3 +1,12 @@
+// Header gets a soft shadow once the page scrolls under it.
+(function () {
+  const header = document.querySelector('.site-header');
+  if (!header) return;
+  const onScroll = () => header.classList.toggle('is-scrolled', window.scrollY > 4);
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+})();
+
 // Confirm popovers (<details class="confirm-pop">): add a way to back out, and close on Escape or a tap outside.
 (function () {
   const pops = Array.from(document.querySelectorAll('details.confirm-pop'));

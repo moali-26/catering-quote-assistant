@@ -35,7 +35,7 @@
         </div>
         <div class="chat-log" id="chat-log">
           <div id="chat-messages">{{ fragments.messages | safe }}</div>
-          <div class="bubble bubble-assistant bubble-typing" id="chat-typing" hidden><span></span><span></span><span></span><span class="sr-only">The assistant is replying…</span></div>
+          <div class="bubble bubble-assistant bubble-typing" id="chat-typing" hidden><i></i><i></i><i></i><span class="typing-label" id="chat-typing-label" aria-hidden="true">Reading your request…</span><span class="sr-only">The assistant is replying…</span></div>
         </div>
         <div class="sr-only" id="chat-announce" aria-live="polite" aria-atomic="true"></div>
         <form class="composer" id="chat-form" method="post" action="/chat/send">

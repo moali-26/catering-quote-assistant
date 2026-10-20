@@ -21,6 +21,19 @@
         <h1 class="section-title">{{ event_time(ev.event_at) }}</h1>
       </div>
     </header>
+    {% set st = q.status %}
+    {% set answered = st in ('customer_accepted', 'customer_declined') %}
+    {% set steps = [
+        ('Requested', 'done'),
+        ('Owner review', 'current' if st == 'draft' else 'done'),
+        ('Approved', 'todo' if st == 'draft' else 'done'),
+        ('Accepted' if st == 'customer_accepted' else ('Declined' if st == 'customer_declined' else ('Customer answer' if user.is_owner else 'Your answer')),
+         ('declined' if st == 'customer_declined' else 'done') if answered else ('current' if st == 'owner_approved' else 'todo'))] %}
+    <ol class="tracker" aria-label="Progress">
+      {% for name, state in steps %}
+      <li class="is-{{ state }}"{% if state == 'current' %} aria-current="step"{% endif %}><span class="tracker-dot" aria-hidden="true"></span><span>{{ name }}</span>{% if state == 'current' %}<span class="sr-only"> (current step)</span>{% endif %}</li>
+      {% endfor %}
+    </ol>
 {% endset %}
 {% if user.is_owner %}<div class="kitchen-detail-band"><div class="wrap">{{ head }}</div></div>{% endif %}
 <section class="workspace workspace-detail">

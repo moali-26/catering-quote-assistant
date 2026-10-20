@@ -20,8 +20,19 @@
     if (narrow.matches) form.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
   };
   const showError = (text) => { errorBox.textContent = text || ''; errorBox.hidden = !text; };
+  // While waiting, say what the assistant is doing, in plain words.
+  const STAGES = ['Reading your request…', 'Checking the menu…', 'Pricing your draft…', 'Almost there…'];
+  const label = document.getElementById('chat-typing-label');
+  let stageTimer = null;
+  const runStages = (on) => {
+    clearInterval(stageTimer);
+    if (!label) return;
+    let i = 0;
+    label.textContent = STAGES[0];
+    if (on) stageTimer = setInterval(() => { i = Math.min(i + 1, STAGES.length - 1); label.textContent = STAGES[i]; }, 2600);
+  };
   const setBusy = (busy) => {
-    send.disabled = busy; input.readOnly = busy; typing.hidden = !busy;
+    send.disabled = busy; input.readOnly = busy; typing.hidden = !busy; runStages(busy);
     // While a reply is pending the draft may change, so it can't be sent or reset.
     document.querySelectorAll('#chat-draft button, .workspace-head button').forEach((b) => { b.disabled = busy; });
     document.body.classList.toggle('is-busy', busy);
