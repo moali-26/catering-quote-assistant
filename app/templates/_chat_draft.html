@@ -35,6 +35,13 @@
         <dd{% if not ev.service_mode or (ev.service_mode == 'delivery' and not ev.address) %} class="is-missing"{% endif %}>{% if ev.service_mode == 'delivery' %}{{ ev.address or 'Address needed' }}{% elif ev.service_mode == 'pickup' %}Pickup{% else %}Not set yet{% endif %}</dd></div>
       <div><dt>Allergies</dt><dd{% if ev.allergens is none %} class="is-missing"{% endif %}>{% if ev.allergens is none %}Not confirmed{% elif ev.allergens %}{{ ev.allergens | join(', ') | replace('_', ' ') }}{% else %}None{% endif %}</dd></div>
     </dl>
+    {% if ev.customer_notes %}
+    <section aria-label="Customer selections and notes">
+      <h3 class="panel-title">Customer selections and notes</h3>
+      <p class="customer-notes">{{ ev.customer_notes }}</p>
+      <p class="muted">The owner will confirm these requests. Tell the assistant if anything needs correcting.</p>
+    </section>
+    {% endif %}
     {% if p %}
     <table class="ticket-lines">
       <caption class="sr-only">Draft items</caption>
@@ -85,7 +92,7 @@
   <p class="muted">The owner checks portions, allergens and availability, then approves. Nothing is charged; you accept or decline later in My Quotes.</p>
   <input type="hidden" name="conversation_id" value="{{ conversation.conversation_id }}">
   <input type="hidden" name="revision" value="{{ conversation.revision }}" class="draft-revision">
-  <label class="check"><input type="checkbox" name="confirm" value="yes" required> <span>The date, guest count, address and allergies above are correct.</span></label>
+  <label class="check"><input type="checkbox" name="confirm" value="yes" required> <span>The date, guest count, address, allergies and any selections or notes above are correct.</span></label>
   <p class="form-hint" data-hint hidden>Tick the box to confirm the details first.</p>
   <button class="btn btn-primary btn-block" type="submit">Send for review <span class="btn-arrow" aria-hidden="true">→</span></button>
 </form>

@@ -100,6 +100,14 @@
           </dl>
         </section>
 
+        {% if ev.customer_notes %}
+        <section class="panel" aria-labelledby="customer-notes-title">
+          <h2 id="customer-notes-title" class="panel-title">Customer selections and notes</h2>
+          <p class="customer-notes">{{ ev.customer_notes }}</p>
+          <p class="muted">Customer requests for owner review; menu pricing and allergy checks still apply.</p>
+        </section>
+        {% endif %}
+
         {% if ready.missing_fields or ready.blocking_reasons %}
         <section class="panel panel-warning" aria-labelledby="blocked-title">
           <h2 id="blocked-title" class="panel-title">Needs attention before approval</h2>

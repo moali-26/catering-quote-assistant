@@ -4,6 +4,17 @@ from zoneinfo import ZoneInfo
 from .pricing import QuoteError, calculate_quote
 
 
+MAX_CUSTOMER_NOTES = 2000
+
+
+def validate_customer_notes(request):
+    """Optional plain text; never authoritative pricing or allergen data."""
+    if 'customer_notes' in request:
+        notes = request['customer_notes']
+        if not isinstance(notes, str) or len(notes) > MAX_CUSTOMER_NOTES or '\x00' in notes:
+            raise QuoteError('customer_notes must be text of at most 2000 characters')
+
+
 def check_quote_readiness(menu, rules, request, *, now, capacity=None):
     """Return controlled errors for invalid data/configuration, never approval."""
     try:
@@ -23,6 +34,7 @@ def _check_quote_readiness(menu, rules, request, *, now, capacity=None):
         raise QuoteError('now must be a timezone-aware server datetime')
     if not all(isinstance(v, dict) for v in (menu, rules, request)):
         raise QuoteError('menu, rules, request must be objects')
+    validate_customer_notes(request)
     if capacity is not None and not isinstance(capacity, dict):
         raise QuoteError('capacity must be an object')
     missing, blockers, review = [], [], []

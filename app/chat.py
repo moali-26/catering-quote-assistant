@@ -29,6 +29,7 @@ from typing import Any, Dict, List, Optional
 
 from ai_service import Conversation
 from quote_engine.ai_tool import TOOL_DEFINITION as EVALUATE_TOOL
+from quote_engine.checks import MAX_CUSTOMER_NOTES
 from quote_engine.postgres_storage import QuoteStorageUnavailable
 from quote_engine.pricing import QuoteError
 from quote_engine.service import QuoteService
@@ -301,7 +302,9 @@ def safe_arguments(arguments) -> Dict[str, Any]:
     text = lambda v: v.strip()[:300] if isinstance(v, str) and v.strip() else None
     headcount = args.get('headcount')
     allergens = args.get('allergens')
+    notes = args.get('customer_notes', '')
     return {
+        'customer_notes': notes if isinstance(notes, str) and len(notes) <= MAX_CUSTOMER_NOTES else '',
         'event_at': text(args.get('event_at')),
         'headcount': headcount if isinstance(headcount, int) and not isinstance(headcount, bool) and headcount > 0 else None,
         'service_mode': args.get('service_mode') if args.get('service_mode') in ('pickup', 'delivery') else None,

@@ -175,6 +175,54 @@ class ChatTest(unittest.TestCase):
         self.assertNotEqual(conversation_of(fresh), conversation_of(page))
         self.assertNotIn('Lunch for 40 on Oct 30', fresh)
 
+    def test_customer_notes_survive_chat_reload_submission_repricing_and_approval(self):
+        ana = self.client()
+        old_notes = 'Pasta Duo: Marinara and Pesto; Caesar salad.'
+        notes = 'Pasta Duo: Marinara and Macaroni & Cheese; garden salad.\n<script>alert(1)</script>'
+        self.script.add(evaluate(dict(REQUEST, customer_notes=old_notes)), say())
+        self.send(ana, old_notes)
+        self.script.add(evaluate(dict(REQUEST, customer_notes=notes)), say())
+        data = self.send(ana, 'Change to Macaroni & Cheese and garden salad').json()
+        self.assertIn('Macaroni &amp; Cheese; garden salad.', data['draft'])
+        self.assertNotIn('Pesto', data['draft'])
+        self.assertNotIn('<script>alert(1)</script>', data['draft'])
+        page = ana.get('/chat').text
+        self.assertIn('&lt;script&gt;', page)
+        submitted = ana.post('/chat/submit', data={
+            'conversation_id': conversation_of(page), 'revision': revision_of(page), 'confirm': 'yes'})
+        self.assertEqual(submitted.status_code, 303)
+        url = submitted.headers['location']
+        owner = self.client('owner@example.com', signup=False)
+        for client in (ana, owner):
+            html = client.get(url).text
+            self.assertIn('Customer selections and notes', html)
+            self.assertIn('Macaroni &amp; Cheese; garden salad.', html)
+            self.assertNotIn('<script>alert(1)</script>', html)
+        quote_id = url.split('/')[-1]
+        record = self.quotes.service.store.get(quote_id, actor_id=OWNER_ID)
+        self.assertEqual(record['versions'][-1]['request']['customer_notes'], notes)
+        # Server-driven reprice carries notes and preserves the previous snapshot.
+        response = owner.post(url + '/reprice', data={'revision': record['revision']})
+        self.assertEqual(response.status_code, 303)
+        record = self.quotes.service.store.get(quote_id, actor_id=OWNER_ID)
+        self.assertEqual(len(record['versions']), 2)
+        self.assertTrue(all(v['request']['customer_notes'] == notes for v in record['versions']))
+        self.quotes.service.approve(quote_id, actor_id=OWNER_ID, expected_revision=record['revision'],
+                                   acknowledged_reviews=record['versions'][-1]['readiness']['review_reasons'])
+        self.assertIn('Macaroni &amp; Cheese; garden salad.', ana.get(url).text)
+        stranger = self.client('bob@example.com')
+        self.assertEqual(stranger.get(url).status_code, 404)
+
+    def test_customer_can_clear_notes_in_next_evaluated_draft(self):
+        ana = self.client()
+        self.script.add(evaluate(dict(REQUEST, customer_notes='Pasta Duo: garden salad')), say())
+        self.send(ana, 'Garden salad please')
+        self.script.add(evaluate(dict(REQUEST, customer_notes='')), say())
+        result = self.send(ana, 'Remove my salad choice').json()
+        self.assertTrue(result['ready'])
+        self.assertNotIn('Customer selections and notes', result['draft'])
+        self.assertNotIn('garden salad', result['draft'])
+
     def test_cannot_submit_before_ready(self):
         ana = self.client()
         self.script.add(say('What date is the event?'))

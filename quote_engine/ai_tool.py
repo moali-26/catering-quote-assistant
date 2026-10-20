@@ -1,5 +1,5 @@
 """Read-only, provider-neutral tool boundary for B's conversation service."""
-from .checks import check_quote_readiness
+from .checks import check_quote_readiness, validate_customer_notes, MAX_CUSTOMER_NOTES
 from .pricing import QuoteError, number, cents
 
 TOOL_DEFINITION = {
@@ -11,6 +11,8 @@ TOOL_DEFINITION = {
     'input_schema': {
         'type': 'object', 'additionalProperties': False,
         'properties': {
+            'customer_notes': {'type': 'string', 'maxLength': MAX_CUSTOMER_NOTES,
+                               'description': 'Complete current customer-confirmed package choices and special requests, labeled by dish. Preserve earlier choices unless changed; use an empty string to clear. Notes require owner review and never change prices or allergy checks.'},
             'headcount': {'type': 'integer', 'minimum': 1},
             'event_at': {'type': 'string', 'description': 'Confirmed ISO datetime with timezone offset.'},
             'service_mode': {'type': 'string', 'enum': ['pickup', 'delivery']},
@@ -118,6 +120,7 @@ def evaluate_catering_quote(arguments, *, menu, rules, now, capacity=None,
 
 
 def _validate(args):
+    validate_customer_notes(args)
     if 'headcount' in args and (type(args['headcount']) is not int or not 1 <= args['headcount'] <= 100000):
         raise QuoteError('invalid headcount')
     for key in ('event_at', 'address', 'budget_usd'):

@@ -939,3 +939,6 @@ html.fx-on .hero::after { opacity: 1; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .display mark { background-size: 100% 100%; }
 }
+
+/* Preserve customer choices as plain text, including long words and line breaks. */
+.customer-notes { white-space: pre-wrap; overflow-wrap: anywhere; }
