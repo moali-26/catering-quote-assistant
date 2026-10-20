@@ -22,15 +22,22 @@
       </a>
       <nav class="site-nav" aria-label="Main">
         {% block nav %}
+        {% if user %}
+        <a class="nav-keep" href="{{ '/owner' if user.is_owner else '/quotes' }}">{{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
+        <span class="nav-user" title="{{ user.email }}">{{ user.email }}</span>
+        <form method="post" action="/logout" class="nav-form"><button class="btn btn-small btn-ghost" type="submit">Sign out</button></form>
+        {% else %}
         <a href="/#how">How it works</a>
         <a href="/#menu">Menu</a>
         <a class="btn btn-small btn-ghost" href="/login">Sign in</a>
+        {% endif %}
         {% endblock %}
       </nav>
     </div>
   </header>
 
   <main id="main">
+    {% if notice %}<div class="wrap"><p class="flash flash-{{ notice[0] }}" role="status">{{ notice[1] }}</p></div>{% endif %}
     {% block content %}{% endblock %}
   </main>
 

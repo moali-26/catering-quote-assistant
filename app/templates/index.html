@@ -8,15 +8,21 @@
       <h1 class="display">Plan the food for your event in <mark>one conversation.</mark></h1>
       <p class="lede">Tell our assistant your date, headcount and dietary needs. It prices every tray from {{ business.name }}’s menu, and the owner checks the quote before you confirm.</p>
       <div class="cta-row">
-        {% if accounts_open %}
-        <a class="btn btn-primary" href="/login">Start a quote request</a>
-        <a class="btn btn-quiet" href="/login">Owner sign in</a>
+        {% if user %}
+        <a class="btn btn-primary" href="{{ '/owner' if user.is_owner else '/quotes' }}">{{ 'Open the quote inbox' if user.is_owner else 'Go to My Quotes' }}</a>
+        <a class="btn btn-quiet" href="#menu">Browse the menu</a>
+        {% elif requests_open %}
+        <a class="btn btn-primary" href="/login?mode=signup">Start a quote request</a>
+        <a class="btn btn-quiet" href="/login">Sign in</a>
+        {% elif accounts_open %}
+        <a class="btn btn-primary" href="/login?mode=signup">Create an account</a>
+        <a class="btn btn-quiet" href="#menu">Browse the menu</a>
         {% else %}
         <a class="btn btn-primary" href="#how">See how it works</a>
         <a class="btn btn-quiet" href="#menu">Browse the menu</a>
         {% endif %}
       </div>
-      {% if not accounts_open %}<p class="launch-note">Online quote requests are coming soon.</p>{% endif %}
+      {% if not requests_open %}<p class="launch-note">Online quote requests are coming soon.</p>{% endif %}
       <ul class="assurances" aria-label="How pricing works">
         <li>Prices come from the menu, never guessed</li>
         <li>Allergens are flagged for the owner</li>
@@ -114,8 +120,8 @@
 <section class="section section-cta">
   <div class="wrap cta-band">
     <h2 class="display-sm">Have a date and a headcount? That’s enough to start.</h2>
-    {% if accounts_open %}
-    <a class="btn btn-primary btn-on-dark" href="/login">Start a quote request</a>
+    {% if requests_open %}
+    <a class="btn btn-primary btn-on-dark" href="/login?mode=signup">Start a quote request</a>
     {% else %}
     <p class="cta-note">Online requests are coming soon.</p>
     {% endif %}

@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% from "_macros.html" import quote_row %}
+{% block title %}My Quotes · {{ business.name }}{% endblock %}
+{% block content %}
+<section class="workspace">
+  <div class="wrap">
+    <header class="workspace-head">
+      <div>
+        <p class="eyebrow">Signed in as {{ user.email }}</p>
+        <h1 class="section-title">My Quotes</h1>
+      </div>
+    </header>
+    {% if quotes %}
+    <p class="muted workspace-lede">The owner reviews every request. Open an approved quote to accept or decline it.</p>
+    <ul class="quote-list">
+      {% for card in quotes %}{{ quote_row(card, '/quotes/' ~ card.quote_id) }}{% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty">
+      <h2>No quote requests yet</h2>
+      <p class="muted">Once online requests open, the requests you send appear here with the owner’s review status.</p>
+      <a class="btn btn-quiet" href="/#menu">Browse the menu</a>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
