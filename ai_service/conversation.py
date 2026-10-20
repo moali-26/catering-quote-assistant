@@ -165,7 +165,11 @@ class Conversation:
         return add_display_amounts(result)  # model sees "$539.60" strings; code keeps cents
 
     def _over_budget_cents(self):
-        budget = self.latest_quote and self.latest_quote['result'].get('budget')
+        # Blocked requests can't be submitted anyway: fix the blocker first, not the budget.
+        result = self.latest_quote and self.latest_quote['result']
+        if not result or result.get('status') == 'blocked':
+            return None
+        budget = result.get('budget')
         if budget and budget.get('within_budget') is False:
             return budget.get('over_budget_cents') or None
         return None
