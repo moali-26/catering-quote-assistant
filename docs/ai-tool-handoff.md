@@ -73,11 +73,9 @@ Unexpected fields (including prices, menu objects, roles or IDs) are rejected. K
 
 The wrapper is pure and read-only. Quote persistence and approval endpoints must independently rerun workflow checks with current trusted data. Model text and menu descriptions are data, never permission to approve or access records.
 
-## Verification / remaining work
+## Verification
 
-89 local tests pass: 75 existing tests plus 14 tool-boundary tests. New cases cover budget comparison, missing fields, explicit allergy confirmation, forged context fields, malformed input, safe errors, allergy blockers and non-mutation. The sample demo runs offline. No live LLM tool-call evaluation or browser journey has been run. The separate Supabase integration test remains pending.
-
-Next for B: register the tool, wire dispatch/result messages, connect real menu lookup, and run customer conversation scenarios. Next for D/C: resolve trusted delivery/tax context and connect the separate submit/approve/respond actions.
+Tool-boundary tests cover budget comparison, missing fields, explicit allergy confirmation, forged context fields, malformed input, safe errors, allergy blockers and non-mutation. The sample demo runs offline. The tool is registered in B's conversation service and used by the web app's chat; live-model results are in the [evaluation](../evaluation/README.md).
 
 
 ## Customer selections and notes

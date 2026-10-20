@@ -2,17 +2,17 @@
 
 ## Web app
 
-The web app is being built in `app/` (FastAPI, server-rendered pages, deploys to Render). It has sign-in for customers and owners, My Quotes and the owner quote inbox; the customer chat follows. Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
+The web app is in `app/` (FastAPI, server-rendered pages, deployed on Render). Customers sign in, request a quote through the AI chat (OpenAI `gpt-5.5`) and accept or decline it in My Quotes. The owner reviews and approves quotes in the quote inbox, edits the menu, and buys the software plan through Stripe (test mode). Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
 
 ## Current project plan
 
-**Team handoff:** [Integration notes by teammate](docs/team-integration-notes.md). Selected deployment direction: **Supabase PostgreSQL + Auth**; implementation pending. Python quote logic stays shared, and SQLite remains local-only.
+**Team handoff (October 19):** [Integration notes by teammate](docs/team-integration-notes.md). Deployment: **Supabase PostgreSQL + Auth**. Python quote logic stays shared, and SQLite remains local-only.
 
-See [Overall Project Plan](docs/project-plan.md) for the October 19 scope, five-person responsibilities, deadlines, and acceptance checks. The app uses **one shared login for customers and owners**, with account-based **My Quotes** for returning customers. See [Quote Engine](docs/quote-engine.md) for implemented Python interfaces and tests. An optional [SQLite quote storage adapter](docs/quote-storage.md) is available for local development. Authentication, hosted database integration, and UI integration are still pending.
+See [Overall Project Plan](docs/project-plan.md) for the October 19 scope, five-person responsibilities, deadlines, and acceptance checks. The app uses **one shared login for customers and owners**, with account-based **My Quotes** for returning customers. See [Quote Engine](docs/quote-engine.md) for implemented Python interfaces and tests. An optional [SQLite quote storage adapter](docs/quote-storage.md) is available for local development.
 
 The data inventory below records the October 18 data work. Its older rollout recommendations are superseded by the current plan.
 
-**Data status: Oct 18, 2026.** Data workstream is on track for the Monday deliverable. The repo now has **two real caterers**: a full primary dataset and a simplified Korean dataset. Keep the repo private because it contains real source names and provenance.
+**Data: Oct 18, 2026.** The repo has **two real caterers**: a full primary dataset and a simplified Korean dataset. Keep the repo private because it contains real source names and provenance.
 
 ## What was done
 
@@ -73,15 +73,15 @@ Load `data/menu.json` and `data/rules.json` for the primary dataset. Load `data/
 
 ### Lightweight sample fixture
 
-`data/sample/` is a fast test version of the primary dataset: 9 items, 15 variants, simplified rules, a 3-date capacity calendar, 5 inquiries, and one hand-checked expected quote. It uses the same item/variant IDs as the full dataset, so tests can switch between them. Use it for unit tests and demos; use the full dataset for the final eval.
+`data/sample/` is a fast test version of the primary dataset: 9 items, 15 variants, simplified rules, a 3-date capacity calendar, 5 inquiries, and one hand-checked expected quote. It uses the same item/variant IDs as the full dataset, so tests can switch between them. Use it for unit tests.
 
-## How we go from here
+### Demo menu
 
-Follow the [current build sequence and responsibilities](docs/project-plan.md). Start with one validated menu subset; a caterer switch is not required for the minimum build.
+`data/demo/` is the menu the web app and the evaluation use: 22 items taken unchanged from the primary dataset. See [data/demo/README.md](data/demo/README.md).
 
 ## Cuisine coverage
 
-Current coverage is **American/BBQ + Korean**. That is enough variety for Thursday. Adding more cuisines means another transcription pass, another rule set, and more eval cases. These datasets are available references. The current plan selects one supported subset for the minimum demo; a second cuisine is optional future work.
+Current coverage is **American/BBQ + Korean**. Adding more cuisines means another transcription pass, another rule set, and more eval cases. These datasets are available references. The web app uses one supported subset (`data/demo/`); a second cuisine is optional future work.
 
 ## Files
 
@@ -102,6 +102,7 @@ Current coverage is **American/BBQ + Korean**. That is enough variety for Thursd
 - `data/sample/capacity.json` — 3-date test calendar
 - `data/sample/inquiries.json` — 5 test inquiries + expected quote
 - `data/sample/validate_sample.py` — fixture validator
+- `data/demo/` — 22-item demo menu used by the web app
 - `data/validate_dataset.py` — primary validator
 - `data/gokjee/validate_gokjee.py` — Korean validator
 - `DATA_STATUS.md` — longer status writeup
@@ -112,6 +113,9 @@ Current coverage is **American/BBQ + Korean**. That is enough variety for Thursd
 - [AI tool interface and examples](docs/ai-tool-handoff.md)
 - [Quote screen data and server actions](docs/quote-ui-handoff.md)
 - [Offline demos and expected results](docs/quote-demo-checklist.md)
-- [Supabase setup draft](docs/supabase-setup.md)
+- [Supabase setup](docs/supabase-setup.md)
+- [Owner menu editing](docs/menu-editing.md)
+- [Owner software plan (Stripe test mode)](docs/billing.md)
+- [Evaluation](evaluation/README.md)
 
-Run `python3 -m examples.quote_journey_demo` for the offline saved-quote journey. Current local test count: 101 passing. Actual model/Auth/Supabase/browser integration remains pending.
+Run `python3 -m examples.quote_journey_demo` for the offline saved-quote journey.

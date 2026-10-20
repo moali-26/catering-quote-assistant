@@ -58,6 +58,6 @@ UI uses returned `actions` booleans. They are advisory snapshot-based display hi
 - `QuoteStorageUnavailable`: retry later message; do not claim the action saved. On a network timeout, reload before retrying because commit outcome may be unknown.
 - Unexpected errors: app-level error boundary and safe diagnostics. Avoid logging complete inquiries or credentials.
 
-## Remaining work owned with D
+## Integration with D
 
-Actual HTTP/UI wiring, verified Auth, real current-context resolution, deployed Supabase migration/testing, accessibility/loading/error states, and full browser tests. C's completed local components do not satisfy those integration requirements on their own.
+Done in the web app (`app/`, see [app.md](app.md)): HTTP/UI wiring, verified Auth, current-context resolution, the deployed Supabase migration, accessibility/loading/error states, and end-to-end tests through the app's pages.

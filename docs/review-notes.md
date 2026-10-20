@@ -2,7 +2,7 @@
 
 ## Result
 
-Reviewed pricing, readiness, workflow transitions, SQLite storage, and the existing test suite. Added regression tests before applying fixes: they reproduced three issues (six failures including subcases). After the fixes, all 65 tests pass. This is a local component review, not a production-security certification or a browser end-to-end test.
+Reviewed pricing, readiness, workflow transitions, SQLite storage, and the existing test suite. Added regression tests before applying fixes: they reproduced three issues (six failures including subcases). After the fixes, all tests pass. This is a local component review, not a production-security certification or a browser end-to-end test.
 
 ## Fixed findings
 
@@ -24,14 +24,14 @@ Customer acceptance is an expression of agreement, not a capacity reservation or
 ## Open integration requirements
 
 - Authentication is not implemented here. A trusted server must derive actor IDs and business membership, authorize access, and run the workflow function before saving. `save` checks participant access, not the full action-specific approval policy. Never expose raw record saving or accept browser-supplied actor IDs.
-- SQLite is an optional local adapter. Production persistence needs a durable supported disk or the team's hosted database. Actual logout/login, server restart, and browser permissions tests remain pending.
+- SQLite is an optional local adapter. Production persistence needs a durable supported disk or the team's hosted database.
 - Only explicit quantities and the supported pickup/delivery rules are implemented. Portion sufficiency, dietary suitability, and final supported menu selection require team review. Passing sample tests does not establish support for every rule/item in the larger datasets.
 - Menu/calendar snapshots can change independently of approval. Atomic quote revision checking prevents lost quote updates, but it is not an atomic menu-version check or booking reservation.
 - The workflow creates drafts but has no distinct submitted status. For the minimum flow, the application should persist an owner-visible quote when the customer submits; keep earlier conversational drafting separate. Do not populate the owner inbox with every incomplete chat turn accidentally.
 - The application must translate QuoteError/QuoteConflict/QuoteNotFound into useful messages. Model-generated prices, distances, and tax locations must not become trusted facts without appropriate validation/confirmation.
 - Tests are unit/component tests using sample fixtures, not the held-out AI evaluation or full UI tests.
 
-## Next integration order
+## Integration order (completed in the web app)
 
 1. Agree with D on authenticated account IDs, business membership, database adapter, and when customer submission creates a saved quote.
 2. Wrap create/get/list/approve/revise/respond in authenticated server actions; load current menus and records on the server.

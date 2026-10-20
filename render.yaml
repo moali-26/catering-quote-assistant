@@ -25,7 +25,7 @@ services:
         sync: false
       - key: ANTHROPIC_API_KEY
         sync: false
-      # Chat model: anthropic (default when ANTHROPIC_API_KEY is set) or openai.
+      # Chat model: the deployed app uses LLM_PROVIDER=openai with OPENAI_MODEL=gpt-5.5.
       - key: LLM_PROVIDER
         sync: false
       - key: ANTHROPIC_MODEL

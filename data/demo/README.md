@@ -55,8 +55,7 @@ Left out: boxed meals (extra per-selection rules), package add-ons and "add prot
 | `dietary_tags`, `allergens`, `allergen_status` | Not in the minimum build | Safety data; changes should be reviewed |
 | `category` | No | Must match a `categories[].name` |
 
-## Still to do (Part A)
+## Menu editing
 
-- **Owner menu editing:** backend done in `menu_admin/` (see `docs/menu-editing.md`). Still needed: apply the Supabase migration, seed this menu, and D's owner page/routes.
-- **Final evaluation inquiries** based on this menu (with E). The 5 sample inquiries are development data.
-- Once menu editing is live, the database becomes the source of truth; re-running `build_demo.py` overwrites `data/demo/*.json`.
+- **Owner menu editing** is live at `/owner/menu` (see `docs/menu-editing.md`). The database copy is the source of truth; re-running `build_demo.py` overwrites `data/demo/*.json` only, not the saved menu.
+- **Final evaluation inquiries** based on this menu are in `evaluation/cases.json`. The 5 sample inquiries are development data.

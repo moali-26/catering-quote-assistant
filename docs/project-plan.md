@@ -1,6 +1,6 @@
 # Catering Quote Assistant — Overall Project Plan
 
-Updated October 19, 2026. Current team implementation plan; supersedes the scope, roles, and next steps in the October 18 handoff. This document records product decisions, not a verbatim course rubric. Verify submission details against the syllabus and Week 4 slides.
+Updated October 20, 2026. Current team implementation plan; supersedes the scope, roles, and next steps in the October 18 handoff. This document records product decisions, not a verbatim course rubric. Verify submission details against the syllabus and Week 4 slides.
 
 ## Goal and scope
 
@@ -12,7 +12,7 @@ Start with one supported caterer and a manageable menu subset. Existing datasets
 
 ## Selected database and authentication
 
-Use **Supabase PostgreSQL + Supabase Auth** for the deployed application. D owns setup, schema coordination, and auth; C adapts quote persistence to the agreed schema. SQLite remains a local development/test adapter. Supabase integration is not yet implemented. The shared quote logic is Python; D/B/C must connect it through the chosen app backend or Python API. See [Team Integration Notes](team-integration-notes.md) for the concise handoff.
+Use **Supabase PostgreSQL + Supabase Auth** for the deployed application. D owns setup, schema coordination, and auth; C adapts quote persistence to the agreed schema. SQLite remains a local development/test adapter. Supabase Auth and PostgreSQL are connected in the deployed app. The shared quote logic is Python and runs inside the FastAPI web app. See [Team Integration Notes](team-integration-notes.md) for the concise handoff.
 
 ## End-to-end journey
 
@@ -54,11 +54,11 @@ D owns the app foundation, not every feature's implementation: A builds menu fun
 
 ## Current implementation status
 
-- Existing data: primary, Korean, and lightweight sample datasets; active final subset still needs team confirmation.
-- Implemented locally: Python pricing, readiness checks, draft/revision/approval/customer-response functions and 50 passing unit tests. See [quote-engine.md](quote-engine.md).
-- Added locally: optional SQLite quote storage with account-filtered reads and atomic revision checks; 61 total tests pass. See [storage integration guide](quote-storage.md).
-- Not yet connected: actual authentication, hosted persistent database, AI conversation, browser screens, Stripe, or hosting. Local storage is not a deployed My Quotes feature.
-- Current work is local; this document does not imply changes have been committed, pushed, or deployed.
+- Deployed on Render with Supabase Auth and PostgreSQL. See [app.md](app.md).
+- Data: the frozen 22-item demo menu (`data/demo/`).
+- Customer journey: AI chat (OpenAI `gpt-5.5`) → submit → My Quotes → owner approval → accept/decline. See [ai-conversation.md](ai-conversation.md) and [quote-engine.md](quote-engine.md).
+- Owner: quote inbox, menu editing ([menu-editing.md](menu-editing.md)) and the software plan through Stripe test mode ([billing.md](billing.md)).
+- Held-out evaluation: 22 cases ([evaluation](../evaluation/README.md)).
 
 ## Build sequence and deadlines
 
@@ -88,15 +88,4 @@ All times are team-local (Los Angeles). Finish Wednesday October 21; Thursday Oc
 
 ## Minimum-build exclusions
 
-No guest secret links, automatic email/SMS notifications, multiple-caterer marketplace, live food payments, automatic reservation confirmation, or full-service staffing calculations. Use existing authentication infrastructure rather than building custom credential handling. Framework/provider choice remains a team integration decision; the Python quote module does not impose it.
-## Review update (October 19)
-
-Three edge cases fixed; all 65 tests pass. See [review notes](review-notes.md) for findings, evidence, and remaining integration requirements. Unrecognized customer allergen names now block approval until clarified; unknown menu allergen information still requires owner review.
-
-## Supabase connection draft update
-
-A server-only Postgres adapter and SQL migration are now prepared. See [Supabase setup and handoff](supabase-setup.md). They have **not** been applied to a shared project. Current validation: **75 local tests pass**; the live Postgres integration test is skipped without a configured development DB. D/C still need to align account IDs/schema, apply the migration, and connect verified Supabase Auth to Python actions.
-
-## Quote integration handoff completed locally
-
-QuoteService now orchestrates submission, lookup, approval, revision and customer response through a supplied storage adapter. UI-ready detail/list data includes formatted amounts, status, history and advisory button flags. See [screen/server action guide](quote-ui-handoff.md) and [demo scenarios with expected results](quote-demo-checklist.md). **101 local tests pass**, and the offline persisted journey runs successfully. Actual Auth, Supabase, model and browser integration remain pending; these components are not a deployed app.
+No guest secret links, automatic email/SMS notifications, multiple-caterer marketplace, live food payments, automatic reservation confirmation, or full-service staffing calculations. Use existing authentication infrastructure rather than building custom credential handling. The Python quote module does not depend on the web framework or the model provider.
