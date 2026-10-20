@@ -80,12 +80,13 @@
 {% endif %}
 
 {% if draft.ready %}
-<form class="panel panel-action" method="post" action="/chat/submit">
+<form class="panel panel-action" method="post" action="/chat/submit" id="send-panel" data-confirm-form>
   <h2 class="panel-title">Send to the owner</h2>
   <p class="muted">The owner checks portions, allergens and availability, then approves. Nothing is charged, and you can accept or decline later in My Quotes.</p>
   <input type="hidden" name="conversation_id" value="{{ conversation.conversation_id }}">
   <input type="hidden" name="revision" value="{{ conversation.revision }}" class="draft-revision">
   <label class="check"><input type="checkbox" name="confirm" value="yes" required> <span>The date, guest count, address and allergies above are correct.</span></label>
+  <p class="form-hint" data-hint hidden>Tick the box to confirm the details first.</p>
   <button class="btn btn-primary btn-block" type="submit">Send for review <span class="btn-arrow" aria-hidden="true">→</span></button>
 </form>
 {% endif %}

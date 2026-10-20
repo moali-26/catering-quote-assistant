@@ -8,7 +8,11 @@
       <p class="error-code">Error {{ code }}</p>
       <h1 class="display-sm">{{ title }}</h1>
       <p class="muted">{{ body }}</p>
+      {% if user %}
+      <a class="btn btn-primary" href="{{ '/owner' if user.is_owner else '/quotes' }}">Go to {{ 'the quote inbox' if user.is_owner else 'My Quotes' }}</a>
+      {% else %}
       <a class="btn btn-primary" href="/">Back to home</a>
+      {% endif %}
     </div>
     <div class="ticket-wrap error-ticket" aria-hidden="true">
       <div class="ticket">

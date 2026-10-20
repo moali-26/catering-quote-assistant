@@ -395,7 +395,7 @@ class ChatService:
                 self._recent = {k: v for k, v in self._recent.items() if v and now - v[-1] < RATE_WINDOW_SECONDS}
             recent = [t for t in self._recent.get(customer_id, []) if now - t < RATE_WINDOW_SECONDS]
             if len(recent) >= RATE_MAX_MESSAGES:
-                raise ChatLimit('You’re sending messages quickly. Wait a few seconds and try again.', 'chat-rate')
+                raise ChatLimit('You’ve sent a lot of messages in the last minute. Try again in about a minute.', 'chat-rate')
             today = datetime.now(timezone.utc).date()
             if self._day != today:
                 self._day, self._turns_today = today, 0

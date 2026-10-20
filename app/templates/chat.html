@@ -10,7 +10,13 @@
         <h1 class="section-title">Plan your catering</h1>
       </div>
       {% if conversation %}
-      <form method="post" action="/chat/new"><button class="btn btn-small btn-quiet" type="submit">Start over</button></form>
+      <details class="confirm-pop" id="start-over" data-keep="Keep chatting"{% if not conversation.messages | selectattr('role', 'equalto', 'user') | list %} hidden{% endif %}>
+        <summary class="btn btn-small btn-quiet">Start over</summary>
+        <div class="confirm-pop-body" role="group" aria-label="Start over">
+          <p><b>Discard this conversation?</b> Your current draft will be cleared. Requests you already sent stay in My Quotes.</p>
+          <form method="post" action="/chat/new"><button class="btn btn-small btn-danger" type="submit">Discard and start over</button></form>
+        </div>
+      </details>
       {% endif %}
     </header>
 
@@ -40,7 +46,7 @@
                     placeholder="Describe your event: date, guests, pickup or delivery, allergies…"></textarea>
           <button class="btn btn-primary composer-send" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button>
           <p class="composer-hint" aria-hidden="true"><kbd>Enter</kbd> to send · <kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line</p>
-          <a class="chat-jump" id="chat-jump" href="#chat-draft"{% if not fragments.ready %} hidden{% endif %}>Your draft is ready · review and send <span aria-hidden="true">↓</span></a>
+          <a class="chat-jump" id="chat-jump" href="#send-panel"{% if not fragments.ready %} hidden{% endif %}>Review and send your draft <span aria-hidden="true">↓</span></a>
           <p class="composer-error" id="chat-error" role="alert"{% if not fragments.error %} hidden{% endif %}>{{ fragments.error or '' }}</p>
         </form>
       </section>

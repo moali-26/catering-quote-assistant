@@ -13,6 +13,7 @@
   <link rel="stylesheet" href="/static/css/app.css?v={{ static_version }}">
 </head>
 {% set role = 'owner' if user and user.is_owner else ('customer' if user else 'guest') %}
+{% set path = request.url.path if request else '' %}
 <body class="role-{{ role }} {% block body_class %}{% endblock %}">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
@@ -25,8 +26,9 @@
       <nav class="site-nav" aria-label="Main">
         {% block nav %}
         {% if user %}
-        {% if not user.is_owner and requests_open %}<a class="nav-keep nav-cta" href="/chat"><span aria-hidden="true">+</span> New request</a>{% endif %}
-        <a class="nav-keep nav-link" href="{{ '/owner' if user.is_owner else '/quotes' }}">{{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
+        {% if not user.is_owner and requests_open %}<a class="nav-keep nav-cta" href="/chat"{% if path == '/chat' %} aria-current="page"{% endif %}><span aria-hidden="true">+</span> New request</a>{% endif %}
+        {% set home = '/owner' if user.is_owner else '/quotes' %}
+        <a class="nav-keep nav-link" href="{{ home }}"{% if path == home %} aria-current="page"{% endif %}>{{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
         <span class="nav-user" title="{{ user.email }}"><span class="nav-avatar" aria-hidden="true">{{ (user.email or '?')[0] | upper }}</span><span class="nav-email">{{ user.email }}</span></span>
         <form method="post" action="/logout" class="nav-form"><button class="btn btn-small btn-ghost" type="submit">Sign out</button></form>
         {% else %}
@@ -40,7 +42,7 @@
   </header>
 
   <main id="main">
-    {% if notice %}<div class="wrap flash-wrap"><p class="flash flash-{{ notice[0] }}" role="status">{{ notice[1] }}</p></div>{% endif %}
+    {% if notice %}<div class="flash-band"><div class="wrap flash-wrap"><p class="flash flash-{{ notice[0] }}" role="status">{{ notice[1] }}</p></div></div>{% endif %}
     {% block content %}{% endblock %}
   </main>
 
@@ -54,5 +56,6 @@
       <p class="muted footer-note">Class project prototype · UCLA Anderson MSBA</p>
     </div>
   </footer>
+  <script src="/static/js/ui.js?v={{ static_version }}" defer></script>
 </body>
 </html>

@@ -35,7 +35,7 @@ from .chat import (ChatConflict, ChatLimit, ChatNotFound, ChatService, PostgresC
                    SQLiteConversationStore, visible_messages)
 
 HERE = Path(__file__).resolve().parent
-STATIC_VERSION = '12'
+STATIC_VERSION = '14'
 NOTICE_COOKIE = 'cqa_notice'
 REFRESH_MAX_AGE = 60 * 60 * 24 * 30
 logger = logging.getLogger('app')
@@ -64,7 +64,7 @@ NOTICES = {
     'not-ready': ('warning', 'That draft can’t be sent yet. Check the draft details, or ask the assistant to recalculate.'),
     'confirm-needed': ('warning', 'Tick the box to confirm the event details, then send it again.'),
     'chat-busy': ('warning', 'Still working on your last message. Wait for the reply, then try again.'),
-    'chat-rate': ('warning', 'You’re sending messages quickly. Wait a few seconds and try again.'),
+    'chat-rate': ('warning', 'You’ve sent a lot of messages in the last minute. Try again in about a minute.'),
     'chat-too-long': ('warning', 'That message was too long. Keep messages under 1,200 characters.'),
     'chat-empty': ('warning', 'Type a message first.'),
     'chat-submitted': ('info', 'That request was already sent to the owner. You’re in a new request now.'),
@@ -491,7 +491,9 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastA
             return redirect('/chat', notice=exc.code)
         except ChatConflict:
             if wants_json(request):
-                return latest_state(user, conversation_id, status=409, reload=True)
+                return latest_state(user, conversation_id, status=409, reload=True,
+                                    error='This chat changed in another tab. The latest messages are shown; '
+                                          'your message is still in the box, so send it again if it’s still needed.')
             return redirect('/chat', notice='chat-conflict')
         except ChatNotFound:
             return error_page(request, 404)
@@ -501,7 +503,7 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastA
             return error_page(request, 503)
         if wants_json(request):
             return JSONResponse(chat_fragments(record))
-        return redirect('/chat')
+        return redirect('/chat#latest')  # without JavaScript, land on the newest reply
 
     @app.post('/chat/submit')
     def chat_submit(request: Request, conversation_id: str = Form(...), revision: int = Form(...),
