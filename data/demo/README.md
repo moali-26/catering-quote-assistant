@@ -57,6 +57,6 @@ Left out: boxed meals (extra per-selection rules), package add-ons and "add prot
 
 ## Still to do (Part A)
 
-- **Owner menu editing** is not built yet: needs a Supabase menu table (with D) and edit functions that enforce the table above. `tests/test_demo_dataset.py` already proves a price edit changes new quotes but not saved ones.
+- **Owner menu editing:** backend done in `menu_admin/` (see `docs/menu-editing.md`). Still needed: apply the Supabase migration, seed this menu, and D's owner page/routes.
 - **Final evaluation inquiries** based on this menu (with E). The 5 sample inquiries are development data.
 - Once menu editing is live, the database becomes the source of truth; re-running `build_demo.py` overwrites `data/demo/*.json`.
