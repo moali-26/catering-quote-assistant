@@ -18,7 +18,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--provider', required=True, help='anthropic or openai')
     parser.add_argument('--model', default=None)
-    parser.add_argument('--dataset', default='sample', choices=['sample', 'full'])
+    parser.add_argument('--dataset', default='demo', choices=['demo', 'sample', 'full'])
     parser.add_argument('--now', default=None, help='ISO datetime with offset to freeze the clock')
     parser.add_argument('--debug', action='store_true')
     args = parser.parse_args()
