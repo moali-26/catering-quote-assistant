@@ -240,7 +240,7 @@ class ChatTest(unittest.TestCase):
         self.script.add(say('Hi there'))
         response = ana.post('/chat/send', data={'conversation_id': conversation_of(page),
                                                 'revision': revision_of(page), 'message': 'Hello'})
-        self.assertEqual(response.headers['location'], '/chat')
+        self.assertEqual(response.headers['location'], '/chat#latest')
         self.assertIn('Hi there', ana.get('/chat').text)
 
     def test_start_over_creates_new_conversation(self):

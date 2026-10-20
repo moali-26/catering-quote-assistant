@@ -6,11 +6,17 @@
   <div class="wrap">
     <header class="workspace-head">
       <div>
-        <p class="eyebrow">New quote request</p>
+        <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>New quote request</p>
         <h1 class="section-title">Plan your catering</h1>
       </div>
       {% if conversation %}
-      <form method="post" action="/chat/new"><button class="btn btn-small btn-quiet" type="submit">Start over</button></form>
+      <details class="confirm-pop" id="start-over" data-keep="Keep chatting"{% if not conversation.messages | selectattr('role', 'equalto', 'user') | list %} hidden{% endif %}>
+        <summary class="btn btn-small btn-quiet">Start over</summary>
+        <div class="confirm-pop-body" role="group" aria-label="Start over">
+          <p><b>Discard this conversation?</b> Your current draft will be cleared. Requests you already sent stay in My Quotes.</p>
+          <form method="post" action="/chat/new"><button class="btn btn-small btn-danger" type="submit">Discard and start over</button></form>
+        </div>
+      </details>
       {% endif %}
     </header>
 
@@ -23,9 +29,13 @@
     {% else %}
     <div class="chat-grid">
       <section class="chat-card" aria-label="Conversation with the quote assistant">
+        <div class="chat-card-head">
+          <span class="assistant-avatar" aria-hidden="true"><svg viewBox="0 0 32 32"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path d="M9 15h14M9 19h10M9 23h7" stroke="#17241e" stroke-width="2.2" stroke-linecap="round"/></svg></span>
+          <div><b>Quote assistant</b><span>Prices from {{ business.name | trim('.') }}’s menu · the owner reviews every quote</span></div>
+        </div>
         <div class="chat-log" id="chat-log">
           <div id="chat-messages">{{ fragments.messages | safe }}</div>
-          <div class="bubble bubble-assistant bubble-typing" id="chat-typing" hidden><span></span><span></span><span></span><span class="sr-only">The assistant is replying…</span></div>
+          <div class="bubble bubble-assistant bubble-typing" id="chat-typing" hidden><i></i><i></i><i></i><span class="typing-label" id="chat-typing-label" aria-hidden="true">Reading your request…</span><span class="sr-only">The assistant is replying…</span></div>
         </div>
         <div class="sr-only" id="chat-announce" aria-live="polite" aria-atomic="true"></div>
         <form class="composer" id="chat-form" method="post" action="/chat/send">
@@ -34,12 +44,13 @@
           <label class="sr-only" for="chat-input">Message the assistant</label>
           <textarea id="chat-input" name="message" rows="2" maxlength="1200" required
                     placeholder="Describe your event: date, guests, pickup or delivery, allergies…"></textarea>
-          <button class="btn btn-primary composer-send" type="submit">Send</button>
-          <a class="chat-jump" id="chat-jump" href="#chat-draft"{% if not fragments.ready %} hidden{% endif %}>Your draft is ready · review and send ↓</a>
+          <button class="btn btn-primary composer-send" type="submit" aria-label="Send"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 19V5M5.5 11.5L12 5l6.5 6.5"/></svg></button>
+          <p class="composer-hint" aria-hidden="true"><kbd>Enter</kbd> to send · <kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line</p>
+          <a class="chat-jump" id="chat-jump" href="#send-panel"{% if not fragments.ready %} hidden{% endif %}>Review and send your draft <span aria-hidden="true">↓</span></a>
           <p class="composer-error" id="chat-error" role="alert"{% if not fragments.error %} hidden{% endif %}>{{ fragments.error or '' }}</p>
         </form>
       </section>
-      <aside class="chat-side" id="chat-draft" aria-label="Your draft quote">{{ fragments.draft | safe }}</aside>
+      <aside class="chat-side" id="chat-draft" aria-label="Your draft quote" tabindex="-1">{{ fragments.draft | safe }}</aside>
     </div>
     <script src="/static/js/chat.js?v={{ static_version }}" defer></script>
     {% endif %}

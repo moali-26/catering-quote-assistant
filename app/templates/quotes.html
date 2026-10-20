@@ -6,10 +6,11 @@
   <div class="wrap">
     <header class="workspace-head">
       <div>
-        <p class="eyebrow">Signed in as {{ user.email }}</p>
+        <p class="eyebrow">Your requests</p>
         <h1 class="section-title">My Quotes</h1>
+        <p class="signed-in">Signed in as {{ user.email }}</p>
       </div>
-      {% if requests_open and quotes %}<a class="btn btn-primary btn-small" href="/chat">New request</a>{% endif %}
+      {% if requests_open and quotes %}<a class="btn btn-primary" href="/chat"><span aria-hidden="true">+</span> New request</a>{% endif %}
     </header>
     {% if quotes %}
     <p class="muted workspace-lede">The owner reviews every request. Open an approved quote to accept or decline it.</p>
@@ -17,11 +18,12 @@
       {% for card in quotes %}{{ quote_row(card, '/quotes/' ~ card.quote_id) }}{% endfor %}
     </ul>
     {% else %}
-    <div class="empty">
+    <div class="empty empty-quotes">
+      <div class="ticket-wrap empty-ticket" aria-hidden="true"><div class="ticket"><div class="ticket-head"><p class="ticket-meta"><span>Order ticket</span><span>Blank</span></p></div><div class="blank-lines"><span></span><span></span><span></span><span></span></div></div></div>
       <h2>No quote requests yet</h2>
       {% if requests_open %}
       <p class="muted">Describe your event to the assistant and it will put an itemized draft together. Requests you send appear here with the owner’s review status.</p>
-      <a class="btn btn-primary" href="/chat">Start a quote request</a>
+      <a class="btn btn-primary" href="/chat">Start a quote request <span class="btn-arrow" aria-hidden="true">→</span></a>
       {% else %}
       <p class="muted">Once online requests open, the requests you send appear here with the owner’s review status.</p>
       <a class="btn btn-quiet" href="/#menu">Browse the menu</a>

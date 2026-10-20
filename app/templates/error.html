@@ -4,10 +4,23 @@
 {% block content %}
 <section class="error-page">
   <div class="wrap error-inner">
-    <p class="error-code">{{ code }}</p>
-    <h1 class="display-sm">{{ title }}</h1>
-    <p class="muted">{{ body }}</p>
-    <a class="btn btn-primary" href="/">Back to home</a>
+    <div class="error-copy">
+      <p class="error-code">Error {{ code }}</p>
+      <h1 class="display-sm">{{ title }}</h1>
+      <p class="muted">{{ body }}</p>
+      {% if user %}
+      <a class="btn btn-primary" href="{{ '/owner' if user.is_owner else '/quotes' }}">Go to {{ 'the quote inbox' if user.is_owner else 'My Quotes' }}</a>
+      {% else %}
+      <a class="btn btn-primary" href="/">Back to home</a>
+      {% endif %}
+    </div>
+    <div class="ticket-wrap error-ticket" aria-hidden="true" data-tilt>
+      <div class="ticket">
+        <div class="ticket-head"><p class="ticket-meta"><span>Ticket</span><span>#{{ code }}</span></p></div>
+        <p class="ticket-big">{{ code }}</p>
+        <p class="stamp">{{ '86’d' if code == 404 else 'On hold' }}</p>
+      </div>
+    </div>
   </div>
 </section>
 {% endblock %}

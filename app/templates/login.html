@@ -2,9 +2,10 @@
 {% set signup = mode == 'signup' %}
 {% block title %}{{ 'Create an account' if signup else 'Sign in' }} · {{ business.name }}{% endblock %}
 {% block body_class %}page-auth{% endblock %}
-{% block nav %}<a href="/">Back to home</a>{% endblock %}
+{% block nav %}<a class="nav-link nav-keep" href="/"><span aria-hidden="true">←</span> Back to home</a>{% endblock %}
 {% block content %}
 <section class="auth">
+  <div class="auth-shell">
   <div class="auth-card">
     <nav class="auth-tabs" aria-label="Account">
       <a href="/login{% if next %}?next={{ next | urlencode }}{% endif %}" {% if not signup %}aria-current="page" class="is-active"{% endif %}>Sign in</a>
@@ -36,6 +37,30 @@
       {% if signup %}Already have an account? <a href="/login{% if next %}?next={{ next | urlencode }}{% endif %}">Sign in</a>.
       {% else %}New here? <a href="/login?mode=signup{% if next %}&next={{ next | urlencode }}{% endif %}">Create a customer account</a>.{% endif %}
     </p>
+  </div>
+  <aside class="auth-aside" aria-hidden="true">
+    <div class="ticket-wrap" data-tilt>
+      <div class="ticket">
+        <div class="ticket-head">
+          <p class="ticket-brand">{{ business.name | trim('.') }}</p>
+          <p class="ticket-meta"><span>Your account</span><span>{{ 'New' if signup else 'Saved' }}</span></p>
+        </div>
+        <table class="ticket-lines">
+          <tbody>
+            <tr><td>Chat with the assistant</td><td class="num">✓</td></tr>
+            <tr><td>Itemized draft from the menu</td><td class="num">✓</td></tr>
+            <tr><td>Owner review</td><td class="num">✓</td></tr>
+            <tr><td>You accept or decline</td><td class="num">✓</td></tr>
+          </tbody>
+        </table>
+        <div class="ticket-foot">
+          <div class="ticket-foot-text"><p>Every quote, in one place</p><span class="barcode"></span></div>
+          <p class="stamp stamp-ready">Free</p>
+        </div>
+      </div>
+    </div>
+    <p class="auth-aside-note">No payment details. Nothing is booked until you accept.</p>
+  </aside>
   </div>
 </section>
 {% endblock %}

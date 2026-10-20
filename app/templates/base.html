@@ -5,31 +5,35 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>{% block title %}{{ business.name }} · Catering quotes{% endblock %}</title>
   <meta name="description" content="Request a catering quote from {{ business.name | trim('.') }}: describe your event, get an itemized draft, and confirm once the owner reviews it.">
-  <meta name="theme-color" content="#17241E">
+  <meta name="theme-color" content="{{ '#17241E' if user and user.is_owner else '#F2F4EE' }}">
   <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="/static/css/app.css?v={{ static_version }}">
 </head>
-<body class="{% block body_class %}{% endblock %}">
+{% set role = 'owner' if user and user.is_owner else ('customer' if user else 'guest') %}
+{% set path = request.url.path if request else '' %}
+<body class="role-{{ role }} {% block body_class %}{% endblock %}">
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="/" aria-label="{{ business.name }} home">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path d="M9 15h14M9 19h10M9 23h7" stroke="var(--paper)" stroke-width="2" stroke-linecap="round"/></svg>
+      <a class="brand" href="{{ '/owner' if role == 'owner' else '/' }}" aria-label="{{ business.name }} {{ 'quote inbox' if role == 'owner' else 'home' }}">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path class="brand-mark-lines" d="M9 15h14M9 19h10M9 23h7" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="brand-name">{{ business.name }}</span>
+        {% if role == 'owner' %}<span class="role-tag">Kitchen</span>{% endif %}
       </a>
       <nav class="site-nav" aria-label="Main">
         {% block nav %}
         {% if user %}
-        {% if not user.is_owner and requests_open %}<a class="nav-keep nav-cta" href="/chat">New request</a>{% endif %}
-        <a class="nav-keep" href="{{ '/owner' if user.is_owner else '/quotes' }}">{{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
-        <span class="nav-user" title="{{ user.email }}">{{ user.email }}</span>
+        {% if not user.is_owner and requests_open %}<a class="nav-keep nav-cta" href="/chat"{% if path == '/chat' %} aria-current="page"{% endif %}><span aria-hidden="true">+</span> New request</a>{% endif %}
+        {% set home = '/owner' if user.is_owner else '/quotes' %}
+        <a class="nav-keep nav-link" href="{{ home }}"{% if path == home %} aria-current="page"{% endif %}>{{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
+        <span class="nav-user" title="{{ user.email }}"><span class="nav-avatar" aria-hidden="true">{{ (user.email or '?')[0] | upper }}</span><span class="nav-email">{{ user.email }}</span></span>
         <form method="post" action="/logout" class="nav-form"><button class="btn btn-small btn-ghost" type="submit">Sign out</button></form>
         {% else %}
-        <a href="/#how">How it works</a>
-        <a href="/#menu">Menu</a>
+        <a class="nav-link" href="/#how">How it works</a>
+        <a class="nav-link" href="/#menu">Menu</a>
         <a class="btn btn-small btn-ghost" href="/login">Sign in</a>
         {% endif %}
         {% endblock %}
@@ -38,16 +42,21 @@
   </header>
 
   <main id="main">
-    {% if notice %}<div class="wrap"><p class="flash flash-{{ notice[0] }}" role="status">{{ notice[1] }}</p></div>{% endif %}
+    {% if notice %}<div class="flash-band"><div class="wrap flash-wrap"><p class="flash flash-{{ notice[0] }}" role="status">{{ notice[1] }}</p></div></div>{% endif %}
     {% block content %}{% endblock %}
   </main>
 
   <footer class="site-footer">
     <div class="wrap footer-row">
-      <p><strong>{{ business.name }}</strong>{% if business.place %} · {{ business.place }}{% endif %}</p>
+      <div class="footer-brand">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path class="brand-mark-lines" d="M9 15h14M9 19h10M9 23h7" stroke-width="2" stroke-linecap="round"/></svg>
+        <p><strong>{{ business.name }}</strong>{% if business.place %} · {{ business.place }}{% endif %}</p>
+      </div>
       <p class="muted">Menu prices from the caterer’s published menu{% if business.captured_at %}, captured {{ business.captured_at }}{% endif %}. Quotes are drafts until the owner approves them.</p>
-      <p class="muted">Class project prototype · UCLA Anderson MSBA.</p>
+      <p class="muted footer-note">Class project prototype · UCLA Anderson MSBA<button type="button" class="fx-toggle" data-fx-toggle hidden aria-pressed="true">Pointer effects: on</button></p>
     </div>
   </footer>
+  <script src="/static/js/ui.js?v={{ static_version }}" defer></script>
+  <script src="/static/js/fx.js?v={{ static_version }}" defer></script>
 </body>
 </html>
