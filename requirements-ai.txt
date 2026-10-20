@@ -1,0 +1,2 @@
+# AI conversation service. Team chose the Claude API (Anthropic).
+anthropic
