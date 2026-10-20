@@ -82,7 +82,7 @@ class CheckoutTests(unittest.TestCase):
                                  cancel_url='https://app/billing', client=client)
         params = client.checkout.Session.created
         self.assertEqual(result['session_id'], 'cs_test_new')
-        self.assertEqual(params['mode'], 'payment')
+        self.assertEqual(params['mode'], 'subscription')
         self.assertEqual(params['line_items'], [{'price': PRICE, 'quantity': 1}])
         self.assertEqual(params['client_reference_id'], 'owner-a')
         self.assertEqual(params['metadata']['purpose'], PURPOSE)

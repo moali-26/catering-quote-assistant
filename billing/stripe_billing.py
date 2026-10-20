@@ -67,7 +67,7 @@ def create_checkout(config: BillingConfig, owner_id: str, *, success_url: str,
     try:
         session = client.checkout.Session.create(
             api_key=config.secret_key,
-            mode='payment',
+            mode='subscription',
             line_items=[{'price': config.price_id, 'quantity': 1}],
             client_reference_id=owner_id,
             metadata={'purpose': PURPOSE, 'owner_id': owner_id},
