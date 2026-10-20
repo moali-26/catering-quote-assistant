@@ -3,17 +3,22 @@ from datetime import timedelta
 
 from .context import PACIFIC
 
-CALENDAR_DAYS = 21
+CALENDAR_DAYS = 35
 
 
 def _calendar(now):
-    """A date table so the model maps 'next Friday' to a date by lookup, not mental math."""
+    """A date table so the model maps 'next Friday' to a date by lookup, not mental math.
+
+    Each day carries its own UTC offset: Pacific time switches from UTC-07:00 to UTC-08:00
+    when daylight saving time ends (early November), so "noon on Nov 4" is 12:00-08:00.
+    """
     local = now.astimezone(PACIFIC)
     lines = []
     for offset in range(CALENDAR_DAYS):
-        day = local + timedelta(days=offset)
+        day = local + timedelta(days=offset)  # wall-clock arithmetic: utcoffset() follows the date
         label = ' (today)' if offset == 0 else ' (tomorrow)' if offset == 1 else ''
-        lines.append(f"- {day:%A} {day:%Y-%m-%d}{label}")
+        zone = day.strftime('%z')
+        lines.append(f"- {day:%A} {day:%Y-%m-%d}{label}, UTC{zone[:3]}:{zone[3:]}")
     return '\n'.join(lines)
 
 
@@ -58,7 +63,8 @@ ambiguous (e.g. "next Friday" could mean two dates), ask which date they mean.
 
 # What you must collect before pricing
 1. headcount (number of guests)
-2. event date AND time. Send event_at as ISO 8601 with offset, e.g. 2026-10-23T12:00:00{offset}.
+2. event date AND time. Send event_at as ISO 8601 with the UTC offset listed for THAT date in
+   the table above (it changes when daylight saving time ends), e.g. 2026-10-23T12:00:00{offset}.
    If they only say "lunch", confirm a time (you may suggest 12:00 PM) before using it.
 3. pickup or delivery; for delivery, the street address or at least the city
 4. allergies: ask explicitly. Send allergens: [] ONLY if the customer confirms there are none.
