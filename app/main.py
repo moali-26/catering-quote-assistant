@@ -26,6 +26,7 @@ from . import catalog
 from .auth import (ACCESS_COOKIE, REFRESH_COOKIE, AuthError, Authenticator, AuthUnavailable,
                    build_backend)
 from .config import load_settings
+from .dbcheck import HINTS, check_database, describe_dsn
 from .quotes import QuoteApp
 
 HERE = Path(__file__).resolve().parent
@@ -89,6 +90,8 @@ def create_app(*, auth_backend=None, quote_app=None) -> FastAPI:
     quotes = quote_app or QuoteApp(settings)
     if settings.is_production and not settings.database_url:
         logger.warning('QUOTE_DATABASE_URL is not set: quote pages will show a temporarily unavailable message')
+    if settings.database_url:
+        logger.warning('QUOTE_DATABASE_URL shape (no secrets): %s', describe_dsn(settings.database_url))
     if backend is None:
         logger.warning('SUPABASE_URL / SUPABASE_PUBLISHABLE_KEY not set: sign-in is disabled')
     if settings.auth_backend == 'memory' and auth_backend is None:
@@ -186,7 +189,7 @@ def create_app(*, auth_backend=None, quote_app=None) -> FastAPI:
             elif settings.is_production:  # browsers always send one of these on form posts
                 return error_page(request, 403)
         # /logout ends the session itself; refreshing it first would re-issue cookies after the clear.
-        if authenticator and not path.startswith('/static') and path not in ('/healthz', '/logout'):
+        if authenticator and not path.startswith('/static') and not path.startswith('/healthz') and path != '/logout':
             checked = True
             try:
                 request.state.user, refreshed = await run_in_threadpool(
@@ -213,6 +216,16 @@ def create_app(*, auth_backend=None, quote_app=None) -> FastAPI:
     @app.api_route('/healthz', methods=PAGE_METHODS)
     def healthz():
         return JSONResponse({'status': 'ok'})
+
+    @app.api_route('/healthz/db', methods=PAGE_METHODS)
+    def healthz_db():
+        """Database reachability with a reason code; never includes the URI or password."""
+        ok, reason = check_database(settings.database_url)
+        if ok:
+            return JSONResponse({'database': 'ok'})
+        logger.warning('Database check failed: %s; URI shape: %s', reason, describe_dsn(settings.database_url))
+        return JSONResponse({'database': 'error', 'reason': reason, 'hint': HINTS.get(reason, HINTS['other'])},
+                            status_code=503, headers={'Cache-Control': 'no-store'})
 
     # ---- accounts --------------------------------------------------------
     @app.api_route('/login', methods=PAGE_METHODS, response_class=HTMLResponse)
