@@ -1,5 +1,7 @@
 # Team Integration Notes
 
+> **Historical handoff (October 19).** The web app is now deployed with Supabase Auth and PostgreSQL, the AI chat, owner menu editing and Stripe test checkout; see the [README](../README.md) and [app.md](app.md) for the current state. The original text is preserved as background.
+
 Updated October 19, 2026 — handoff from the pricing/workflow workstream.
 
 ## Decisions to share

@@ -1,6 +1,6 @@
 # Persistent Quotes — Integration Guide
 
-**Selected deployment direction: Supabase PostgreSQL + Supabase Auth.** D and C will coordinate the schema and quote adapter; that integration is still pending.
+**Deployment: Supabase PostgreSQL + Supabase Auth.** The deployed app uses `PostgresQuoteStore` (see [Supabase setup](supabase-setup.md)).
 
 This standard-library SQLite adapter is a local development option, not the planned production database. It saves full quote records and version history across process restarts. Use the same interface with the team's hosted database if needed.
 

@@ -26,12 +26,12 @@ The journey demo uses a temporary SQLite DB and synthetic actors, explicitly ack
 | Incomplete request is submitted | No owner-visible record saved | Service tests |
 | Owner approves and customer reopens storage | Same quote, approval persists, response available | Service tests + journey demo |
 | Customer attempts owner approval / unrelated account opens quote | Rejected; no unauthorized data returned | Service/workflow/storage tests |
-| Two updates use the same revision | One succeeds, the other must reload | SQLite concurrency tests; live Postgres test still pending |
+| Two updates use the same revision | One succeeds, the other must reload | SQLite concurrency tests; live Postgres test |
 | Owner changes price before approval | Revision required; historical price preserved | Workflow/service tests |
 | Customer revises approved quote | New draft, prior version preserved, no accept until approved again | Service tests |
 | Event has passed | No accept/decline action | Service/workflow tests |
 
-## Real app tests still required (B/D/E with C)
+## Real app tests (B/D/E with C)
 
 - Two real customer accounts and an owner account, including direct attempts to access another customer's quote.
 - Customer submits through AI chat, signs out/closes the page, then logs back in and finds the quote in My Quotes.
@@ -44,4 +44,4 @@ The journey demo uses a temporary SQLite DB and synthetic actors, explicitly ack
 
 ## Current evidence
 
-**101 local tests pass**: original logic/storage, Postgres contract mocks, AI tool wrapper, and 12 service/view integration cases. The live Postgres test remains skipped without a configured test DB. No live-model or browser evaluation result is claimed.
+The component cases above run offline. The real app tests are covered by the web app's tests (`tests/test_app*.py`), the live Postgres tests (`tests/integration`), the deployed app, and the held-out [evaluation](../evaluation/README.md) with a live model.

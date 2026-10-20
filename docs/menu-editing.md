@@ -1,4 +1,4 @@
-# Owner Menu Editing (Part A) — Backend + Handoff to D
+# Owner Menu Editing (Part A)
 
 The owner can change an item's **name, description and availability**, and a size's **price and availability**. Everything else (IDs, pricing units, serving sizes, dietary tags, allergens) is fixed in the minimum build. The backend, owner page and HTTP routes are implemented. See the deployment update below for DB setup and validation.
 
@@ -27,7 +27,7 @@ from ai_service import ServerContext
 
 menus = MenuService(PostgresMenuStore(), clock=utc_now)
 
-# One-time setup script (not an HTTP route):
+# Done once, on the owner's first visit to /owner/menu:
 menus.seed(owner_uuid, json.load(open('data/demo/menu.json')))
 
 # Shared by chat and QuoteService so both see the same current menu:
@@ -36,7 +36,7 @@ def load_current_business_context(owner_id, request):
     return ctx.quote_service_context(owner_id, request)
 ```
 
-## Routes to build (D)
+## Routes (D)
 
 | UI action | Call | Browser sends | Server supplies |
 | --- | --- | --- | --- |
@@ -73,12 +73,10 @@ Validation: price > 0, ≤ $10,000, at most 2 decimals (`"4.29"`, `4.29` or `"$4
 - Each save checks `expected_revision` atomically, so two tabs can't silently overwrite each other.
 - The last 200 edits are kept in `change_log` with old/new values, time and editor.
 
-## Setup checklist (D + A)
+## Setup (D + A)
 
-1. Apply `supabase/migrations/202610190002_menu_storage.sql` **after** C's `202610190001_quote_storage.sql` (it reuses the `catering_private` schema).
-2. Seed the business menu from `data/demo/menu.json` with the owner's Auth UUID.
-3. Point chat and `QuoteService` at `menus.current_menu(owner_id)` as shown above.
-4. Build the owner page + routes; test as a customer (must be refused) and as the owner.
+1. Apply `supabase/migrations/202610190002_menu_storage.sql` **after** C's `202610190001_quote_storage.sql` (it reuses the `catering_private` schema). Already applied on the shared project.
+2. The owner's first visit to `/owner/menu` seeds the business menu from `data/demo/menu.json` with the owner's Auth UUID.
 
 ## Limits
 
@@ -109,8 +107,8 @@ menu. If loading fails, the turn stops without using cached data. Each new custo
 turn clears submission readiness; the model must evaluate the current request again
 before the submit action is enabled. Use `TurnResult.ready_to_submit` to update the UI.
 The callback is server code and must not accept owner IDs from model/customer fields.
-Static file demos may omit the callback. D still needs to wire this into the real chat
-endpoint. QuoteService must continue reloading current data at submit/approve time;
+Static file demos may omit the callback. The web app's chat uses it. QuoteService must
+continue reloading current data at submit/approve time;
 show its returned total if prices changed after the last chat turn.
 
 ## Owner menu app integration — October 20, 2026
@@ -146,13 +144,12 @@ the app uses its existing server `QUOTE_DATABASE_URL` connection.
 
 ### Validation and rollout
 
-At PR #17, 273 local tests passed, including owner/customer permissions, invalid/stale edits, existing
+At PR #17, the local tests passed, including owner/customer permissions, invalid/stale edits, existing
 chat refresh, new-quote pricing, historical totals, public menu availability, DB failures,
 and explicit repricing. Browser-tested local initialization and price editing with the
-SQLite preview. The Supabase table/seed were verified through the dashboard; the new
-web routes have not yet been deployed or tested against the production connection.
+SQLite preview. The Supabase table/seed were verified through the dashboard.
 
-After deployment: sign in as owner, open Menu, verify the 22 items,
+Manual check on the deployed app: sign in as owner, open Menu, verify the 22 items,
 and perform a coordinated price/availability edit while a test customer chats. Verify
 new quotes reflect edits, saved quotes retain totals, and pending quotes can be repriced.
 Restore demo prices after testing. No Render environment-variable change is required.

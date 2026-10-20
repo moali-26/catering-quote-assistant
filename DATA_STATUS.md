@@ -1,5 +1,7 @@
 # Data Status — Catering Quote Assistant
 
+> **Historical data status (October 18).** The web app and the evaluation use the frozen 22-item menu in `data/demo/` (see [data/demo/README.md](data/demo/README.md)). The original text is preserved as background.
+
 **Oct 18, 2026 · Data workstream**
 
 ## TL;DR

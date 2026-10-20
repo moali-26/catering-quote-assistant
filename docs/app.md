@@ -1,6 +1,6 @@
 # Web App (D)
 
-Status (Oct 20, 2026): customers request quotes through the AI chat and send the draft to the owner; the owner reviews, approves and **edits the menu** (A's `menu_admin`). Sign-in, My Quotes and the inbox are from PR 2, the chat from PR 3; menu editing combines PR #17 (live-menu wiring, storage-failure handling, Supabase setup) and PR #18 (editor page).
+Status (Oct 20, 2026): deployed on Render. Customers request quotes through the AI chat and send the draft to the owner; the owner reviews and approves quotes, **edits the menu** (A's `menu_admin`) and buys the **software plan** through Stripe test mode (see [billing.md](billing.md)).
 
 ## Pages and actions
 
@@ -21,6 +21,7 @@ Status (Oct 20, 2026): customers request quotes through the AI chat and send the
 | `POST /quotes/{id}/reprice` | Owner | New draft version of the same request at today's menu prices (`QuoteService.revise`) |
 | `/owner/menu` | Owner | Menu editor: name, description and availability per dish; price and availability per size; change log |
 | `POST /owner/menu` | Owner | Saves only the fields that changed, with the displayed menu revision (`MenuService.update`) |
+| `/owner/billing` | Owner | Software plan status and Stripe test checkout ([billing.md](billing.md)) |
 | `/healthz` | Monitoring | `{"status": "ok"}` |
 
 Browser forms send only the quote ID, the revision they displayed and the chosen action. Prices, totals, status and permissions all come from `quote_view` / `QuoteService`, which recheck every action.
@@ -29,10 +30,10 @@ Browser forms send only the quote ID, the revision they displayed and the chosen
 
 - **Who does what:** the model reads the customer's words, asks questions and picks menu items; `quote_engine` prices them and checks rules; the price guard rejects any dollar amount the model invents. The draft panel shows code-computed amounts only.
 - **Saved conversations:** each turn is saved in `catering_private.conversations` (SQLite locally) with a revision check, so a refresh or sign-out keeps the chat and a second tab can't overwrite it. On load, the last evaluated request is re-checked against the current menu and time to rebuild the draft.
-- **Submit:** only when the latest evaluation says `needs_owner_review` (all details present, nothing blocking) and the customer ticks the box confirming the date, guests, address and allergies shown on the draft. The quote id is derived from the conversation id, so a double click, a second tab or a retry after a crash can never create two quotes. The customer's message is saved before the model answers and submit waits for the reply, so a draft that is being changed can't be sent. The server re-runs `QuoteService.submit`, which rechecks everything; the quote is routed to `OWNER_USER_IDS[0]`, never to a business named in the chat. After submitting, the next visit starts a new conversation.
+- **Submit:** only when the latest evaluation says `needs_owner_review` (all details present, nothing blocking) and the customer ticks the box confirming the date, guests, address, allergies, and any selections or notes shown on the draft. The quote id is derived from the conversation id, so a double click, a second tab or a retry after a crash can never create two quotes. The customer's message is saved before the model answers and submit waits for the reply, so a draft that is being changed can't be sent. The server re-runs `QuoteService.submit`, which rechecks everything; the quote is routed to `OWNER_USER_IDS[0]`, never to a business named in the chat. After submitting, the next visit starts a new conversation.
 - **Limits (cost control):** messages up to 1,200 characters; 15 customer messages per conversation; per customer 8 messages a minute, 40 a day and 6 new conversations a day; 400 replies a day for the whole site; one reply at a time. Each reply may call the model at most 5 times within 75 seconds (30 s per call, no retries), and older menu-tool results are shortened before being resent. Model or network failures show a polite fallback; nothing crashes. Also set a monthly spend limit in the provider console. The per-customer lock and the site-wide daily cap live in the web process, so they assume one worker (the `render.yaml` start command runs one); add a shared counter before scaling out.
-- **Model choice:** `LLM_PROVIDER=anthropic` (default when `ANTHROPIC_API_KEY` is set, model from `ANTHROPIC_MODEL`) or `openai` (`OPENAI_API_KEY` + `OPENAI_MODEL`; set `OPENAI_REASONING_EFFORT=none` for models such as gpt-6-luna that refuse tools with reasoning on). `LLM_PROVIDER=scripted` is a local preview model that needs no key and is refused in production. With no model configured, the home page doesn't offer requests and `/chat` says the assistant is unavailable.
-- **Dataset:** `APP_DATASET=demo` is A's frozen 22-item menu for the presentation (`render.yaml` now sets it).
+- **Model choice:** the deployed app uses OpenAI: `LLM_PROVIDER=openai`, `OPENAI_MODEL=gpt-5.5` (the model in the [evaluation](../evaluation/README.md)). The code also supports `LLM_PROVIDER=anthropic` (`ANTHROPIC_API_KEY`, model from `ANTHROPIC_MODEL`). `OPENAI_REASONING_EFFORT=none` is only for models such as gpt-6-luna that refuse tools with reasoning on. `LLM_PROVIDER=scripted` is a local preview model that needs no key and is refused in production. With no model configured, the home page doesn't offer requests and `/chat` says the assistant is unavailable.
+- **Dataset:** `APP_DATASET=demo` is the frozen 22-item menu in `data/demo/` (`render.yaml` sets it).
 
 ## Accounts and roles
 
@@ -75,9 +76,10 @@ AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app 
 | --- | --- | --- |
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Render | Enables sign-in. Publishable key only; never the secret key |
 | `QUOTE_DATABASE_URL` | Render | Supabase session-pooler URI; server only |
-| `OWNER_USER_IDS` | Render | Added to `render.yaml` in this PR. Render does not prompt for keys added after the blueprint was created, so add it in the dashboard |
-| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Render | Claude for the chat (default provider) |
-| `LLM_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_REASONING_EFFORT` | Render | Optional: `LLM_PROVIDER=openai` to test with OpenAI |
+| `OWNER_USER_IDS` | Render | Supabase user ID of the owner. Render does not prompt for keys added after the blueprint was created, so add it in the dashboard |
+| `LLM_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_REASONING_EFFORT` | Render | `openai`, the key, `gpt-5.5`; reasoning effort is optional |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Render | Optional, not used by the deployed app |
+| `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` | Render | Stripe test mode only; see [billing.md](billing.md) |
 | `APP_ENV`, `APP_DATASET` | `render.yaml` | `production`, `demo` |
 
 ## Design notes
@@ -99,7 +101,7 @@ AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app 
 
 ## Database
 
-Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, `202610190002_menu_storage.sql`, then `202610200001_conversations.sql`. All are server-only (RLS on, no browser grants). The shared Supabase project already has all three applied and the owner's menu seeded (see [menu-editing.md](menu-editing.md)); don't rerun them there. Verified on PostgreSQL 16 with `tests/integration` (quotes, conversations, and A's `PostgresMenuStore`).
+Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, `202610190002_menu_storage.sql`, `202610200001_conversations.sql`, then `202610200002_owner_billing.sql`. All are server-only (RLS on, no browser grants). The shared Supabase project already has all four applied and the owner's menu seeded (see [menu-editing.md](menu-editing.md)); don't rerun them there. Verified on PostgreSQL 16 with `tests/integration` (quotes, conversations, and A's `PostgresMenuStore`).
 
 ## Next
 

@@ -1,6 +1,6 @@
 # Owner Software Plan (Stripe test mode)
 
-The business owner buys the Catering Quote Assistant through Stripe Checkout. **Test mode only**: live keys are refused, and no real money moves. This is separate from food quotes; customers never pay in this app, and accepting a quote never charges anything.
+The business owner subscribes to the Catering Quote Assistant (monthly plan) through Stripe Checkout. **Test mode only**: live keys are refused, and no real money moves. This is separate from food quotes; customers never pay in this app, and accepting a quote never charges anything.
 
 E built the Stripe module (`billing/`). This page covers how it's wired into the web app (`app/billing_app.py`, routes in `app/main.py`).
 
@@ -35,7 +35,7 @@ The owner inbox shows "Software plan: Active / Not purchased" linking to the bil
 ## Setup (D or E, about 10 minutes)
 
 1. **Stripe dashboard, in Test mode** (toggle at the top right).
-2. **Product catalog → Add product:** e.g. "Catering Quote Assistant — Owner plan", one-time price (e.g. $29.00). Copy the **price ID** (`price_...`).
+2. **Product catalog → Add product:** e.g. "Catering Quote Assistant — Owner plan", recurring monthly price (e.g. $29.00 per month). Checkout runs in subscription mode, so a one-time price is refused. Copy the **price ID** (`price_...`).
 3. **Developers → API keys:** copy the **secret key** (`sk_test_...`). Never the live key.
 4. **Developers → Webhooks → Add endpoint:**
    - URL: `https://<your-render-app>.onrender.com/stripe/webhook`
@@ -51,8 +51,9 @@ Local development: without `QUOTE_DATABASE_URL`, payments are stored in `var/bil
 
 `tests/test_app_billing.py` (16 tests, no network): customers and signed-out users can't reach billing; checkout uses the session's owner ID and the configured price; success records payment only after Stripe confirms, and refuses unpaid, foreign, mismatched or made-up sessions; webhook works in production without an Origin header while other origin-less posts are still refused; bad signatures are rejected; unknown accounts are ignored; double confirmation records once; unconfigured and live-key setups turn checkout off safely. E's `tests/test_billing.py` covers the Stripe module itself.
 
+On the deployed app, a test-mode checkout with card `4242 4242 4242 4242` has completed and the plan shows **Plan active**.
+
 ## Not done
 
-- Live Stripe hasn't been exercised from the deployed app yet (needs steps 1–6).
-- No subscriptions, refunds or invoices: a one-time test purchase is enough for the course requirement.
+- The app records the first confirmed payment only. Cancellations, failed renewals, refunds and invoices are not tracked, so a paid plan stays **Active**.
 - Paid status is shown to the owner but doesn't lock any features.

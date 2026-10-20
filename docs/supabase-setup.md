@@ -1,6 +1,6 @@
-# Supabase Quote Storage — Connection Draft
+# Supabase Quote Storage — Connection
 
-Status: Python adapter and SQL migration prepared; **not applied to a Supabase project or tested against a live Postgres database yet**. The team has not created a shared schema. This draft preserves the existing quote record format and keeps pricing/workflow in Python.
+Status: **applied to the team's Supabase project and used by the deployed app.** All four migrations in `supabase/migrations/` are applied there; don't rerun them. This setup preserves the existing quote record format and keeps pricing/workflow in Python.
 
 ## Design and ownership
 
@@ -8,13 +8,13 @@ Status: Python adapter and SQL migration prepared; **not applied to a Supabase p
 - Supabase PostgreSQL stores quote snapshots in `catering_private.quotes`.
 - Python `PostgresQuoteStore` offers the same insert/get/list/save operations as the local SQLite adapter.
 - D owns Supabase setup and the app/server connection. C owns quote persistence integration. A's menu tables and E's payment tables are outside this migration.
-- This draft maps `owner_id` to one owner's Auth UUID and `customer_id` to the customer's Auth UUID. It does not support multiple employees per business yet. If D adopts business membership tables, align that mapping before applying the migration.
+- This setup maps `owner_id` to one owner's Auth UUID and `customer_id` to the customer's Auth UUID. It does not support multiple employees per business.
 
 ## Why server-only storage
 
 The browser must not directly write a price, approval, or quote record. It calls authenticated Python actions, which load trusted data, run the existing workflow, and save the result. The SQL creates a private schema, enables RLS, and grants no access to `anon` or `authenticated`; there are deliberately no browser policies.
 
-The adapter uses a privileged server-only Postgres connection (initially the migration-owning `postgres` connection from Supabase). Such a connection bypasses RLS. Therefore **the Python actor filters and workflow checks are essential**, not optional. This draft is not a per-user JWT/RLS data-access implementation. Never expose the connection string to the frontend, AI prompts, logs, or repository. A dedicated least-privilege server DB role can be configured with D before deployment; it needs a deliberate policy/grant plan, not public client access.
+The adapter uses a privileged server-only Postgres connection (initially the migration-owning `postgres` connection from Supabase). Such a connection bypasses RLS. Therefore **the Python actor filters and workflow checks are essential**, not optional. This is not a per-user JWT/RLS data-access implementation. Never expose the connection string to the frontend, AI prompts, logs, or repository. A dedicated least-privilege server DB role can be configured with D before deployment; it needs a deliberate policy/grant plan, not public client access.
 
 ## Setup order for D + C
 
@@ -24,7 +24,7 @@ The adapter uses a privileged server-only Postgres connection (initially the mig
 4. In the Python server environment, install `requirements-postgres.txt` and set `QUOTE_DATABASE_URL` from Supabase **Connect**. Do not paste it into chat. Use the session pooler on IPv4-only hosts, or the connection method appropriate to the final hosting setup.
 5. D verifies the customer's Supabase access token server-side (for example, Supabase Auth `get_user(token)`) and extracts the returned account UUID. Never derive identity from browser-submitted IDs or unverified token contents. Resolve the owning business/account from trusted server configuration, not public role signup.
 6. Instantiate `PostgresQuoteStore()` after setting the environment. Use existing workflow functions before saving. Do not create a generic endpoint accepting a complete quote object.
-7. Run the live test below against a disposable development project, then test the actual signup/login/My Quotes journey after the UI exists.
+7. Run the live test below against a disposable development project, then test the signup/login/My Quotes journey in the app.
 
 The adapter requires TLS, times out connections after 10 seconds, and disables prepared statements for transaction-pooler compatibility. It opens/closes one connection per operation. It does not automatically load `.env` files or run migrations.
 
@@ -63,9 +63,9 @@ python3 -m unittest discover -s tests -v
 python3 -m unittest discover -s tests/integration -v
 ```
 
-Current result: **75 local tests pass** (65 existing + 10 mocked Postgres adapter contract tests). **The one live Postgres test is skipped** because no test connection is configured. Mock tests validate query arguments and error/guard behavior, not SQL execution, RLS, deployed Auth, or real database concurrency.
+The live Postgres tests in `tests/integration` (quotes, conversations and menus) pass on PostgreSQL 16 with all migrations applied. Without `QUOTE_TEST_DATABASE_URL` they are skipped; the local mocked contract tests still run.
 
-The opt-in live test writes synthetic quotes under random UUIDs, checks persistence/account filtering/concurrent updates, and removes only its own test record. It assumes the migration is already applied. It does not prove frontend permissions or actual Supabase Auth behavior; those require the full app integration test. SQL execution remains unverified until the migration is run on development Supabase.
+The opt-in live test writes synthetic quotes under random UUIDs, checks persistence/account filtering/concurrent updates, and removes only its own test record. It assumes the migration is already applied. It does not prove frontend permissions or actual Supabase Auth behavior; those are covered by the web app's tests and the deployed app.
 
 ## Official references
 

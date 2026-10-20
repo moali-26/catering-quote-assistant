@@ -1,7 +1,6 @@
 -- Owner-editable menus (Part A). Apply AFTER 202610190001_quote_storage.sql,
 -- which creates the catering_private schema. Server-only, like quotes:
 -- the browser calls authenticated Python endpoints; no client grants or policies.
--- NOT yet applied to a Supabase project.
 BEGIN;
 CREATE TABLE catering_private.menus (
     owner_id uuid PRIMARY KEY,               -- the business owner's Supabase Auth UUID

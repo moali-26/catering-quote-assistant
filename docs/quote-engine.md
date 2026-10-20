@@ -70,19 +70,17 @@ Use separate workflow status from pricing result:
 - Menu changes do not silently update stored quotes. Explicit revised pricing uses the current owner menu and returns to review.
 - Customer acceptance does not itself mean payment or confirmed booking.
 
-## Remaining tasks and dependencies
+## Integration status
 
-| Order | Task | Needs |
+| Order | Task | Status |
 |---|---|---|
-| 1 | Review pricing contract with team | Finalized supported menu/units/rules and request fields |
-| 2 | Integrate implemented readiness checks and review their policy with the team | Request schema, injected clock, final data |
-| 3 | Connect implemented quote IDs, versions and transitions to persistence | Chosen database and ownership/session interfaces |
-| 4 | Build reusable quote detail/list components and action endpoints | UI/API framework and authenticated actors |
-| 5 | Run final-data and end-to-end evaluation | Frozen answer keys and full app integrations |
+| 1 | Review pricing contract with team | Done: the frozen `data/demo` menu and rules |
+| 2 | Integrate implemented readiness checks and review their policy with the team | Done: used by the AI chat and on submit/approve |
+| 3 | Connect implemented quote IDs, versions and transitions to persistence | Done: Supabase PostgreSQL (SQLite locally) |
+| 4 | Build reusable quote detail/list components and action endpoints | Done: the web app (`app/`) |
+| 5 | Run final-data and end-to-end evaluation | Done: [evaluation](../evaluation/README.md) |
 
-The team should confirm rounding/tax-base assumptions and service scope. The AI service must supply explicit variant quantities, not only guest count. The application can wrap this module without adopting its local execution commands as the full app architecture.
-
-No shared datasets or framework/configuration files were changed. Work is local on a feature branch; no commit or push has been performed.
+The AI service supplies explicit variant quantities, not only guest count. The application wraps this module without adopting its local execution commands as the full app architecture.
 
 ## Readiness checks
 
@@ -96,7 +94,7 @@ Checks cover required input, past dates, minimum notice, capacity snapshot limit
 
 Reviewed initial arithmetic and error boundaries. Added controlled errors for malformed input/configuration and rejected non-USD configuration rather than silently labeling it USD. Tests exercise the sample $749.04 result, calculation/rounding, invalid quantities/prices, unsupported service, dataset mixing, date/timezone boundaries, capacity conflicts, allergens, and non-mutation.
 
-This code is shared project functionality. Branch names are only Git organization and do not create separate submissions. Authentication, persistence and UI integration are not implemented by this module. Workflow transitions are implemented and tested locally.
+This code is shared project functionality. Branch names are only Git organization and do not create separate submissions. Authentication, persistence and UI integration are not part of this module; the web app provides them. Workflow transitions are implemented and tested.
 
 
 ### Workflow integration contract
@@ -119,12 +117,12 @@ Validation: 50 local unit tests cover pricing/readiness plus approval and respon
 
 See the [Overall Project Plan](project-plan.md). Customers and owners use the same authentication system with server-enforced roles. `customer_id` is the stable authenticated account ID, not a browser-session ID; customers return to My Quotes after closing the page or signing out. `owner_id` must identify the trusted owning account consistently; if the app uses separate business IDs, resolve membership server-side before invoking these functions.
 
-D implements persistent account-filtered quote queries and authenticated action endpoints; C supplies these workflow functions and assists integration. Read access needs authorization as well as write access. Never trust a customer ID, owner ID, or role from the browser. Save returned records transactionally, preserving version history. No guest-link authentication is planned. These are integration requirements, not implemented login or storage features.
+D implements persistent account-filtered quote queries and authenticated action endpoints; C supplies these workflow functions and assists integration. Read access needs authorization as well as write access. Never trust a customer ID, owner ID, or role from the browser. Save returned records transactionally, preserving version history. No guest-link authentication is planned.
 
 
 ## Optional persistence adapter
 
-See [Persistent Quotes](quote-storage.md) for the SQLite adapter, server-side action integration, and deployment limits. The adapter adds account-filtered reads and atomic saves of workflow results; total tests now number 61. Authentication and browser integration remain pending.
+See [Persistent Quotes](quote-storage.md) for the SQLite adapter, server-side action integration, and deployment limits. The adapter adds account-filtered reads and atomic saves of workflow results.
 
 
-Review update (October 19): three edge cases fixed; all 65 tests pass. See [review notes](review-notes.md) for findings, evidence, and remaining integration requirements. Unrecognized customer allergen names now block approval until clarified; unknown menu allergen information still requires owner review.
+Review update (October 19): three edge cases fixed. See [review notes](review-notes.md) for findings, evidence, and remaining integration requirements. Unrecognized customer allergen names now block approval until clarified; unknown menu allergen information still requires owner review.
