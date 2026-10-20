@@ -215,6 +215,15 @@ class ConversationTests(Base):
         self.assertEqual(turn.reply, 'No cheaper menu fits; this is $49.04 over budget.')
         self.assertTrue(turn.ready_to_submit)
 
+    def test_no_budget_retry_when_blocked(self):
+        blocked = dict(FULL_ARGS, budget_usd='700.00', event_at='2026-10-19T12:00:00-07:00')  # <48 h
+        convo = self.convo([call('evaluate_catering_quote', blocked),
+                            say('Delivery needs 48 hours notice; want pickup instead?')])
+        turn = convo.send('...')
+        self.assertEqual(turn.quote['result']['status'], 'blocked')
+        self.assertFalse(any(w.startswith('over_budget_retry') for w in turn.warnings))
+        self.assertFalse(turn.ready_to_submit)
+
     def test_customer_amount_and_menu_unit_price_allowed(self):
         convo = self.convo([call('search_menu', {'item_ids': ['app-hummus']}),
                             say('Hummus small is $25.00; that fits your $500 budget nicely.')])
