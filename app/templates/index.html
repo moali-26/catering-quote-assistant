@@ -1,0 +1,124 @@
+{% extends "base.html" %}
+{% block body_class %}page-home{% endblock %}
+{% block content %}
+<section class="hero">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow">Catering quotes{% if business.place %} · {{ business.place }}{% endif %}</p>
+      <h1 class="display">Plan the food for your event in <mark>one conversation.</mark></h1>
+      <p class="lede">Tell our assistant your date, headcount and dietary needs. It prices every tray from {{ business.name }}’s menu, and the owner checks the quote before you confirm.</p>
+      <div class="cta-row">
+        {% if accounts_open %}
+        <a class="btn btn-primary" href="/login">Start a quote request</a>
+        <a class="btn btn-quiet" href="/login">Owner sign in</a>
+        {% else %}
+        <a class="btn btn-primary" href="#how">See how it works</a>
+        <a class="btn btn-quiet" href="#menu">Browse the menu</a>
+        {% endif %}
+      </div>
+      {% if not accounts_open %}<p class="launch-note">Online quote requests are coming soon.</p>{% endif %}
+      <ul class="assurances" aria-label="How pricing works">
+        <li>Prices come from the menu, never guessed</li>
+        <li>Allergens are flagged for the owner</li>
+        <li>Nothing is charged when you accept</li>
+      </ul>
+    </div>
+
+    {% if example %}
+    <figure class="ticket-stage" aria-labelledby="ticket-caption">
+      <div class="ticket-wrap">
+      <article class="ticket">
+        <header class="ticket-head">
+          <span>Order ticket</span>
+          <span>Example</span>
+        </header>
+        <blockquote class="ticket-request">“{{ example.request_text }}”</blockquote>
+        <dl class="ticket-facts">
+          <div><dt>Guests</dt><dd>{{ example.headcount }}</dd></div>
+          <div><dt>Service</dt><dd>{{ example.service_mode | capitalize }}</dd></div>
+          <div><dt>Tax area</dt><dd>{{ example.tax_location }}</dd></div>
+        </dl>
+        <table class="ticket-lines">
+          <caption class="sr-only">Itemized example quote</caption>
+          <thead><tr><th scope="col">Item</th><th scope="col" class="num">Qty</th><th scope="col" class="num">Amount</th></tr></thead>
+          <tbody>
+            {% for line in example.lines %}
+            <tr>
+              <td>{{ line.name }}<span class="ticket-sub">{{ line.label }} · {{ line.unit }} each</span></td>
+              <td class="num">{{ line.quantity }}</td>
+              <td class="num">{{ line.total }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+          <tfoot>
+            <tr><th scope="row" colspan="2">Food subtotal</th><td class="num">{{ example.subtotal }}</td></tr>
+            <tr><th scope="row" colspan="2">Delivery</th><td class="num">{{ example.delivery }}</td></tr>
+            <tr><th scope="row" colspan="2">Tax ({{ example.tax_rate }})</th><td class="num">{{ example.tax }}</td></tr>
+            <tr class="ticket-total"><th scope="row" colspan="2">Total</th><td class="num">{{ example.total }}</td></tr>
+          </tfoot>
+        </table>
+        <footer class="ticket-foot">
+          <p>Draft · not yet confirmed</p>
+          {% if example.needs_review %}<p class="stamp"><span class="sr-only">Status: </span>Awaiting<br>owner review</p>{% endif %}
+        </footer>
+      </article>
+      </div>
+      <figcaption id="ticket-caption" class="ticket-caption">A real draft from the sample menu, priced by the quote engine.</figcaption>
+    </figure>
+    {% endif %}
+  </div>
+</section>
+
+<section id="how" class="section">
+  <div class="wrap">
+    <h2 class="section-title">How a quote comes together</h2>
+    <ol class="steps">
+      <li>
+        <h3>Describe your event</h3>
+        <p>Date, headcount, delivery or pickup, and any dietary needs. The assistant asks about anything missing before it prices.</p>
+      </li>
+      <li>
+        <h3>Get an itemized draft</h3>
+        <p>Every line uses the menu’s price. Delivery and tax are calculated from the caterer’s rules, so the total adds up.</p>
+      </li>
+      <li>
+        <h3>Owner reviews, you confirm</h3>
+        <p>The owner checks portions and allergens, then approves. You accept or decline from My Quotes, whenever suits you.</p>
+      </li>
+    </ol>
+  </div>
+</section>
+
+<section id="menu" class="section section-menu">
+  <div class="wrap">
+    <div class="section-head">
+      <h2 class="section-title">On the menu</h2>
+      <p class="muted">A selection of what the assistant can quote. Starting prices shown.</p>
+    </div>
+    <ul class="menu-grid">
+      {% for item in menu %}
+      <li class="menu-card">
+        <p class="menu-cat">{{ item.category }}</p>
+        <h3>{{ item.name }}</h3>
+        <p class="menu-desc">{{ item.description }}</p>
+        {% if item.tags %}<ul class="tags">{% for tag in item.tags %}<li>{{ tag }}</li>{% endfor %}</ul>{% endif %}
+        <p class="menu-price"><span class="price">{% if item.price.several %}from {% endif %}{{ item.price.amount }}</span> <span class="muted">{{ item.price.unit }}</span></p>
+        {% if item.price.serves %}<p class="menu-serves">{{ item.price.serves }}</p>{% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    <p class="fine-print">Gluten-sensitive means the caterer marks the item GF; it is not a gluten-free certification. Allergy needs are always confirmed by the owner.</p>
+  </div>
+</section>
+
+<section class="section section-cta">
+  <div class="wrap cta-band">
+    <h2 class="display-sm">Have a date and a headcount? That’s enough to start.</h2>
+    {% if accounts_open %}
+    <a class="btn btn-primary btn-on-dark" href="/login">Start a quote request</a>
+    {% else %}
+    <p class="cta-note">Online requests are coming soon.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

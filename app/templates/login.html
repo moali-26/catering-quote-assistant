@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block title %}Sign in · {{ business.name }}{% endblock %}
+{% block body_class %}page-auth{% endblock %}
+{% block nav %}<a href="/">Back to home</a>{% endblock %}
+{% block content %}
+<section class="auth">
+  <div class="auth-card">
+    <h1 class="display-sm">Sign in</h1>
+    <p class="muted">Customers see their quote requests in My Quotes. Owners go to the review dashboard.</p>
+    <div class="notice">
+      <strong>Accounts open in the next update.</strong>
+      Sign-in and sign-up are being connected now; this form is not active yet.
+    </div>
+    <form class="form" action="/login" method="get">
+      <label for="email">Email</label>
+      <input id="email" type="email" aria-describedby="login-help" autocomplete="email" disabled>
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="current-password" disabled>
+      <button class="btn btn-primary btn-block" type="submit" disabled>Sign in</button>
+    </form>
+    <p id="login-help" class="fine-print">New here? You’ll be able to create a customer account from this page.</p>
+  </div>
+</section>
+{% endblock %}
