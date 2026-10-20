@@ -53,7 +53,9 @@ class AnthropicLLM:
     def __init__(self, model=None, max_tokens=1500, client=None):
         if client is None:
             import anthropic  # lazy: only needed if the team picks Claude
-            client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'))
+            # 60 s per request, 1 retry: a stuck network call fails visibly instead of hanging.
+            client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'),
+                                         timeout=60.0, max_retries=1)
         self.client = client
         self.model = model or os.environ.get('ANTHROPIC_MODEL', DEFAULT_MODEL)
         self.max_tokens = max_tokens

@@ -170,6 +170,51 @@ class ConversationTests(Base):
         self.assertIn(f'${total // 100}.{total % 100:02d}', turn.reply)
         self.assertIn('calculated by our pricing system', turn.reply)
 
+    def test_model_sees_ready_made_dollar_strings(self):
+        convo = self.convo([call('evaluate_catering_quote', FULL_ARGS), say('Total is $749.04.')])
+        turn = convo.send('...')
+        sent = json.loads([m for m in convo.messages if m['role'] == 'tool'][-1]['content'])
+        self.assertEqual(sent['pricing']['total_display'], '$749.04')
+        self.assertEqual(sent['pricing']['lines'][0]['line_total_display'], '$539.60')
+        self.assertNotIn('total_display', turn.quote['result']['pricing'])  # code keeps cents only
+        self.assertEqual(turn.warnings, [])
+
+    def test_cents_read_as_dollars_is_caught(self):
+        convo = self.convo([call('evaluate_catering_quote', FULL_ARGS),
+                            say('The pasta is $53,960 and the total is $74,904.'), reply_with_total])
+        turn = convo.send('...')
+        self.assertTrue(any(w.startswith('unverified_amounts') for w in turn.warnings))
+        self.assertNotIn('53,960', turn.reply)
+
+    def test_running_out_of_calls_after_pricing_shows_code_written_quote(self):
+        script = [call('evaluate_catering_quote', FULL_ARGS)] + [call('search_menu', {}, f's{i}') for i in range(20)]
+        turn = self.convo(script).send('...')
+        self.assertIn('too_many_model_calls', turn.warnings)
+        self.assertTrue(turn.ready_to_submit)
+        self.assertIn('Total: $749.04', turn.reply)
+        self.assertIn('The Pasta Duo (Per person) x40: $539.60', turn.reply)
+
+    def test_over_budget_draft_gets_one_retry(self):
+        over = dict(FULL_ARGS, budget_usd='700.00')   # $749.04 > $700
+        cheaper = dict(over, selections=[FULL_ARGS['selections'][0]])
+        convo = self.convo([call('evaluate_catering_quote', over), say('Here it is.'),
+                            call('evaluate_catering_quote', cheaper, 'c2'), reply_with_total])
+        turn = convo.send('...')
+        self.assertIn('over_budget_retry:4904', turn.warnings)
+        self.assertTrue(turn.quote['result']['budget']['within_budget'])
+        notes = [m for m in convo.messages if m.get('server_note')]
+        self.assertEqual(len(notes), 1)
+        self.assertNotIn('Here it is.', [m['content'] for m in convo.messages if m['role'] == 'assistant'])
+
+    def test_over_budget_nudge_only_once(self):
+        over = dict(FULL_ARGS, budget_usd='700.00')
+        convo = self.convo([call('evaluate_catering_quote', over), say('Here it is.'),
+                            call('evaluate_catering_quote', over, 'c2'),
+                            say('No cheaper menu fits; this is $49.04 over budget.')])
+        turn = convo.send('...')
+        self.assertEqual(turn.reply, 'No cheaper menu fits; this is $49.04 over budget.')
+        self.assertTrue(turn.ready_to_submit)
+
     def test_customer_amount_and_menu_unit_price_allowed(self):
         convo = self.convo([call('search_menu', {'item_ids': ['app-hummus']}),
                             say('Hummus small is $25.00; that fits your $500 budget nicely.')])
@@ -187,7 +232,7 @@ class ConversationTests(Base):
         def boom(*_):
             raise ConnectionError('network down')
         turn = self.convo([boom]).send('hello')
-        self.assertIn('model_error', turn.warnings)
+        self.assertIn('model_error:ConnectionError', turn.warnings)
         self.assertIn('Sorry', turn.reply)
 
     def test_tool_loop_is_bounded(self):
