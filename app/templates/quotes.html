@@ -9,6 +9,7 @@
         <p class="eyebrow">Signed in as {{ user.email }}</p>
         <h1 class="section-title">My Quotes</h1>
       </div>
+      {% if requests_open and quotes %}<a class="btn btn-primary btn-small" href="/chat">New request</a>{% endif %}
     </header>
     {% if quotes %}
     <p class="muted workspace-lede">The owner reviews every request. Open an approved quote to accept or decline it.</p>
@@ -18,8 +19,13 @@
     {% else %}
     <div class="empty">
       <h2>No quote requests yet</h2>
+      {% if requests_open %}
+      <p class="muted">Describe your event to the assistant and it will put an itemized draft together. Requests you send appear here with the owner’s review status.</p>
+      <a class="btn btn-primary" href="/chat">Start a quote request</a>
+      {% else %}
       <p class="muted">Once online requests open, the requests you send appear here with the owner’s review status.</p>
       <a class="btn btn-quiet" href="/#menu">Browse the menu</a>
+      {% endif %}
     </div>
     {% endif %}
   </div>

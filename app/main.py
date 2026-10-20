@@ -6,11 +6,13 @@ owner role comes from OWNER_USER_IDS. Browser forms send only quote IDs, the
 displayed revision and the chosen action; QuoteService rechecks every action.
 """
 import logging
+import re
 from pathlib import Path
 from typing import List, Optional
 from urllib.parse import quote as urlquote, urlsplit
 
 from fastapi import FastAPI, Form, Request
+from markupsafe import Markup, escape
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
@@ -20,6 +22,7 @@ from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from quote_engine.postgres_storage import QuoteStorageUnavailable
 from quote_engine.pricing import QuoteError
+from quote_engine.presentation import money
 from quote_engine.storage import QuoteConflict, QuoteNotFound
 
 from . import catalog
@@ -28,9 +31,11 @@ from .auth import (ACCESS_COOKIE, REFRESH_COOKIE, AuthError, Authenticator, Auth
 from .config import load_settings
 from .dbcheck import HINTS, check_database, describe_dsn
 from .quotes import QuoteApp
+from .chat import (ChatConflict, ChatLimit, ChatNotFound, ChatService, PostgresConversationStore,
+                   SQLiteConversationStore, visible_messages)
 
 HERE = Path(__file__).resolve().parent
-STATIC_VERSION = '6'
+STATIC_VERSION = '10'
 NOTICE_COOKIE = 'cqa_notice'
 REFRESH_MAX_AGE = 60 * 60 * 24 * 30
 logger = logging.getLogger('app')
@@ -53,6 +58,20 @@ NOTICES = {
     'conflict': ('warning', 'This quote changed while you were viewing it. Review the latest version and try again.'),
     'failed': ('warning', 'That action isn’t available for this quote right now. Review the details below.'),
     'acknowledge': ('warning', 'Tick every review item to confirm you checked it before approving.'),
+    'submitted': ('success', 'Request sent. The owner will review it; check back here for the approved quote.'),
+    'chat-conflict': ('warning', 'This conversation changed in another tab. Here is the latest version.'),
+    'new-chat': ('info', 'Started a new request.'),
+    'not-ready': ('warning', 'That draft can’t be sent yet. Check the draft details, or ask the assistant to recalculate.'),
+    'confirm-needed': ('warning', 'Tick the box to confirm the event details, then send it again.'),
+    'chat-busy': ('warning', 'Still working on your last message. Wait for the reply, then try again.'),
+    'chat-rate': ('warning', 'You’re sending messages quickly. Wait a few seconds and try again.'),
+    'chat-too-long': ('warning', 'That message was too long. Keep messages under 1,200 characters.'),
+    'chat-empty': ('warning', 'Type a message first.'),
+    'chat-submitted': ('info', 'That request was already sent to the owner. You’re in a new request now.'),
+    'chat-long': ('warning', 'This conversation is getting long. Send it for review or start a new request.'),
+    'chat-daily': ('warning', 'You’ve reached today’s limit for the assistant. Try again tomorrow.'),
+    'chat-off': ('warning', 'The assistant isn’t available right now. Try again later.'),
+    'chat-limit': ('warning', 'That message couldn’t be sent. Try again.'),
 }
 
 SECURITY_HEADERS = {
@@ -78,7 +97,59 @@ def safe_next(value: Optional[str]) -> Optional[str]:
     return None
 
 
-def create_app(*, auth_backend=None, quote_app=None) -> FastAPI:
+def chat_format(text: str) -> Markup:
+    """Escape model/customer text, then allow a tiny safe subset: paragraphs, bullets and **bold**."""
+    blocks, bullets = [], []
+
+    def inline(line):
+        return re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', str(escape(line)))
+
+    def flush():
+        if bullets:
+            blocks.append('<ul>' + ''.join(f'<li>{b}</li>' for b in bullets) + '</ul>')
+            bullets.clear()
+
+    for raw in (text or '').splitlines():
+        line = raw.strip()
+        if re.match(r'^([-*•]|\d+[.)])\s+', line):
+            bullets.append(inline(re.sub(r'^([-*•]|\d+[.)])\s+', '', line)))
+            continue
+        flush()
+        if line:
+            blocks.append(f'<p>{inline(line)}</p>')
+    flush()
+    return Markup(''.join(blocks))
+
+
+def build_llm_factory(settings, clock):
+    if settings.llm_provider == 'scripted':
+        from .preview_llm import PreviewLLM
+        return lambda: PreviewLLM(clock)
+    if settings.llm_provider == 'anthropic':
+        import anthropic
+        from ai_service.providers import make_llm
+        # One shared client; short timeout and no retry so a stuck call can't hold a turn for minutes.
+        client = anthropic.Anthropic(timeout=30.0, max_retries=0)
+        return lambda: make_llm('anthropic', client=client)
+    if settings.llm_provider == 'openai':
+        import openai
+        from ai_service.providers import make_llm
+        client = openai.OpenAI(timeout=30.0, max_retries=0)
+        return lambda: make_llm('openai', client=client)
+    return None
+
+
+def build_chat_store(settings):
+    if settings.database_url:
+        return PostgresConversationStore(settings.database_url)
+    if settings.is_production:
+        return None
+    folder = HERE.parent / 'var'
+    folder.mkdir(exist_ok=True)
+    return SQLiteConversationStore(folder / 'chat.sqlite3')
+
+
+def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastAPI:
     settings = load_settings()
     backend = auth_backend if auth_backend is not None else build_backend(settings)
     owner_ids = settings.owner_ids
@@ -105,12 +176,22 @@ def create_app(*, auth_backend=None, quote_app=None) -> FastAPI:
     )
     app.state.auth_backend = backend
     app.state.quotes = quotes
-    app.state.business_owner_id = business_owner_id  # where customer requests are routed (chat PR)
+    app.state.business_owner_id = business_owner_id  # where customer requests are routed
+    chat = chat_service
+    if chat is None:
+        store = build_chat_store(settings)
+        factory = build_llm_factory(settings, quotes.context.now)
+        chat = ChatService(store, quotes=quotes, llm_factory=factory, owner_id=business_owner_id) if store else None
+    app.state.chat = chat
+    if chat is None or not chat.available:
+        logger.warning('Customer chat is off (needs LLM_PROVIDER/key, OWNER_USER_IDS and a database)')
     templates = Jinja2Templates(directory=str(HERE / 'templates'))
     templates.env.globals.update(static_version=STATIC_VERSION, accounts_open=backend is not None,
-                                 requests_open=False)  # True once the chat PR lands
-    templates.env.globals.update(review_label=quotes.review_label, field_label=quotes.field_label,
+                                 requests_open=bool(backend is not None and chat and chat.available))
+    templates.env.globals.update(review_label=quotes.review_label, block_label=quotes.customer_block_label, field_label=quotes.field_label,
                                  event_time=quotes.event_time, tone=quotes.tone, scrub=quotes.scrub)
+    templates.env.filters['chat_format'] = chat_format
+    templates.env.globals['money'] = money
     app.mount('/static', StaticFiles(directory=str(HERE / 'static')), name='static')
     secure_cookies = settings.is_production
 
@@ -338,6 +419,129 @@ def create_app(*, auth_backend=None, quote_app=None) -> FastAPI:
         return quote_action(request, user, quote_id, lambda: quotes.service.respond(
             quote_id, actor_id=user.id, expected_revision=revision, decision=decision),
             'accepted' if decision == 'accept' else 'declined')
+
+    # ---- customer chat ---------------------------------------------------
+    def chat_fragments(record, *, error=None):
+        """Rendered pieces the chat page swaps in after each message (also used for the full page)."""
+        context = {'messages': visible_messages(record['messages'], quotes.scrub), 'conversation': record,
+                   'error': error, 'business': catalog.business(settings.dataset)}
+        try:
+            draft = chat.draft(record)
+            draft_html = templates.env.get_template('_chat_draft.html').render(dict(context, draft=draft))
+        except QuoteStorageUnavailable:
+            raise
+        except Exception:  # an odd model result must never lock the customer out of the page
+            logger.exception('Chat draft could not be shown')
+            draft = None
+            draft_html = templates.env.get_template('_chat_draft.html').render(dict(context, draft=None))
+        return {
+            'messages': templates.env.get_template('_chat_messages.html').render(dict(context, draft=draft)),
+            'draft': draft_html,
+            'revision': record['revision'],
+            'ready': bool(draft and draft['ready']),
+            'error': error,
+        }
+
+    def latest_state(user, conversation_id, *, status, error=None, reload=False):
+        """JSON with the conversation as saved now, for the page to resync after a refusal."""
+        try:
+            record = chat.store.get(conversation_id, customer_id=user.id)
+        except ChatNotFound:
+            return JSONResponse({'error': 'This conversation isn’t available.'}, status_code=404)
+        except QuoteStorageUnavailable:
+            return JSONResponse({'error': error or 'We couldn’t load the conversation. Try again in a minute.'},
+                                status_code=503)
+        payload = chat_fragments(record, error=error)
+        if reload:
+            payload['reload'] = True
+        return JSONResponse(payload, status_code=status)
+
+    def wants_json(request: Request) -> bool:
+        return request.headers.get('x-requested-with') == 'fetch'
+
+    @app.api_route('/chat', methods=PAGE_METHODS, response_class=HTMLResponse)
+    def chat_page(request: Request):
+        user, stop = require(request, 'customer')
+        if stop:
+            return stop
+        if chat is None or not chat.available:
+            return page(request, 'chat.html', unavailable=True, conversation=None, fragments=None)
+        try:
+            record = chat.current(user.id)
+            fragments = chat_fragments(record)
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        return page(request, 'chat.html', unavailable=False, conversation=record, fragments=fragments)
+
+    @app.post('/chat/send')
+    def chat_send(request: Request, conversation_id: str = Form(...), revision: int = Form(...),
+                  message: str = Form('')):
+        user, stop = require(request, 'customer')
+        if stop:
+            return JSONResponse({'error': 'Your session ended. Sign in again.'}, status_code=401) \
+                if wants_json(request) and request.state.user is None else stop
+        if chat is None or not chat.available:
+            return error_page(request, 503)
+        try:
+            record, _turn = chat.send(user.id, conversation_id, message, expected_revision=revision)
+        except ChatLimit as exc:
+            if wants_json(request):
+                return latest_state(user, conversation_id, error=str(exc),
+                                    status=429 if exc.code in ('chat-rate', 'chat-busy') else 400)
+            return redirect('/chat', notice=exc.code)
+        except ChatConflict:
+            if wants_json(request):
+                return latest_state(user, conversation_id, status=409, reload=True)
+            return redirect('/chat', notice='chat-conflict')
+        except ChatNotFound:
+            return error_page(request, 404)
+        except QuoteStorageUnavailable:
+            if wants_json(request):
+                return JSONResponse({'error': 'We couldn’t save that message. Try again in a minute.'}, status_code=503)
+            return error_page(request, 503)
+        if wants_json(request):
+            return JSONResponse(chat_fragments(record))
+        return redirect('/chat')
+
+    @app.post('/chat/submit')
+    def chat_submit(request: Request, conversation_id: str = Form(...), revision: int = Form(...),
+                    confirm: str = Form('')):
+        user, stop = require(request, 'customer')
+        if stop:
+            return stop
+        if chat is None or not chat.available:
+            return error_page(request, 503)
+        if confirm != 'yes':
+            return redirect('/chat', notice='confirm-needed')
+        try:
+            _record, quote_id = chat.submit(user.id, conversation_id, expected_revision=revision)
+        except ChatConflict:
+            return redirect('/chat', notice='chat-conflict')
+        except ChatNotFound:
+            return error_page(request, 404)
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        except ChatLimit as exc:
+            return redirect('/chat', notice=exc.code)
+        except QuoteError as exc:  # a readiness/business-rule change at submit time
+            logger.info('Chat submit refused: %s', exc)
+            return redirect('/chat', notice='not-ready')
+        return redirect(f'/quotes/{quote_id}', notice='submitted')
+
+    @app.post('/chat/new')
+    def chat_new(request: Request):
+        user, stop = require(request, 'customer')
+        if stop:
+            return stop
+        if chat is None or not chat.available:
+            return error_page(request, 503)
+        try:
+            chat.start_new(user.id)
+        except ChatLimit as exc:
+            return redirect('/chat', notice=exc.code)
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        return redirect('/chat', notice='new-chat')
 
     # ---- errors ----------------------------------------------------------
     @app.exception_handler(StarletteHTTPException)

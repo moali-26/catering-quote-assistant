@@ -48,12 +48,15 @@ class OpenAILLM:
             import openai  # lazy: only needed if the team picks OpenAI
             client = openai.OpenAI(api_key=os.environ.get('OPENAI_API_KEY'), timeout=60.0, max_retries=1)
         self.client = client
-        self.model = model or os.environ.get('OPENAI_MODEL')
+        self.model = model or (os.environ.get('OPENAI_MODEL') or '').strip() or None
         if not self.model:
             raise ValueError('Set OPENAI_MODEL (or pass model=...) to the model name you chose.')
+        # Some reasoning models only allow function tools on chat completions with reasoning_effort='none'.
+        self.reasoning_effort = (os.environ.get('OPENAI_REASONING_EFFORT') or '').strip() or None
 
     def generate(self, system, messages, tools):
+        extra = {'reasoning_effort': self.reasoning_effort} if self.reasoning_effort else {}
         response = self.client.chat.completions.create(
             model=self.model, messages=to_openai_messages(system, messages),
-            tools=to_openai_tools(tools))
+            tools=to_openai_tools(tools), **extra)
         return from_openai_response(response)

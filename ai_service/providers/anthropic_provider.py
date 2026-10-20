@@ -57,7 +57,7 @@ class AnthropicLLM:
             client = anthropic.Anthropic(api_key=os.environ.get('ANTHROPIC_API_KEY'),
                                          timeout=60.0, max_retries=1)
         self.client = client
-        self.model = model or os.environ.get('ANTHROPIC_MODEL', DEFAULT_MODEL)
+        self.model = model or (os.environ.get('ANTHROPIC_MODEL') or '').strip() or DEFAULT_MODEL  # empty var = default
         self.max_tokens = max_tokens
 
     def generate(self, system, messages, tools):

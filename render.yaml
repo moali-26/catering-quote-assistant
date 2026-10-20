@@ -16,7 +16,7 @@ services:
       - key: APP_ENV
         value: production
       - key: APP_DATASET
-        value: sample
+        value: demo
       - key: QUOTE_DATABASE_URL
         sync: false
       - key: SUPABASE_URL
@@ -24,6 +24,17 @@ services:
       - key: SUPABASE_PUBLISHABLE_KEY
         sync: false
       - key: ANTHROPIC_API_KEY
+        sync: false
+      # Chat model: anthropic (default when ANTHROPIC_API_KEY is set) or openai.
+      - key: LLM_PROVIDER
+        sync: false
+      - key: ANTHROPIC_MODEL
+        sync: false
+      - key: OPENAI_API_KEY
+        sync: false
+      - key: OPENAI_MODEL
+        sync: false
+      - key: OPENAI_REASONING_EFFORT
         sync: false
       # Supabase Auth user ID(s) of the business owner, comma-separated. Set after the
       # owner account signs up; until then everyone who signs in is a customer.

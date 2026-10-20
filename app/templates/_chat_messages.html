@@ -1,0 +1,12 @@
+<div class="bubble bubble-assistant">
+  <p>Hi! I’m the quote assistant for {{ business.name.rstrip('.') }}. Tell me about your event and I’ll put together an itemized draft from our menu. The owner checks every quote before it’s final.</p>
+</div>
+{% if not messages %}
+<div class="starters" aria-label="Example requests">
+  <button type="button" class="starter" data-text="Lunch for 40 people next Friday at noon, delivered to our office in Culver City. A few vegetarians, one nut allergy. Budget around $900.">Office lunch for 40 in Culver City</button>
+  <button type="button" class="starter" data-text="Dinner pickup for 25 guests on a Saturday evening in two weeks. No allergies. What would you suggest?">Dinner pickup for 25</button>
+</div>
+{% endif %}
+{% for m in messages %}
+<div class="bubble bubble-{{ m.role }}">{{ m.text | chat_format }}</div>
+{% endfor %}

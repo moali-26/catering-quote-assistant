@@ -1,5 +1,6 @@
 # Everything the deployed web app needs (Render runs: pip install -r requirements.txt). Includes E's billing (stripe).
 -r requirements-ai.txt
+openai==3.35.1  # optional chat provider (LLM_PROVIDER=openai) for testing
 -r requirements-postgres.txt
 fastapi==0.150.0
 uvicorn[standard]==0.54.0

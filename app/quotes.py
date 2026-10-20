@@ -33,6 +33,13 @@ FIELD_LABELS = {
     'address': 'Delivery address', 'allergens': 'Allergies', 'selections': 'Menu items',
     'tax_location': 'Delivery city', 'delivery_miles': 'Delivery distance',
 }
+# Blockers shown to the customer in the chat draft (second person; owner wording stays above).
+CUSTOMER_BLOCK_LABELS = {
+    'event_in_past': 'The event date has already passed. Pick a future date',
+    'insufficient_lead_time': 'That’s too soon for us to prepare. Choose a later date',
+    'capacity_conflict': 'The kitchen is fully booked that day. Try another date',
+    'allergen_conflict': '{item} contains {detail}, which you said to avoid. Swap it for something else',
+}
 STATUS_TONE = {'draft': 'pending', 'owner_approved': 'ready', 'customer_accepted': 'done', 'customer_declined': 'closed'}
 
 
@@ -80,6 +87,15 @@ class QuoteApp:
         return SQLiteQuoteStore(folder / 'quotes.sqlite3')
 
     # ---- display helpers -------------------------------------------------
+    def customer_block_label(self, code: str) -> str:
+        base, _, rest = code.partition(':')
+        item_id, _, detail = rest.partition(':')
+        template = CUSTOMER_BLOCK_LABELS.get(base)
+        if not template:
+            return self.review_label(code)
+        return self.scrub(template.format(item=self.items.get(item_id, item_id or 'An item'),
+                                          detail=detail.replace('_', ' ') or 'an allergen'))
+
     def review_label(self, code: str) -> str:
         base, _, rest = code.partition(':')
         item_id, _, detail = rest.partition(':')

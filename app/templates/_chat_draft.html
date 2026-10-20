@@ -1,0 +1,75 @@
+{% if not draft %}
+<div class="panel draft-empty">
+  <h2 class="panel-title">Your quote builds here</h2>
+  <p class="muted">As you chat, the assistant prices your order from the menu. Totals come from our pricing system, never from the AI.</p>
+  <ul class="plain-list muted">
+    <li>Date, time and guest count</li>
+    <li>Pickup or delivery address</li>
+    <li>Food allergies (or “none”)</li>
+    <li>What you’d like to serve</li>
+  </ul>
+</div>
+{% else %}
+{% set p = draft.pricing %}
+<div class="ticket-wrap ticket-wrap-flat">
+  <article class="ticket ticket-compact" aria-label="Draft quote">
+    <header class="ticket-head"><span>Draft quote</span><span>{{ 'Ready to send' if draft.ready else ('Can’t send yet' if draft.blocking_reasons else 'In progress') }}</span></header>
+    {% set ev = draft.arguments or {} %}
+    <dl class="draft-facts">
+      <div><dt>When</dt><dd>{{ event_time(ev.event_at) if ev.event_at else 'Not set yet' }}</dd></div>
+      <div><dt>Guests</dt><dd>{{ ev.headcount or 'Not set yet' }}</dd></div>
+      <div><dt>{{ 'Delivery' if ev.service_mode == 'delivery' else 'Service' }}</dt>
+        <dd>{% if ev.service_mode == 'delivery' %}{{ ev.address or 'Address needed' }}{% elif ev.service_mode == 'pickup' %}Pickup{% else %}Not set yet{% endif %}</dd></div>
+      <div><dt>Allergies</dt><dd>{% if ev.allergens is none %}Not confirmed{% elif ev.allergens %}{{ ev.allergens | join(', ') | replace('_', ' ') }}{% else %}None{% endif %}</dd></div>
+    </dl>
+    {% if p %}
+    <table class="ticket-lines">
+      <caption class="sr-only">Draft items</caption>
+      <thead><tr><th scope="col">Item</th><th scope="col" class="num">Qty</th><th scope="col" class="num">Amount</th></tr></thead>
+      <tbody>
+        {% for line in p.lines %}
+        <tr><td>{{ scrub(line.name) }}<span class="ticket-sub">{{ line.label }}</span></td><td class="num">{{ line.quantity }}</td><td class="num">{{ money(line.line_total_cents) }}</td></tr>
+        {% endfor %}
+      </tbody>
+      <tfoot>
+        <tr><th scope="row" colspan="2">Food subtotal</th><td class="num">{{ money(p.food_subtotal_cents) }}</td></tr>
+        {% if p.delivery_fee_cents %}<tr><th scope="row" colspan="2">Delivery</th><td class="num">{{ money(p.delivery_fee_cents) }}</td></tr>{% endif %}
+        {% if p.service_charge_cents %}<tr><th scope="row" colspan="2">Service charge</th><td class="num">{{ money(p.service_charge_cents) }}</td></tr>{% endif %}
+        {% if p.staffing_fee_cents %}<tr><th scope="row" colspan="2">Staffing</th><td class="num">{{ money(p.staffing_fee_cents) }}</td></tr>{% endif %}
+        <tr><th scope="row" colspan="2">Tax</th><td class="num">{{ money(p.tax_cents) }}</td></tr>
+        <tr class="ticket-total"><th scope="row" colspan="2">Total</th><td class="num">{{ money(p.total_cents) }}</td></tr>
+      </tfoot>
+    </table>
+    {% if draft.budget and draft.budget.limit_cents %}
+    <p class="draft-budget {{ 'is-over' if draft.budget.within_budget is false }}">
+      Budget {{ money(draft.budget.limit_cents) }} ·
+      {% if draft.budget.within_budget is false %}{{ money(draft.budget.over_budget_cents) }} over{% else %}within budget{% endif %}
+    </p>
+    {% endif %}
+    {% else %}
+    <p class="ticket-request">Not priced yet.</p>
+    {% endif %}
+  </article>
+</div>
+
+{% if draft.missing_fields or draft.blocking_reasons %}
+<div class="panel panel-warning">
+  <h2 class="panel-title">Still needed</h2>
+  <ul class="plain-list">
+    {% for f in draft.missing_fields %}<li>{{ field_label(f) }}</li>{% endfor %}
+    {% for code in draft.blocking_reasons %}<li>{{ block_label(code) }}</li>{% endfor %}
+  </ul>
+</div>
+{% endif %}
+
+{% if draft.ready %}
+<form class="panel panel-action" method="post" action="/chat/submit">
+  <h2 class="panel-title">Send to the owner</h2>
+  <p class="muted">The owner checks portions, allergens and availability, then approves. Nothing is charged, and you can accept or decline later in My Quotes.</p>
+  <input type="hidden" name="conversation_id" value="{{ conversation.conversation_id }}">
+  <input type="hidden" name="revision" value="{{ conversation.revision }}" class="draft-revision">
+  <label class="check"><input type="checkbox" name="confirm" value="yes" required> The date, guest count, address and allergies above are correct.</label>
+  <button class="btn btn-primary btn-block" type="submit">Send for review</button>
+</form>
+{% endif %}
+{% endif %}

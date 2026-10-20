@@ -114,6 +114,8 @@ def menu_highlights(dataset: str = 'sample', limit: int = 8) -> list:
 def example_quote(dataset: str = 'sample'):
     """Price the fixture's worked example with the real engine, or None if absent."""
     path = DATASETS[dataset] / 'inquiries.json'
+    if not path.exists():  # demo menu has no fixture; its items include the sample's, so reuse that example
+        path = DATASETS['sample'] / 'inquiries.json'
     if not path.exists():
         return None
     fixture = json.loads(path.read_text(encoding='utf-8'))
