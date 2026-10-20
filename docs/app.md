@@ -1,6 +1,6 @@
 # Web App (D)
 
-Status (Oct 20, 2026): **PR 3 of 3.** Customers can now request a quote through the AI chat: the assistant asks for missing details, prices from the menu through C's engine, and the customer sends the draft to the owner. Sign-in, My Quotes, the owner inbox and approval are from PR 2.
+Status (Oct 20, 2026): customers request quotes through the AI chat and send the draft to the owner; the owner reviews, approves and **edits the menu** (A's `menu_admin`). Sign-in, My Quotes and the inbox are from PR 2, the chat from PR 3; menu editing combines PR #17 (live-menu wiring, storage-failure handling, Supabase setup) and PR #18 (editor page).
 
 ## Pages and actions
 
@@ -18,6 +18,9 @@ Status (Oct 20, 2026): **PR 3 of 3.** Customers can now request a quote through 
 | `/quotes/{id}` | The quote's customer or owner | Itemized ticket, event details, blockers, review checklist or accept/decline, history |
 | `POST /quotes/{id}/approve` | Owner | `QuoteService.approve` with the displayed revision and ticked review codes |
 | `POST /quotes/{id}/respond` | Customer | `QuoteService.respond` with `accept` or `decline` |
+| `POST /quotes/{id}/reprice` | Owner | New draft version of the same request at today's menu prices (`QuoteService.revise`) |
+| `/owner/menu` | Owner | Menu editor: name, description and availability per dish; price and availability per size; change log |
+| `POST /owner/menu` | Owner | Saves only the fields that changed, with the displayed menu revision (`MenuService.update`) |
 | `/healthz` | Monitoring | `{"status": "ok"}` |
 
 Browser forms send only the quote ID, the revision they displayed and the chosen action. Prices, totals, status and permissions all come from `quote_view` / `QuoteService`, which recheck every action.
@@ -86,10 +89,18 @@ AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app 
 - **Signature: the order ticket.** Thermal paper with torn edges (CSS mask), barcode and an inked status stamp, used on the home page, the chat draft, quote pages and the owner inbox, where tickets awaiting review hang on a rail (a swipeable strip on phones). The chat draft "prints" again when its total changes (`chat.js`); the owner checklist counts checks done (`review.js`).
 - **Quality floor:** no horizontal scroll from 320px to desktop, visible focus on light and dark areas, text contrast at least 4.5:1, and all animation off under `prefers-reduced-motion`.
 
+## Owner menu
+
+- **One menu, used everywhere.** `QuoteApp.current_menu()` reads the owner's saved menu (`MenuService.current_menu(OWNER_USER_IDS[0])`) and caches it for 5 seconds; a save clears the cache at once. Chat pricing, submission, approval, the assistant's menu search and the home page all use it. Until the owner's menu is first saved, everything uses the dataset's `menu.json`. If menu storage is down, pages that price (home, chat, submit, approve) return 503 instead of quoting from a menu that may be out of date (from PR #17). A saved menu from a different dataset than the business rules is refused the same way.
+- **First visit seeds it.** The first time the owner opens the page, the server copies `data/<dataset>/menu.json` into the menus table (trusted file, not browser input). Only the main owner (`OWNER_USER_IDS[0]`) can edit.
+- **What can change:** dish name, description and availability; each size's price and availability (A's rules). Allergens, portions, sizes and IDs are fixed so saved quotes and allergy checks stay right; the page shows them as locked.
+- **Saving:** the form posts every field, the server sends `MenuService.update` only what changed and checks each field first so errors appear next to the field. A save is all-or-nothing and carries the menu revision, so a second tab can't overwrite newer edits. The last edits show in the change log.
+- **Waiting drafts after a price change:** C's engine refuses to approve a draft whose prices no longer match the menu. The owner's quote page detects this and shows "Reprice with today's menu", which creates a new version (`QuoteService.revise`); the old version stays in the history. Approved quotes keep their prices.
+
 ## Database
 
-Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, then `202610200001_conversations.sql`. Both are server-only (RLS on, no browser grants). Verified on PostgreSQL 16, including C's `tests/integration` live test.
+Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, `202610190002_menu_storage.sql`, then `202610200001_conversations.sql`. All are server-only (RLS on, no browser grants). The shared Supabase project already has all three applied and the owner's menu seeded (see [menu-editing.md](menu-editing.md)); don't rerun them there. Verified on PostgreSQL 16 with `tests/integration` (quotes, conversations, and A's `PostgresMenuStore`).
 
 ## Next
 
-Owner menu editing is implemented at `/owner/menu`, with current DB menu reads for chat, quotes and public prices. See [menu-editing.md](menu-editing.md) for rollout status. Customer revisions of a submitted quote through chat remain outside this change; owners can explicitly reprice a pending draft.
+Customer revisions of a submitted quote through the chat. Adding new dishes (needs allergen data, out of scope for the minimum build).

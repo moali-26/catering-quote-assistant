@@ -58,6 +58,8 @@ class PreviewLLM:
                 return LLMResponse(content=f'Here’s a draft priced from the menu: The Pasta Duo for everyone, '
                                            f'with a side where it fits your allergies. The total comes to {total}. '
                                            f'If the draft details look right, send it to the owner for review.')
+            if 'unavailable' in json.dumps(result).lower():
+                return LLMResponse(content='That dish isn’t available right now, so I can’t price it. Would you like something else from the menu?')
             return LLMResponse(content='I couldn’t price that yet. Could you confirm the date, guest count and address?')
         customer_turns = sum(1 for m in messages if m['role'] == 'user' and not m.get('server_note'))
         if customer_turns == 1 and len(last.get('content', '')) < 40:
