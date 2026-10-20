@@ -95,8 +95,8 @@ def _price_from(item: dict) -> dict:
     }
 
 
-def menu_highlights(dataset: str = 'sample', limit: int = 8) -> list:
-    menu = business(dataset)['menu']
+def menu_highlights(dataset: str = 'sample', limit: int = 8, *, current_menu=None) -> list:
+    menu = current_menu if current_menu is not None else business(dataset)['menu']
     scrub = make_scrubber(menu)
     return [
         {
@@ -106,12 +106,13 @@ def menu_highlights(dataset: str = 'sample', limit: int = 8) -> list:
             'tags': [DIETARY_LABELS[t] for t in item.get('dietary_tags', []) if t in DIETARY_LABELS],
             'price': _price_from(item),
         }
-        for item in menu.get('items', [])[:limit]
+        for item in [dict(i, variants=[v for v in i['variants'] if v.get('available', True)])
+                     for i in menu.get('items', []) if i.get('available', True)
+                     and any(v.get('available', True) for v in i['variants'])][:limit]
     ]
 
 
-@lru_cache(maxsize=2)
-def example_quote(dataset: str = 'sample'):
+def example_quote(dataset: str = 'sample', *, current_menu=None):
     """Price the fixture's worked example with the real engine, or None if absent."""
     path = DATASETS[dataset] / 'inquiries.json'
     if not path.exists():  # demo menu has no fixture; its items include the sample's, so reuse that example
@@ -127,9 +128,15 @@ def example_quote(dataset: str = 'sample'):
     request = {key: example[key] for key in ('service_mode', 'delivery_miles', 'tax_location', 'selections')}
     if headcount:
         request['headcount'] = headcount
-    data = business(dataset)
+    data = dict(business(dataset))
+    if current_menu is not None:
+        data['menu'] = current_menu
     scrub = make_scrubber(data['menu'])
-    quote = calculate_quote(data['menu'], data['rules'], request)
+    from quote_engine.pricing import QuoteError
+    try:
+        quote = calculate_quote(data['menu'], data['rules'], request)
+    except QuoteError:
+        return None  # Example selections may have been disabled by the owner.
     return {
         'request_text': scrub((inquiry or {}).get('text', '')),
         'headcount': quote['headcount'],
