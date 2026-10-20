@@ -42,17 +42,28 @@ class TurnResult:
 
 
 class Conversation:
-    def __init__(self, llm, context, messages=None):
+    def __init__(self, llm, context, messages=None, *, context_loader=None):
         self.llm = llm
         self.context = context
+        self.context_loader = context_loader
         self.messages: List[Dict[str, Any]] = list(messages or [])
         self.latest_quote: Optional[Dict[str, Any]] = None
 
     # ---------- public API ----------
 
     def send(self, text: str) -> TurnResult:
+        # Customer edits must never leave the previous request submittable.
+        self.latest_quote = None
         self.messages.append({'role': 'user', 'content': text})
         turn = TurnResult(reply='')
+        if self.context_loader is not None:
+            try:
+                # Trusted server callback bound to this chat's business, not model args.
+                self.context = self.context_loader()
+            except Exception:
+                log.exception('business context refresh failed')
+                turn.warnings.append('context_refresh_failed')
+                return self._finish(turn, 'Sorry, I could not load the current menu. Please try again.')
         corrected = False
         for _ in range(MAX_MODEL_CALLS_PER_TURN):
             system = build_system_prompt(self.context)
@@ -119,10 +130,13 @@ class Conversation:
                 return self._evaluate(arguments)
             return {'error': 'unknown_tool', 'available_tools': [t['name'] for t in TOOLS]}
         except Exception:
+            if name == EVALUATE_TOOL['name']:
+                self.latest_quote = None
             log.exception('tool %s failed', name)
             return {'status': 'cannot_evaluate', 'error_code': 'tool_failure'}
 
     def _evaluate(self, arguments):
+        self.latest_quote = None
         if not isinstance(arguments, dict):
             return {'status': 'invalid_input', 'error_code': 'arguments_must_be_object'}
         tax_location, miles = self.context.location_for(arguments)
