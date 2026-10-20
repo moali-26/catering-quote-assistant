@@ -31,6 +31,8 @@ from .auth import (ACCESS_COOKIE, REFRESH_COOKIE, AuthError, Authenticator, Auth
 from .config import load_settings
 from .dbcheck import HINTS, check_database, describe_dsn
 from .quotes import QuoteApp
+from .billing_app import build_billing
+from billing import BillingError
 from .chat import (ChatConflict, ChatLimit, ChatNotFound, ChatService, PostgresConversationStore,
                    SQLiteConversationStore, visible_messages)
 
@@ -79,6 +81,11 @@ NOTICES = {
     'chat-daily': ('warning', 'You’ve reached today’s limit for the assistant. Try again tomorrow.'),
     'chat-off': ('warning', 'The assistant isn’t available right now. Try again later.'),
     'chat-limit': ('warning', 'That message couldn’t be sent. Try again.'),
+    'billing-paid': ('success', 'Payment confirmed with Stripe. Your software plan is active.'),
+    'billing-pending': ('info', 'Stripe hasn’t confirmed the payment yet. Refresh this page in a moment.'),
+    'billing-failed': ('warning', 'We couldn’t start or confirm that checkout. Nothing was charged here; try again.'),
+    'billing-off': ('warning', 'Checkout isn’t set up on this server yet.'),
+    'billing-canceled': ('info', 'Checkout canceled. Nothing was charged.'),
 }
 
 SECURITY_HEADERS = {
@@ -89,6 +96,8 @@ SECURITY_HEADERS = {
 }
 PAGE_METHODS = ['GET', 'HEAD']
 SAFE_METHODS = {'GET', 'HEAD', 'OPTIONS'}
+# Stripe calls this server-to-server: no Origin/Referer and no session. Its signature is the check.
+STRIPE_WEBHOOK_PATH = '/stripe/webhook'
 
 
 def add_security_headers(response):
@@ -169,7 +178,8 @@ def build_menu_service(settings, clock):
     return MenuService(SQLiteMenuStore(folder / 'menus.sqlite3'), clock=clock)
 
 
-def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_service=None) -> FastAPI:
+def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_service=None,
+               billing_app=None) -> FastAPI:
     settings = load_settings()
     backend = auth_backend if auth_backend is not None else build_backend(settings)
     owner_ids = settings.owner_ids
@@ -207,6 +217,8 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
         factory = build_llm_factory(settings, quotes.context.now)
         chat = ChatService(store, quotes=quotes, llm_factory=factory, owner_id=business_owner_id) if store else None
     app.state.chat = chat
+    billing = billing_app if billing_app is not None else build_billing(settings, owner_ids)
+    app.state.billing = billing
     if chat is None or not chat.available:
         logger.warning('Customer chat is off (needs LLM_PROVIDER/key, OWNER_USER_IDS and a database)')
     templates = Jinja2Templates(directory=str(HERE / 'templates'))
@@ -284,7 +296,7 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
         request.state.user, request.state.auth_down, refreshed = None, False, None
         path = request.url.path
         checked = False
-        if request.method not in SAFE_METHODS:
+        if request.method not in SAFE_METHODS and path != STRIPE_WEBHOOK_PATH:
             source = request.headers.get('origin') or request.headers.get('referer')
             expected = f"{request.url.scheme}://{request.headers.get('host', '')}"
             if source:
@@ -294,7 +306,8 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
             elif settings.is_production:  # browsers always send one of these on form posts
                 return error_page(request, 403)
         # /logout ends the session itself; refreshing it first would re-issue cookies after the clear.
-        if authenticator and not path.startswith('/static') and not path.startswith('/healthz') and path != '/logout':
+        if (authenticator and not path.startswith('/static') and not path.startswith('/healthz')
+                and path not in ('/logout', STRIPE_WEBHOOK_PATH)):
             checked = True
             try:
                 request.state.user, refreshed = await run_in_threadpool(
@@ -399,12 +412,12 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
             return redirect(f'/quotes/{quote_id}', notice=notice)
         return redirect(f'/quotes/{quote_id}', notice=success)
 
-    def load_list(request: Request, user, workspace: str, template: str):
+    def load_list(request: Request, user, workspace: str, template: str, **extra):
         try:
             cards = quotes.service.list_quotes(actor_id=user.id, workspace=workspace)
         except QuoteStorageUnavailable:
             return error_page(request, 503)
-        return page(request, template, quotes=cards)
+        return page(request, template, quotes=cards, **extra)
 
     @app.api_route('/quotes', methods=PAGE_METHODS, response_class=HTMLResponse)
     def my_quotes(request: Request):
@@ -414,7 +427,13 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
     @app.api_route('/owner', methods=PAGE_METHODS, response_class=HTMLResponse)
     def owner_inbox(request: Request):
         user, stop = require(request, 'owner')
-        return stop or load_list(request, user, 'owner', 'owner.html')
+        if stop:
+            return stop
+        try:
+            plan = billing.status(user.id)
+        except QuoteStorageUnavailable:
+            plan = None  # the inbox still works if billing storage is down
+        return load_list(request, user, 'owner', 'owner.html', plan=plan)
 
     @app.api_route('/quotes/{quote_id}', methods=PAGE_METHODS, response_class=HTMLResponse)
     def quote_detail(request: Request, quote_id: str):
@@ -547,6 +566,72 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
         return quote_action(request, user, quote_id, lambda: quotes.service.respond(
             quote_id, actor_id=user.id, expected_revision=revision, decision=decision),
             'accepted' if decision == 'accept' else 'declined')
+
+    # ---- owner software plan (Stripe test mode) ---------------------------
+    def base_url(request: Request) -> str:
+        # Scheme is https behind Render thanks to --proxy-headers (see render.yaml).
+        return f"{request.url.scheme}://{request.headers.get('host', '')}"
+
+    @app.api_route('/owner/billing', methods=PAGE_METHODS, response_class=HTMLResponse)
+    def owner_billing(request: Request, canceled: Optional[str] = None):
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        try:
+            plan = billing.status(user.id)
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        extra = {'notice': NOTICES['billing-canceled']} if canceled else {}
+        return page(request, 'owner_billing.html', plan=plan, configured=billing.configured, **extra)
+
+    @app.post('/owner/billing/checkout')
+    def owner_billing_checkout(request: Request):
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        if not billing.configured:
+            return redirect('/owner/billing', notice='billing-off')
+        try:
+            if (billing.status(user.id) or {}).get('paid'):
+                return redirect('/owner/billing')  # already active: never charge twice
+            url = billing.start(user.id, base_url(request))
+        except BillingError as exc:
+            logger.warning('Checkout could not start: %s', exc)
+            return redirect('/owner/billing', notice='billing-failed')
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        return RedirectResponse(url, status_code=303)
+
+    @app.api_route('/owner/billing/success', methods=PAGE_METHODS)
+    def owner_billing_success(request: Request, session_id: str = ''):
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        if not billing.configured:
+            return redirect('/owner/billing', notice='billing-off')
+        try:
+            outcome = billing.confirm(user.id, session_id)  # asks Stripe; the redirect alone proves nothing
+        except BillingError as exc:
+            logger.warning('Checkout could not be confirmed: %s', exc)
+            return redirect('/owner/billing', notice='billing-failed')
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        return redirect('/owner/billing', notice='billing-paid' if outcome == 'paid' else 'billing-pending')
+
+    @app.post(STRIPE_WEBHOOK_PATH)
+    async def stripe_webhook(request: Request):
+        if not billing.webhook_ready:
+            return JSONResponse({'error': 'webhook not configured'}, status_code=503)
+        payload = await request.body()  # raw bytes: the signature covers them exactly
+        signature = request.headers.get('stripe-signature', '')
+        try:
+            await run_in_threadpool(billing.webhook, payload, signature)
+        except BillingError as exc:
+            logger.warning('Stripe webhook rejected: %s', exc)
+            return JSONResponse({'error': 'rejected'}, status_code=400)
+        except QuoteStorageUnavailable:
+            return JSONResponse({'error': 'storage unavailable'}, status_code=503)  # Stripe retries
+        return JSONResponse({'received': True})
 
     # ---- customer chat ---------------------------------------------------
     def chat_fragments(record, *, error=None):

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Software plan · {{ business.name }}{% endblock %}
+{% block body_class %}page-owner{% endblock %}
+{% block content %}
+<section class="workspace">
+  <div class="wrap">
+    <header class="workspace-head">
+      <div>
+        <p class="eyebrow">{{ business.name | trim('.') }} · Owner</p>
+        <h1 class="section-title">Software plan</h1>
+        <p class="signed-in">Signed in as {{ user.email }}</p>
+      </div>
+      <a class="btn btn-quiet" href="/owner">Back to quote inbox</a>
+    </header>
+
+    <p class="muted workspace-lede">This is your purchase of the Catering Quote Assistant itself. It is separate from food quotes: customers never pay through this app.</p>
+
+    {% if plan and plan.paid %}
+    <div class="notice">
+      <strong>Plan active</strong>
+      Paid {{ money(plan.amount_total_cents) if plan.amount_total_cents is not none else '' }}{% if plan.paid_at %} on {{ plan.paid_at[:10] }}{% endif %}. Payment confirmed with Stripe.
+    </div>
+    {% elif not configured %}
+    <div class="notice">
+      <strong>Checkout isn’t set up yet</strong>
+      Stripe test keys haven’t been configured on the server, so the plan can’t be purchased right now.
+    </div>
+    {% else %}
+    <div class="notice">
+      <strong>No plan purchased yet</strong>
+      Checkout runs in Stripe <b>test mode</b>: no real money moves. Use card 4242 4242 4242 4242, any future expiry date and any CVC.
+    </div>
+    <form method="post" action="/owner/billing/checkout" style="margin-top: 1rem">
+      <button class="btn btn-primary" type="submit">Buy the software plan <span class="btn-arrow" aria-hidden="true">→</span></button>
+    </form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

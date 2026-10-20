@@ -36,6 +36,13 @@ services:
         sync: false
       - key: OPENAI_REASONING_EFFORT
         sync: false
+      # Owner software plan checkout (Stripe TEST mode only: sk_test_ keys; live keys are refused).
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_PRICE_ID
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
       # Supabase Auth user ID(s) of the business owner, comma-separated. Set after the
       # owner account signs up; until then everyone who signs in is a customer.
       - key: OWNER_USER_IDS
