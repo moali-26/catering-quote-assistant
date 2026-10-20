@@ -7,7 +7,7 @@
   if (!fine.matches || calm.matches) return;
 
   const root = document.documentElement;
-  let mx = 0, my = 0, rx = 0, ry = 0, seen = false;
+  let mx = 0, my = 0, seen = false;
   // A footer switch lets anyone keep their own system cursor; the choice stays in this browser.
   let enabled = true;
   try { enabled = localStorage.getItem('cqa-fx') !== 'off'; } catch (_) { /* storage blocked: keep effects on */ }
@@ -64,8 +64,11 @@
   document.addEventListener('pointermove', (e) => {
     if (!enabled || (e.pointerType && e.pointerType !== 'mouse')) return;
     mx = e.clientX; my = e.clientY;
-    if (!seen) { seen = true; rx = mx; ry = my; show(); }
-    dot.style.transform = `translate3d(${mx}px, ${my}px, 0)`;
+    if (!seen) { seen = true; show(); }
+    // dot and ring move together, straight to the pointer: no trailing, no easing
+    const at = `translate3d(${mx}px, ${my}px, 0)`;
+    dot.style.transform = at;
+    ring.style.transform = at;
     classify(e.target);
     wake();
   }, { passive: true });
@@ -122,8 +125,7 @@
   document.addEventListener('scroll', restale, { passive: true, capture: true });
 
   function frame() {
-    rx += (mx - rx) * 0.22; ry += (my - ry) * 0.22;
-    ring.style.transform = `translate3d(${rx.toFixed(1)}px, ${ry.toFixed(1)}px, 0)`;
+    running = false;
     if (dirty) {
       dirty = false;
       if (listStale) { refresh(); rectsStale = true; }
@@ -169,8 +171,6 @@
         hero.style.setProperty('--my', `${(my - hrect.top).toFixed(0)}px`);
       }
     }
-    // stop when the ring has caught up and nothing changed; the next move starts it again
-    if (dirty || Math.abs(mx - rx) > 0.3 || Math.abs(my - ry) > 0.3) requestAnimationFrame(frame);
-    else running = false;
+    // paper effects run once per frame at most; the next pointer move schedules the next one
   }
 })();

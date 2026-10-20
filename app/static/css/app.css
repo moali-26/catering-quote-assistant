@@ -775,8 +775,8 @@ html.fx-on :is(input:not([type="checkbox"]):not([type="radio"]), textarea, [cont
 .fx-sheen { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; mix-blend-mode: soft-light; transition: opacity .45s ease;
   background: radial-gradient(circle at var(--sx, 50%) var(--sy, 0%), rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 42%); will-change: opacity; }
 .is-lit .fx-sheen { opacity: 1; }
-[data-tilt] .ticket { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s var(--ease-out); }
-[data-tilt].ticket-wrap { filter: drop-shadow(0 1px 1px rgba(23, 36, 30, .08)) drop-shadow(var(--shx, 0px) var(--shy, 16px) 24px rgba(23, 36, 30, .17)); transition: filter .5s var(--ease-out); }
+[data-tilt] .ticket { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .2s ease-out; }
+[data-tilt].ticket-wrap { filter: drop-shadow(0 1px 1px rgba(23, 36, 30, .08)) drop-shadow(var(--shx, 0px) var(--shy, 16px) 24px rgba(23, 36, 30, .17)); transition: filter .2s ease-out; }
 [data-magnetic] { translate: var(--mgx, 0px) var(--mgy, 0px); transition: translate .3s var(--ease-out), background-color .18s ease, box-shadow .18s ease; }
 .hero::after { /* warm light that follows the pointer across the pass */
   content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .6s ease;
