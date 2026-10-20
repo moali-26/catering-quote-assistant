@@ -62,8 +62,9 @@ def humanize(code: str) -> str:
 class QuoteApp:
     """Owns the QuoteService and the business context for the single demo business.
 
-    The menu is the owner's current menu (A's MenuService) when one is saved; until then,
-    or if menu storage is down, it is the dataset's menu file. Chat pricing, submission,
+    The menu is the owner's current menu (A's MenuService) when one is saved, and the
+    dataset's menu file until then. If menu storage is down, menu reads raise
+    QuoteStorageUnavailable rather than price from a menu that may be out of date. Chat pricing, submission,
     approval and the home page all read it through current_context().
     """
 
@@ -93,12 +94,19 @@ class QuoteApp:
             return self.base_context.menu, 'file'
         from menu_admin import MenuNotFound
         try:
-            return self.menus.current_menu(self.owner_id), 'saved'
-        except MenuNotFound:
+            menu = self.menus.current_menu(self.owner_id)
+        except MenuNotFound:  # before the owner's menu is first saved, the file is the menu
             return self.base_context.menu, 'file'
-        except QuoteError:  # MenuStorageUnavailable (e.g. migration not applied): keep quoting from the file
-            logger.warning('Menu storage unavailable; pricing from the menu file')
-            return self.base_context.menu, 'unavailable'
+        except QuoteError as exc:
+            # MenuStorageUnavailable: never fall back to the file here, since that could
+            # quote prices or dishes the owner has already changed. Callers show a 503.
+            with self._menu_lock:
+                self.menu_source = 'unavailable'
+            logger.warning('Menu storage unavailable: %s', exc)
+            raise QuoteStorageUnavailable('menu storage unavailable') from exc
+        if menu.get('meta', {}).get('dataset_id') != self.base_context.menu.get('meta', {}).get('dataset_id'):
+            raise QuoteStorageUnavailable('saved menu does not match the business rules dataset')
+        return menu, 'saved'
 
     def _menu_state(self):
         with self._menu_lock:

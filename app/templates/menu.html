@@ -26,7 +26,7 @@
     <div class="empty">
       {% if setup == 'storage' %}
       <h2>The menu can’t be loaded right now</h2>
-      <p class="muted">The menu storage isn’t reachable. If this is a new setup, the menu table may not exist yet: apply <code>202610190002_menu_storage.sql</code> in Supabase (see docs/app.md). Otherwise try again in a minute. Quotes keep using the standard menu in the meantime.</p>
+      <p class="muted">The menu storage isn’t reachable. Try again in a minute. Until it’s back, new quotes are paused rather than priced from a menu that may be out of date. On a brand-new database, the menu table may not exist yet (see docs/menu-editing.md).</p>
       {% elif setup == 'not-main-owner' %}
       <h2>Only the main owner account can edit the menu</h2>
       <p class="muted">Sign in with the business’s main owner account to make changes.</p>

@@ -56,7 +56,7 @@ NOTICES = {
     'menu-unchanged': ('info', 'Nothing changed, so there was nothing to save.'),
     'menu-invalid': ('warning', 'Some changes need fixing (marked below). Nothing was saved yet.'),
     'menu-conflict': ('warning', 'The menu was changed in another tab or by someone else. This is the latest version; your edits were not saved.'),
-    'menu-changed': ('warning', 'Menu prices changed since this request was priced. Reprice it with today’s menu, then approve.'),
+    'menu-changed': ('warning', 'Prices changed since this request was priced (menu, delivery or tax). Reprice it with today’s menu, then approve.'),
     'menu-unavailable': ('warning', 'A dish in this request is off the menu, so it can’t be approved as it is. See the options below.'),
     'repriced': ('success', 'Repriced with today’s menu as a new version. Review it and approve.'),
     'approved': ('success', 'Quote approved. The customer can now accept or decline it.'),
@@ -315,8 +315,12 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
     # ---- public pages ----------------------------------------------------
     @app.api_route('/', methods=PAGE_METHODS, response_class=HTMLResponse)
     def home(request: Request):
-        return page(request, 'index.html', menu=catalog.menu_highlights(settings.dataset, menu=quotes.current_menu()),
-                    example=catalog.example_quote(settings.dataset))
+        try:
+            current = quotes.current_menu()
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)  # never show prices from a menu that may be out of date
+        return page(request, 'index.html', menu=catalog.menu_highlights(settings.dataset, menu=current),
+                    example=catalog.example_quote(settings.dataset, current_menu=current))
 
     @app.api_route('/healthz', methods=PAGE_METHODS)
     def healthz():
@@ -470,11 +474,11 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
                 quotes.forget_menu()
                 view = menus.owner_view(business_owner_id, actor_id=user.id)
             log = menus.change_log(business_owner_id, actor_id=user.id)[:40]
+            names = dict(quotes.items)
         except (MenuStorageUnavailable, QuoteStorageUnavailable):
             return page(request, 'menu.html', status_code=503, **dict(ctx, setup='storage'))
         groups = menu_editor.editor_view(view, submitted=submitted, errors=errors)
         tz = quotes.base_context.now().tzinfo
-        names = dict(quotes.items)
         items = [i for g in groups for i in g['items']]
         return page(request, 'menu.html', status_code=status_code, **dict(
             ctx, menu_groups=groups, revision=view['revision'],

@@ -117,9 +117,9 @@ def menu_highlights(dataset: str = 'sample', limit: int = 8, menu: dict = None) 
     return shown
 
 
-@lru_cache(maxsize=2)
-def example_quote(dataset: str = 'sample'):
-    """Price the fixture's worked example with the real engine, or None if absent."""
+def example_quote(dataset: str = 'sample', *, current_menu=None):
+    """Price the fixture's worked example with the real engine (on the owner's current menu
+    when given), or None if absent or if the owner took one of its dishes off the menu."""
     path = DATASETS[dataset] / 'inquiries.json'
     if not path.exists():  # demo menu has no fixture; its items include the sample's, so reuse that example
         path = DATASETS['sample'] / 'inquiries.json'
@@ -134,9 +134,15 @@ def example_quote(dataset: str = 'sample'):
     request = {key: example[key] for key in ('service_mode', 'delivery_miles', 'tax_location', 'selections')}
     if headcount:
         request['headcount'] = headcount
-    data = business(dataset)
-    scrub = make_scrubber(data['menu'])
-    quote = calculate_quote(data['menu'], data['rules'], request)
+    data = dict(business(dataset))
+    scrub = make_scrubber(data['menu'])  # branding lives in the dataset file
+    if current_menu is not None:
+        data['menu'] = current_menu
+    from quote_engine.pricing import QuoteError
+    try:
+        quote = calculate_quote(data['menu'], data['rules'], request)
+    except QuoteError:
+        return None  # an example dish may be off the menu
     return {
         'request_text': scrub((inquiry or {}).get('text', '')),
         'headcount': quote['headcount'],

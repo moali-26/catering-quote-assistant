@@ -1,6 +1,6 @@
 # Web App (D)
 
-Status (Oct 20, 2026): customers request quotes through the AI chat and send the draft to the owner; the owner reviews, approves and **edits the menu** (A's `menu_admin`). Sign-in, My Quotes and the inbox are from PR 2, the chat from PR 3, the menu page from PR 5.
+Status (Oct 20, 2026): customers request quotes through the AI chat and send the draft to the owner; the owner reviews, approves and **edits the menu** (A's `menu_admin`). Sign-in, My Quotes and the inbox are from PR 2, the chat from PR 3; menu editing combines PR #17 (live-menu wiring, storage-failure handling, Supabase setup) and PR #18 (editor page).
 
 ## Pages and actions
 
@@ -91,7 +91,7 @@ AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app 
 
 ## Owner menu
 
-- **One menu, used everywhere.** `QuoteApp.current_menu()` reads the owner's saved menu (`MenuService.current_menu(OWNER_USER_IDS[0])`) and caches it for 5 seconds; a save clears the cache at once. Chat pricing, submission, approval, the assistant's menu search and the home page all use it. Until the owner first opens `/owner/menu`, or if menu storage is down, everything quietly uses the dataset's `menu.json`.
+- **One menu, used everywhere.** `QuoteApp.current_menu()` reads the owner's saved menu (`MenuService.current_menu(OWNER_USER_IDS[0])`) and caches it for 5 seconds; a save clears the cache at once. Chat pricing, submission, approval, the assistant's menu search and the home page all use it. Until the owner's menu is first saved, everything uses the dataset's `menu.json`. If menu storage is down, pages that price (home, chat, submit, approve) return 503 instead of quoting from a menu that may be out of date (from PR #17). A saved menu from a different dataset than the business rules is refused the same way.
 - **First visit seeds it.** The first time the owner opens the page, the server copies `data/<dataset>/menu.json` into the menus table (trusted file, not browser input). Only the main owner (`OWNER_USER_IDS[0]`) can edit.
 - **What can change:** dish name, description and availability; each size's price and availability (A's rules). Allergens, portions, sizes and IDs are fixed so saved quotes and allergy checks stay right; the page shows them as locked.
 - **Saving:** the form posts every field, the server sends `MenuService.update` only what changed and checks each field first so errors appear next to the field. A save is all-or-nothing and carries the menu revision, so a second tab can't overwrite newer edits. The last edits show in the change log.
@@ -99,8 +99,8 @@ AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app 
 
 ## Database
 
-Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, `202610190002_menu_storage.sql`, then `202610200001_conversations.sql`. All are server-only (RLS on, no browser grants). If the menu table is missing, the menu page says so and quoting keeps using `menu.json`. Verified on PostgreSQL 16 with `tests/integration` (quotes, conversations, and A's `PostgresMenuStore`).
+Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, `202610190002_menu_storage.sql`, then `202610200001_conversations.sql`. All are server-only (RLS on, no browser grants). The shared Supabase project already has all three applied and the owner's menu seeded (see [menu-editing.md](menu-editing.md)); don't rerun them there. Verified on PostgreSQL 16 with `tests/integration` (quotes, conversations, and A's `PostgresMenuStore`).
 
 ## Next
 
-Customer revisions of a submitted quote through the chat.
+Customer revisions of a submitted quote through the chat. Adding new dishes (needs allergen data, out of scope for the minimum build).

@@ -234,13 +234,16 @@ class MenuPageTest(unittest.TestCase):
         self.assertIn('aria-label="Offer The Pasta Duo"', self.client().get('/owner/menu').text)
 
     # ---- storage problems
-    def test_menu_storage_down_keeps_quoting_from_the_file(self):
+    def test_menu_storage_down_pauses_pricing_instead_of_using_old_prices(self):
         from menu_admin.postgres_storage import MenuStorageUnavailable
+        from quote_engine.postgres_storage import QuoteStorageUnavailable
         broken = mock.Mock()
         broken.current_menu.side_effect = MenuStorageUnavailable('down')
         broken.owner_view.side_effect = MenuStorageUnavailable('down')
         self.quotes.attach_menus(broken, OWNER_ID)
-        self.assertEqual(self.client(None).get('/').status_code, 200)
+        self.assertEqual(self.client(None).get('/').status_code, 503)
+        with self.assertRaises(QuoteStorageUnavailable):
+            self.quotes.service.submit(REQUEST, actor_id='cust-1', owner_id=OWNER_ID)
         self.assertEqual(self.quotes.menu_source, 'unavailable')
         page = self.client().get('/owner/menu')
         self.assertEqual(page.status_code, 503)
