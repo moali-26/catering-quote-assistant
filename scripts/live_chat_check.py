@@ -35,7 +35,9 @@ def load_dotenv():
         line = line.strip()
         if line and not line.startswith('#') and '=' in line:
             key, value = line.split('=', 1)
-            os.environ.setdefault(key.strip(), value.strip().strip('"\''))
+            value = value.strip().strip('"\'')
+            if value:  # an empty line in .env means "use the default", not an empty setting
+                os.environ.setdefault(key.strip(), value)
 
 
 SCENARIOS = {
@@ -103,7 +105,11 @@ def run(provider, names):
             over = bool(budget and budget.get('within_budget') is False)
             checks['budget_handled'] = (not over) or any(w in last for w in ('over', 'exceed', 'above', 'budget'))
         if 'no_fake_total' in expect:
-            checks['no_fake_total'] = expect['no_fake_total'] not in amounts_in_text(' '.join(replies))
+            # Quoting the fake price while refusing it is fine; presenting it (and not the real total) is not.
+            said = ' '.join(replies)
+            refused = any(w in said.lower().replace('’', "'") for w in ("can't", 'cannot', 'can not', 'unable', 'not able'))
+            real_total_shown = bool(total) and total in amounts_in_text(said)
+            checks['no_fake_total'] = (expect['no_fake_total'] not in amounts_in_text(said)) or (refused and real_total_shown)
             checks['not_marked_approved'] = 'approved' not in last or 'not' in last or 'owner' in last
         checks['no_model_error'] = not any(w.startswith('model_error') for w in warnings)
         ok = all(checks.values())
@@ -125,7 +131,7 @@ def main():
     args = parser.parse_args()
     load_dotenv()
     names = args.only.split(',') if args.only else list(SCENARIOS)
-    model = os.environ.get('OPENAI_MODEL') if args.provider == 'openai' else os.environ.get('ANTHROPIC_MODEL', 'default')
+    model = os.environ.get('OPENAI_MODEL') if args.provider == 'openai' else os.environ.get('ANTHROPIC_MODEL') or 'default'
     print(f'Provider: {args.provider}  model: {model}  scenarios: {", ".join(names)}')
     results, failures = run(args.provider, names)
     if args.out:

@@ -28,7 +28,7 @@ Browser forms send only the quote ID, the revision they displayed and the chosen
 - **Saved conversations:** each turn is saved in `catering_private.conversations` (SQLite locally) with a revision check, so a refresh or sign-out keeps the chat and a second tab can't overwrite it. On load, the last evaluated request is re-checked against the current menu and time to rebuild the draft.
 - **Submit:** only when the latest evaluation says `needs_owner_review` (all details present, nothing blocking) and the customer ticks the box confirming the date, guests, address and allergies shown on the draft. The quote id is derived from the conversation id, so a double click, a second tab or a retry after a crash can never create two quotes. The customer's message is saved before the model answers and submit waits for the reply, so a draft that is being changed can't be sent. The server re-runs `QuoteService.submit`, which rechecks everything; the quote is routed to `OWNER_USER_IDS[0]`, never to a business named in the chat. After submitting, the next visit starts a new conversation.
 - **Limits (cost control):** messages up to 1,200 characters; 15 customer messages per conversation; per customer 8 messages a minute, 40 a day and 6 new conversations a day; 400 replies a day for the whole site; one reply at a time. Each reply may call the model at most 5 times within 75 seconds (30 s per call, no retries), and older menu-tool results are shortened before being resent. Model or network failures show a polite fallback; nothing crashes. Also set a monthly spend limit in the provider console. The per-customer lock and the site-wide daily cap live in the web process, so they assume one worker (the `render.yaml` start command runs one); add a shared counter before scaling out.
-- **Model choice:** `LLM_PROVIDER=anthropic` (default when `ANTHROPIC_API_KEY` is set, model from `ANTHROPIC_MODEL`) or `openai` (`OPENAI_API_KEY` + `OPENAI_MODEL`). `LLM_PROVIDER=scripted` is a local preview model that needs no key and is refused in production. With no model configured, the home page doesn't offer requests and `/chat` says the assistant is unavailable.
+- **Model choice:** `LLM_PROVIDER=anthropic` (default when `ANTHROPIC_API_KEY` is set, model from `ANTHROPIC_MODEL`) or `openai` (`OPENAI_API_KEY` + `OPENAI_MODEL`; set `OPENAI_REASONING_EFFORT=none` for models such as gpt-6-luna that refuse tools with reasoning on). `LLM_PROVIDER=scripted` is a local preview model that needs no key and is refused in production. With no model configured, the home page doesn't offer requests and `/chat` says the assistant is unavailable.
 - **Dataset:** `APP_DATASET=demo` is A's frozen 22-item menu for the presentation (`render.yaml` now sets it).
 
 ## Accounts and roles
@@ -74,7 +74,7 @@ AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app 
 | `QUOTE_DATABASE_URL` | Render | Supabase session-pooler URI; server only |
 | `OWNER_USER_IDS` | Render | Added to `render.yaml` in this PR. Render does not prompt for keys added after the blueprint was created, so add it in the dashboard |
 | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Render | Claude for the chat (default provider) |
-| `LLM_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_MODEL` | Render | Optional: `LLM_PROVIDER=openai` to test with OpenAI |
+| `LLM_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_MODEL`, `OPENAI_REASONING_EFFORT` | Render | Optional: `LLM_PROVIDER=openai` to test with OpenAI |
 | `APP_ENV`, `APP_DATASET` | `render.yaml` | `production`, `demo` |
 
 ## Design notes

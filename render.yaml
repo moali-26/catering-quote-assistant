@@ -34,6 +34,8 @@ services:
         sync: false
       - key: OPENAI_MODEL
         sync: false
+      - key: OPENAI_REASONING_EFFORT
+        sync: false
       # Supabase Auth user ID(s) of the business owner, comma-separated. Set after the
       # owner account signs up; until then everyone who signs in is a customer.
       - key: OWNER_USER_IDS
