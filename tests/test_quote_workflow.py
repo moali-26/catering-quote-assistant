@@ -36,6 +36,11 @@ class WorkflowTests(unittest.TestCase):
         args.update(overrides)
         return revise_quote(record, self.menu, self.rules, self.request, **args)
 
+    def test_invalid_notes_rejected_outside_ai_tool(self):
+        self.request['customer_notes'] = {'unexpected': 'object'}
+        with self.assertRaises(QuoteError):
+            self.revise(self.quote)
+
     def test_happy_path_and_json(self):
         approved = self.approve()
         accepted = self.respond(approved)

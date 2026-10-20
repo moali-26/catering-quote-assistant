@@ -78,3 +78,24 @@ The wrapper is pure and read-only. Quote persistence and approval endpoints must
 89 local tests pass: 75 existing tests plus 14 tool-boundary tests. New cases cover budget comparison, missing fields, explicit allergy confirmation, forged context fields, malformed input, safe errors, allergy blockers and non-mutation. The sample demo runs offline. No live LLM tool-call evaluation or browser journey has been run. The separate Supabase integration test remains pending.
 
 Next for B: register the tool, wire dispatch/result messages, connect real menu lookup, and run customer conversation scenarios. Next for D/C: resolve trusted delivery/tax context and connect the separate submit/approve/respond actions.
+
+
+## Customer selections and notes
+
+`evaluate_catering_quote` accepts optional `customer_notes` (plain text, maximum
+2,000 characters). Send the complete current customer-confirmed package choices
+and special requests on each evaluation, labeled by dish; preserve prior choices
+unless changed and use `""` to clear them. Never invent choices. Allergies must
+still be supplied in `allergens`, and notes do not alter pricing or checks.
+
+The customer sees these notes in the draft before confirming submission. They
+are stored inside each quote version's request and displayed on both customer
+and owner quote pages, including after repricing and approval. Existing quotes
+without notes still work. No database migration is required for the JSON payload.
+Old chat-only choices are not automatically backfilled into submitted quotes.
+
+Deployment smoke test: ask for Pasta Duo with Marinara, Macaroni & Cheese, and
+garden salad; verify the draft notes, submit, and sign in as owner to see the
+same notes. Change a choice before submitting and verify only the current choice
+is sent. Local regression tests use a scripted model; verify actual model
+extraction after deployment.

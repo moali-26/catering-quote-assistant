@@ -35,7 +35,7 @@ def quote_view(record, *, actor_id, now):
                    and ready['status'] == 'needs_owner_review'
                    and not ready['blocking_reasons'] and not ready['missing_fields'])
     can_respond = customer and status == 'owner_approved' and valid_event and not expired
-    fields = ('headcount','event_at','service_mode','address','allergens','dietary_needs','budget_usd')
+    fields = ('headcount','event_at','service_mode','address','allergens','dietary_needs','budget_usd','customer_notes')
     result = {'quote_id':record['quote_id'], 'revision':record['revision'],
               'version':version['version'], 'status':status,
               'status_label':('Awaiting customer response' if owner and status == 'owner_approved' else LABELS[status]),

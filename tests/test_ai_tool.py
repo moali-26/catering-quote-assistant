@@ -16,6 +16,17 @@ class AIToolTests(unittest.TestCase):
     def call(self):
         return evaluate_catering_quote(self.args, **self.context)
 
+    def test_customer_notes_are_optional_bounded_and_do_not_change_pricing(self):
+        original = self.call()
+        self.args['customer_notes'] = 'Pasta Duo: Marinara and Mac & Cheese; garden salad.'
+        self.assertEqual(self.call(), original)
+        for value in (None, [], {}, 12, 'x' * 2001, 'bad\x00text'):
+            with self.subTest(value=repr(value)[:40]):
+                self.args['customer_notes'] = value
+                self.assertEqual(self.call()['status'], 'invalid_input')
+        self.args['customer_notes'] = ''
+        self.assertEqual(self.call(), original)
+
     def test_ready_draft_with_budget(self):
         result = self.call()
         self.assertEqual(result['status'],'needs_owner_review')
