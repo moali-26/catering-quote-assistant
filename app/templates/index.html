@@ -118,16 +118,17 @@
   <div class="wrap">
     <div class="section-head">
       <h2 class="section-title">On the menu</h2>
-      <p class="muted">A selection of what the assistant can quote. Starting prices shown.</p>
+      <p class="muted">Everything the assistant can quote. Starting prices shown.</p>
     </div>
-    <div class="menu-board">
+    {% set extra = menu | rejectattr('featured') | list | length %}
+    <div class="menu-board" id="menu-board"{% if extra %} data-collapsible{% endif %}>
       {% set cats = [] %}{% for i in menu %}{% if i.category not in cats %}{% set _ = cats.append(i.category) %}{% endif %}{% endfor %}
       {% for cat in cats %}
-      <section class="menu-group" aria-labelledby="menu-cat-{{ loop.index }}">
+      <section class="menu-group{% if not (menu | selectattr('category', 'equalto', cat) | selectattr('featured') | list) %} menu-extra{% endif %}" aria-labelledby="menu-cat-{{ loop.index }}">
         <h3 class="menu-cat" id="menu-cat-{{ loop.index }}">{{ cat }}</h3>
         <ul class="menu-list">
           {% for item in menu if item.category == cat %}
-          <li class="menu-item">
+          <li class="menu-item{% if not item.featured %} menu-extra{% endif %}">
             <p class="menu-line">
               <span class="menu-name">{{ item.name }}</span>
               <span class="menu-leader" aria-hidden="true"></span>
@@ -144,6 +145,10 @@
       </section>
       {% endfor %}
     </div>
+    {% if extra %}
+    <p class="menu-more"><button type="button" class="btn btn-small btn-quiet" aria-controls="menu-board" aria-expanded="false"
+      data-more="Show the full menu ({{ extra }} more {{ 'dish' if extra == 1 else 'dishes' }})" data-less="Show fewer dishes" hidden>Show the full menu ({{ extra }} more {{ 'dish' if extra == 1 else 'dishes' }})</button></p>
+    {% endif %}
     <p class="fine-print">Gluten-sensitive means the caterer marks the item GF; it is not a gluten-free certification. Allergy needs are always confirmed by the owner.</p>
   </div>
 </section>

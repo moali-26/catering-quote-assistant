@@ -344,6 +344,9 @@ p { margin: 0; }
 .menu-meta { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .5rem; margin-top: .3rem; font-size: .78rem; color: var(--muted); }
 .tag { padding: .05rem .5rem; border-radius: 999px; background: var(--herb-tint); color: var(--herb-deep); font-weight: 600; font-size: .74rem; }
 .section-menu .fine-print { margin-top: 1.4rem; max-width: 46rem; }
+.menu-board.is-collapsed .menu-extra { display: none; }
+.menu-more { margin-top: 1.2rem; text-align: center; }
+.menu-more button[hidden] { display: none; }
 
 .section-cta { padding-top: 0; background: var(--linen-deep); }
 .cta-band {
