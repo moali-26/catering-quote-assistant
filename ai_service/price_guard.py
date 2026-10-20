@@ -60,3 +60,21 @@ def unverified_amounts(reply, system_prompt, messages):
 
 def format_cents(cents):
     return f"${Decimal(cents) / 100:,.2f}"
+
+
+def add_display_amounts(result):
+    """Copy of a tool result with ready-made dollar strings next to every *_cents field.
+
+    Small models misread cents (writing 53960 as $53,960). Giving them "$539.60" to copy
+    removes the conversion entirely; the cents fields stay for code.
+    """
+    if isinstance(result, dict):
+        out = {}
+        for key, value in result.items():
+            out[key] = add_display_amounts(value)
+            if isinstance(key, str) and key.endswith('_cents') and type(value) is int:
+                out[key[:-len('_cents')] + '_display'] = format_cents(value)
+        return out
+    if isinstance(result, list):
+        return [add_display_amounts(v) for v in result]
+    return result

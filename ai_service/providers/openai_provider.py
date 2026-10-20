@@ -46,7 +46,7 @@ class OpenAILLM:
     def __init__(self, model=None, client=None):
         if client is None:
             import openai  # lazy: only needed if the team picks OpenAI
-            client = openai.OpenAI(api_key=os.environ.get('OPENAI_API_KEY'))
+            client = openai.OpenAI(api_key=os.environ.get('OPENAI_API_KEY'), timeout=60.0, max_retries=1)
         self.client = client
         self.model = model or os.environ.get('OPENAI_MODEL')
         if not self.model:

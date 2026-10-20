@@ -26,7 +26,7 @@ def main():
     convo = Conversation(llm=make_llm(args.provider, model=args.model),
                          context=load_context(args.dataset, args.now))
     debug = args.debug
-    print(f"Chatting with {convo.context.business_name}. Type 'quit' to exit.\n")
+    print(f"Chatting with {convo.context.business_name.rstrip('.')}. Type 'quit' to exit.\n")
     while True:
         try:
             text = input('You: ').strip()
@@ -40,6 +40,7 @@ def main():
             continue
         if not text:
             continue
+        print('  (thinking...)', flush=True)
         turn = convo.send(text)
         if debug:
             for call in turn.tool_calls:

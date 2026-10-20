@@ -12,12 +12,12 @@ from typing import Any, Dict, List, Optional
 from quote_engine.ai_tool import TOOL_DEFINITION as EVALUATE_TOOL, evaluate_catering_quote
 
 from .menu_tools import SEARCH_MENU_TOOL, search_menu
-from .price_guard import format_cents, unverified_amounts
+from .price_guard import add_display_amounts, format_cents, unverified_amounts
 from .prompts import build_system_prompt
 
 log = logging.getLogger(__name__)
 
-MAX_MODEL_CALLS_PER_TURN = 8
+MAX_MODEL_CALLS_PER_TURN = 12
 TOOLS = [SEARCH_MENU_TOOL, EVALUATE_TOOL]
 
 FALLBACK_ERROR = ("Sorry, I ran into a problem putting that together. Could you rephrase, "
@@ -26,6 +26,10 @@ CORRECTION_NOTE = ("[Automated server check - not from the customer] Your last r
                    "dollar amounts that do not appear in any tool result: {amounts}. Rewrite the "
                    "reply using only amounts returned by the tools (call evaluate_catering_quote "
                    "if you need a total). Do not do arithmetic on prices.")
+BUDGET_NOTE = ("[Automated server check - not from the customer] The draft you are about to present is "
+               "{over} over the customer's budget. Before presenting it, swap to cheaper items or smaller "
+               "quantities and call evaluate_catering_quote again. If no reasonable menu fits, present "
+               "the closest option and say plainly that it is over budget.")
 
 
 @dataclass
@@ -65,14 +69,16 @@ class Conversation:
                 turn.warnings.append('context_refresh_failed')
                 return self._finish(turn, 'Sorry, I could not load the current menu. Please try again.')
         corrected = False
+        budget_nudged = False
         for _ in range(MAX_MODEL_CALLS_PER_TURN):
             system = build_system_prompt(self.context)
             try:
                 response = self.llm.generate(system, self.messages, TOOLS)
-            except Exception:  # provider/network failure: never crash the chat
+            except Exception as exc:  # provider/network failure: never crash the chat
                 log.exception('model call failed')
-                turn.warnings.append('model_error')
-                return self._finish(turn, FALLBACK_ERROR)
+                # Class name only (e.g. AuthenticationError): never the message, which may echo secrets.
+                turn.warnings.append(f'model_error:{type(exc).__name__}')
+                return self._finish(turn, self._safe_summary())
 
             self.messages.append({'role': 'assistant', 'content': response.content or '',
                                   'tool_calls': [asdict(c) for c in response.tool_calls]})
@@ -86,6 +92,15 @@ class Conversation:
                 continue
 
             reply = (response.content or '').strip()
+            over = self._over_budget_cents()
+            if over and not budget_nudged:
+                # Deterministic nudge, once per turn: try to fit the budget before presenting.
+                budget_nudged = True
+                turn.warnings.append(f'over_budget_retry:{over}')
+                self.messages.pop()
+                self.messages.append({'role': 'user', 'server_note': True,
+                                      'content': BUDGET_NOTE.format(over=format_cents(over))})
+                continue
             bad = unverified_amounts(reply, system, self.messages[:-1])
             if not bad:
                 self.messages[-1]['content'] = reply
@@ -100,7 +115,8 @@ class Conversation:
                 amounts=', '.join(format_cents(c) for c in bad))})
 
         turn.warnings.append('too_many_model_calls')
-        return self._finish(turn, FALLBACK_ERROR)
+        # A priced quote exists: show it (code-written) rather than an error next to "ready".
+        return self._finish(turn, self._safe_summary())
 
     def submission_request(self) -> Optional[Dict[str, Any]]:
         """Request dict for quote_engine create_quote / QuoteService, built from the last
@@ -146,14 +162,25 @@ class Conversation:
             tax_location=tax_location, delivery_miles=miles)
         self.latest_quote = {'id': str(uuid.uuid4()), 'arguments': arguments, 'result': result,
                              'tax_location': tax_location, 'delivery_miles': miles}
-        return result
+        return add_display_amounts(result)  # model sees "$539.60" strings; code keeps cents
+
+    def _over_budget_cents(self):
+        budget = self.latest_quote and self.latest_quote['result'].get('budget')
+        if budget and budget.get('within_budget') is False:
+            return budget.get('over_budget_cents') or None
+        return None
 
     def _safe_summary(self):
-        """Code-written reply used when the model keeps inventing amounts."""
+        """Code-written reply when the model fails or keeps inventing amounts."""
         quote = self.latest_quote
         pricing = quote and quote['result'].get('pricing')
         if not pricing:
             return FALLBACK_ERROR
-        return ("Here is the draft total calculated by our pricing system: "
-                f"{format_cents(pricing['total_cents'])} (including delivery and tax). "
+        lines = [f"- {l['name']} ({l['label']}) x{l['quantity']}: {format_cents(l['line_total_cents'])}"
+                 for l in pricing['lines']]
+        extras = [('Food subtotal', 'food_subtotal_cents'), ('Delivery', 'delivery_fee_cents'),
+                  ('Tax', 'tax_cents')]
+        lines += [f"{label}: {format_cents(pricing[key])}" for label, key in extras if pricing.get(key)]
+        return ("Here is the draft quote calculated by our pricing system:\n" + "\n".join(lines) +
+                f"\nTotal: {format_cents(pricing['total_cents'])}\n"
                 "The owner will review it before it is final. Would you like to change anything?")
