@@ -25,7 +25,7 @@ from quote_engine.pricing import QuoteError
 from quote_engine.presentation import money
 from quote_engine.storage import QuoteConflict, QuoteNotFound
 
-from . import catalog
+from . import catalog, menu_editor
 from .auth import (ACCESS_COOKIE, REFRESH_COOKIE, AuthError, Authenticator, AuthUnavailable,
                    build_backend)
 from .config import load_settings
@@ -35,7 +35,7 @@ from .chat import (ChatConflict, ChatLimit, ChatNotFound, ChatService, PostgresC
                    SQLiteConversationStore, visible_messages)
 
 HERE = Path(__file__).resolve().parent
-STATIC_VERSION = '25'
+STATIC_VERSION = '30'
 NOTICE_COOKIE = 'cqa_notice'
 REFRESH_MAX_AGE = 60 * 60 * 24 * 30
 logger = logging.getLogger('app')
@@ -52,6 +52,13 @@ SERVER_ERROR_COPY = ('Something went wrong on our side',
 FALLBACK_BUSINESS = {'name': 'Catering Quote Assistant', 'place': '', 'captured_at': ''}
 NOTICES = {
     'signed-out': ('info', 'You’re signed out.'),
+    'menu-saved': ('success', 'Menu saved. New requests and the home page use it right away.'),
+    'menu-unchanged': ('info', 'Nothing changed, so there was nothing to save.'),
+    'menu-invalid': ('warning', 'Some changes need fixing (marked below). Nothing was saved yet.'),
+    'menu-conflict': ('warning', 'The menu was changed in another tab or by someone else. This is the latest version; your edits were not saved.'),
+    'menu-changed': ('warning', 'Menu prices changed since this request was priced. Reprice it with today’s menu, then approve.'),
+    'menu-unavailable': ('warning', 'A dish in this request is off the menu, so it can’t be approved as it is. See the options below.'),
+    'repriced': ('success', 'Repriced with today’s menu as a new version. Review it and approve.'),
     'approved': ('success', 'Quote approved. The customer can now accept or decline it.'),
     'accepted': ('success', 'You accepted this quote. The owner will see your response.'),
     'declined': ('info', 'You declined this quote. The owner will see your response.'),
@@ -149,7 +156,20 @@ def build_chat_store(settings):
     return SQLiteConversationStore(folder / 'chat.sqlite3')
 
 
-def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastAPI:
+def build_menu_service(settings, clock):
+    """A's MenuService on the same storage as quotes (Postgres in production, SQLite locally)."""
+    from menu_admin import MenuService, SQLiteMenuStore
+    if settings.database_url:
+        from menu_admin.postgres_storage import PostgresMenuStore
+        return MenuService(PostgresMenuStore(settings.database_url), clock=clock)
+    if settings.is_production:
+        return None
+    folder = HERE.parent / 'var'
+    folder.mkdir(exist_ok=True)
+    return MenuService(SQLiteMenuStore(folder / 'menus.sqlite3'), clock=clock)
+
+
+def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_service=None) -> FastAPI:
     settings = load_settings()
     backend = auth_backend if auth_backend is not None else build_backend(settings)
     owner_ids = settings.owner_ids
@@ -159,6 +179,10 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastA
     business_owner_id = owner_ids[0] if owner_ids else None
     authenticator = Authenticator(backend, owner_ids) if backend else None
     quotes = quote_app or QuoteApp(settings)
+    if menu_service is not None:
+        quotes.attach_menus(menu_service, business_owner_id)
+    elif quotes.menus is None and quote_app is None:
+        quotes.attach_menus(build_menu_service(settings, quotes.base_context.now), business_owner_id)
     if settings.is_production and not settings.database_url:
         logger.warning('QUOTE_DATABASE_URL is not set: quote pages will show a temporarily unavailable message')
     if settings.database_url:
@@ -291,7 +315,7 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastA
     # ---- public pages ----------------------------------------------------
     @app.api_route('/', methods=PAGE_METHODS, response_class=HTMLResponse)
     def home(request: Request):
-        return page(request, 'index.html', menu=catalog.menu_highlights(settings.dataset),
+        return page(request, 'index.html', menu=catalog.menu_highlights(settings.dataset, menu=quotes.current_menu()),
                     example=catalog.example_quote(settings.dataset))
 
     @app.api_route('/healthz', methods=PAGE_METHODS)
@@ -365,6 +389,8 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastA
             logger.info('Quote action refused for %s: %s', quote_id, exc)
             message = str(exc).lower()
             notice = ('acknowledge' if 'acknowledg' in message else
+                      'menu-changed' if 'revise' in message or 'revised draft' in message else
+                      'menu-unavailable' if 'unavailable' in message else
                       'conflict' if 'stale' in message or 'revision' in message else 'failed')
             return redirect(f'/quotes/{quote_id}', notice=notice)
         return redirect(f'/quotes/{quote_id}', notice=success)
@@ -398,7 +424,13 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastA
             return error_page(request, 503)
         except QuoteError:  # not found, not yours, or malformed ID: same answer
             return error_page(request, 404)
-        return page(request, 'quote.html', quote=view)
+        menu_check = {'state': 'ok'}
+        if user.is_owner and view['status'] == 'draft':
+            try:
+                menu_check = quotes.menu_check(quote_id, actor_id=user.id)
+            except QuoteError:
+                logger.warning('Could not compare quote %s with the current menu', quote_id)
+        return page(request, 'quote.html', quote=view, menu_check=menu_check)
 
     @app.post('/quotes/{quote_id}/approve')
     def approve(request: Request, quote_id: str, revision: int = Form(...), ack: List[str] = Form([])):
@@ -407,6 +439,98 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None) -> FastA
         return stop or quote_action(request, user, quote_id, lambda: quotes.service.approve(
             quote_id, actor_id=user.id, expected_revision=revision,
             acknowledged_reviews=[code for code in ack if isinstance(code, str)]), 'approved')
+
+    @app.post('/quotes/{quote_id}/reprice')
+    def reprice(request: Request, quote_id: str, revision: int = Form(...)):
+        quote_id = quote_id.lower()
+        user, stop = require(request, 'owner')
+        return stop or quote_action(request, user, quote_id, lambda: quotes.reprice(
+            quote_id, actor_id=user.id, expected_revision=revision), 'repriced')
+
+    # ---- owner menu ------------------------------------------------------
+    def render_menu(request: Request, user, *, submitted=None, errors=None, status_code=200, notice_code=None):
+        from menu_admin import MenuConflict, MenuNotFound
+        from menu_admin.postgres_storage import MenuStorageUnavailable
+        ctx = {'menu_groups': None, 'setup': None, 'errors': errors or {}}
+        if notice_code:
+            ctx['notice'] = NOTICES.get(notice_code)
+        menus = quotes.menus
+        if menus is None:
+            return page(request, 'menu.html', status_code=503, **dict(ctx, setup='off'))
+        if user.id != business_owner_id:
+            return page(request, 'menu.html', status_code=403, **dict(ctx, setup='not-main-owner'))
+        try:
+            try:
+                view = menus.owner_view(business_owner_id, actor_id=user.id)
+            except MenuNotFound:  # first visit: start from the dataset's menu (server-side, trusted file)
+                try:
+                    menus.seed(business_owner_id, quotes.base_context.menu)
+                except MenuConflict:  # another tab seeded it a moment ago; use that one
+                    pass
+                quotes.forget_menu()
+                view = menus.owner_view(business_owner_id, actor_id=user.id)
+            log = menus.change_log(business_owner_id, actor_id=user.id)[:40]
+        except (MenuStorageUnavailable, QuoteStorageUnavailable):
+            return page(request, 'menu.html', status_code=503, **dict(ctx, setup='storage'))
+        groups = menu_editor.editor_view(view, submitted=submitted, errors=errors)
+        tz = quotes.base_context.now().tzinfo
+        names = dict(quotes.items)
+        items = [i for g in groups for i in g['items']]
+        return page(request, 'menu.html', status_code=status_code, **dict(
+            ctx, menu_groups=groups, revision=view['revision'],
+            updated=menu_editor.describe_change({'item_id': '', 'field': 'description', 'at': view.get('updated_at')}, {}, tz)['when'],
+            stats={'items': len(items), 'off': sum(1 for i in view['items'] if not i['available']),
+                   'sizes_off': sum(1 for i in view['items'] for v in i['variants'] if not v['available'])},
+            history=[menu_editor.describe_change(e, names, tz) for e in log]))
+
+    @app.api_route('/owner/menu', methods=PAGE_METHODS, response_class=HTMLResponse)
+    def owner_menu(request: Request):
+        user, stop = require(request, 'owner')
+        return stop or render_menu(request, user)
+
+    @app.post('/owner/menu', response_class=HTMLResponse)
+    async def owner_menu_save(request: Request):
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        form = await request.form()
+        fields = {k: v for k, v in form.items() if isinstance(v, str)}
+        return await run_in_threadpool(save_menu, request, user, fields)
+
+    def save_menu(request: Request, user, form):
+        from menu_admin import MenuConflict, MenuEditError, MenuNotFound
+        from menu_admin.postgres_storage import MenuStorageUnavailable
+        menus = quotes.menus
+        if menus is None or user.id != business_owner_id:
+            return render_menu(request, user)
+        submitted = None
+        try:
+            revision = int(form.get('revision', ''))
+        except ValueError:
+            return error_page(request, 400)
+        try:
+            view = menus.owner_view(business_owner_id, actor_id=user.id)
+            changes, submitted = menu_editor.read_form(view, form)
+            if not changes:
+                return redirect('/owner/menu', notice='menu-unchanged')
+            if revision != view['revision']:
+                return render_menu(request, user, status_code=409, notice_code='menu-conflict')
+            errors = menu_editor.field_errors(menus.current_menu(business_owner_id), changes)
+            if errors:
+                return render_menu(request, user, submitted=submitted, errors=errors, status_code=400,
+                                   notice_code='menu-invalid')
+            menus.update(business_owner_id, changes, actor_id=user.id, expected_revision=revision)
+        except MenuConflict:
+            return render_menu(request, user, status_code=409, notice_code='menu-conflict')
+        except MenuEditError as exc:  # a rule only the whole menu can break
+            logger.info('Menu save refused: %s', exc)
+            return render_menu(request, user, submitted=submitted, status_code=400, notice_code='menu-invalid')
+        except MenuNotFound:
+            return render_menu(request, user)
+        except (MenuStorageUnavailable, QuoteStorageUnavailable):
+            return error_page(request, 503)
+        quotes.forget_menu()
+        return redirect('/owner/menu', notice='menu-saved')
 
     @app.post('/quotes/{quote_id}/respond')
     def respond(request: Request, quote_id: str, revision: int = Form(...), decision: str = Form(...)):

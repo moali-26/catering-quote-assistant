@@ -95,19 +95,26 @@ def _price_from(item: dict) -> dict:
     }
 
 
-def menu_highlights(dataset: str = 'sample', limit: int = 8) -> list:
-    menu = business(dataset)['menu']
-    scrub = make_scrubber(menu)
-    return [
-        {
+def menu_highlights(dataset: str = 'sample', limit: int = 8, menu: dict = None) -> list:
+    """Items for the home page: the owner's current menu when given, available items only."""
+    source = business(dataset)['menu']
+    menu = menu or source
+    scrub = make_scrubber(source)  # branding lives in the dataset file
+    shown = []
+    for item in menu.get('items', []):
+        variants = [v for v in item.get('variants', []) if v.get('available', True) is True]
+        if item.get('available', True) is not True or not variants:
+            continue
+        shown.append({
             'name': scrub(item['name']),
             'category': item.get('category', ''),
             'description': scrub(item.get('description', '')),
             'tags': [DIETARY_LABELS[t] for t in item.get('dietary_tags', []) if t in DIETARY_LABELS],
-            'price': _price_from(item),
-        }
-        for item in menu.get('items', [])[:limit]
-    ]
+            'price': _price_from(dict(item, variants=variants)),
+        })
+        if len(shown) == limit:
+            break
+    return shown
 
 
 @lru_cache(maxsize=2)

@@ -57,9 +57,11 @@
             <caption class="sr-only">Itemized quote</caption>
             <thead><tr><th scope="col">Item</th><th scope="col" class="num">Qty</th><th scope="col" class="num">Amount</th></tr></thead>
             <tbody>
+              {% set off_lines = menu_check.variants if user.is_owner and menu_check and menu_check.state == 'unavailable' else [] %}
               {% for line in q.pricing.lines %}
-              <tr>
-                <td>{{ scrub(line.name) }}<span class="ticket-sub">{{ line.label }} · {{ line.unit_price_display }} each</span></td>
+              {% set is_off = line.variant_id in off_lines %}
+              <tr{% if is_off %} class="is-off"{% endif %}>
+                <td>{{ scrub(line.name) }}{% if is_off %} <span class="ticket-flag">Off menu</span>{% endif %}<span class="ticket-sub">{{ line.label }} · {{ line.unit_price_display }} each</span></td>
                 <td class="num qty">{{ line.quantity }}</td>
                 <td class="num">{{ line.line_total_display }}</td>
               </tr>
@@ -108,7 +110,23 @@
         </section>
         {% endif %}
 
-        {% if user.is_owner and q.actions.approve %}
+        {% if user.is_owner and menu_check.state == 'unavailable' %}
+        <section class="panel panel-warning panel-status" aria-labelledby="offmenu-title">
+          <span class="panel-icon">{{ icon_warn }}</span>
+          <div>
+            <h2 class="panel-title" id="offmenu-title">{{ menu_check['items'] | join(', ') }} {{ 'is' if menu_check['items'] | length == 1 else 'are' }} off the menu</h2>
+            <p class="muted">This request can’t be priced or approved as it is. Put {{ 'it' if menu_check['items'] | length == 1 else 'them' }} back on the menu to approve it, or contact the customer about changing the order; they can send a new request from the chat.</p>
+            <p><a class="btn btn-small btn-quiet" href="/owner/menu">Open the menu</a></p>
+          </div>
+        </section>
+        {% elif user.is_owner and menu_check.state == 'prices' %}
+        <form class="panel panel-action panel-reprice" method="post" action="/quotes/{{ q.quote_id }}/reprice">
+          <h2 class="panel-title">Menu prices changed</h2>
+          <p class="muted">You changed the menu after this request was priced. Reprice it with today’s menu to make a new version, then review and approve it. The current version stays in the history.</p>
+          <input type="hidden" name="revision" value="{{ q.revision }}">
+          <button class="btn btn-primary btn-block" type="submit">Reprice with today’s menu</button>
+        </form>
+        {% elif user.is_owner and q.actions.approve %}
         <form class="panel panel-action" method="post" action="/quotes/{{ q.quote_id }}/approve">
           <h2 class="panel-title">Review and approve</h2>
           <p class="muted">Tick each item once you’ve checked it. The customer can accept only after you approve.</p>
