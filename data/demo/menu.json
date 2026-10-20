@@ -1,0 +1,1001 @@
+{
+  "meta": {
+    "schema_version": "1.0.0",
+    "dataset_id": "sample-catering-co-torrance-ca",
+    "captured_at": "2026-10-18",
+    "currency": "USD",
+    "source": {
+      "business_name": "Stonefire Grill",
+      "location": "Torrance, CA",
+      "menu_url": "https://www.stonefiregrill.com/location/torrance/ca/catering-menu/",
+      "rules_urls": [
+        "https://www.stonefiregrill.com/catering/",
+        "https://www.stonefiregrill.com/contact/faqs/?faq_cat=catering"
+      ],
+      "allergen_url": "https://www.stonefiregrill.com/allergen-info/",
+      "nutrition_url": "https://www.stonefiregrill.com/nutritional-info/",
+      "menu_pricing_note": "Menu pricing is valid for Torrance only.",
+      "snapshots": [
+        "data/raw/stonefire-torrance-catering-menu-2026-10-18.pdf",
+        "data/raw/stonefire-catering-faq-2026-10-18.pdf",
+        "data/raw/stonefire-allergen-info-2026-10-18.pdf"
+      ]
+    },
+    "branding": {
+      "display_name": "Sample Catering Co.",
+      "anonymized": true,
+      "note": "Display alias only. Prices, items, and source URLs are real and retained for provenance.",
+      "ui_usage": "Use display_name in the app, demo, and slides. Keep source.business_name out of the UI.",
+      "item_aliases": {
+        "Stonefire's BBQ Chopped": "BBQ Chopped Boxed Meal",
+        "Stonefire's Beans": "BBQ Beans",
+        "SFG Classic": "Classic Package",
+        "SFG Select": "Select Package",
+        "SFG Best": "Best Package"
+      }
+    },
+    "notes": [
+      "Prices and serving sizes are transcribed from the public Torrance catering menu captured 2026-10-18.",
+      "GF on the source menu means gluten-sensitive, not certified gluten-free. No item is represented as gluten-free.",
+      "Allergens are transcribed from the source allergen table where an item matched. Unmatched items are marked unknown, never none.",
+      "Package and boxed-meal allergens depend on the selections made and must be confirmed by the caterer."
+    ],
+    "demo_subset": {
+      "derived_from": "data/menu.json",
+      "build_script": "data/demo/build_demo.py",
+      "item_count": 22,
+      "note": "Frozen demo menu: a subset of the full primary dataset. IDs, prices, serving sizes, dietary tags and allergens are unchanged from the source. Added: available flags, display-alias item names (source_name keeps the original)."
+    }
+  },
+  "categories": [
+    {
+      "id": "appetizers",
+      "name": "Appetizers"
+    },
+    {
+      "id": "catering-packages",
+      "name": "Catering Packages"
+    },
+    {
+      "id": "a-la-carte-pans",
+      "name": "A La Carte Pans"
+    },
+    {
+      "id": "salads",
+      "name": "Salads"
+    },
+    {
+      "id": "pastas",
+      "name": "Pastas"
+    },
+    {
+      "id": "sides",
+      "name": "Sides"
+    },
+    {
+      "id": "desserts",
+      "name": "Desserts"
+    },
+    {
+      "id": "beverages",
+      "name": "Beverages"
+    }
+  ],
+  "dietary_tag_definitions": {
+    "vegan": "Source menu marks the item V.",
+    "vegetarian": "Source menu marks the item VT.",
+    "gluten_sensitive": "Source menu marks the item GF. This is not a gluten-free certification."
+  },
+  "allergen_definitions": [
+    "egg",
+    "fish",
+    "milk",
+    "peanut",
+    "soy",
+    "tree_nuts",
+    "wheat",
+    "gluten",
+    "sesame",
+    "shellfish"
+  ],
+  "items": [
+    {
+      "id": "app-hummus",
+      "name": "Hummus",
+      "category": "Appetizers",
+      "description": "Served with grilled pita, celery, carrots, cucumber, and red bell pepper.",
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergens": [
+        "sesame",
+        "milk",
+        "soy",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Traditional Hummus (Contains Sesame)",
+        "Hummus Pita Bread"
+      ],
+      "variants": [
+        {
+          "id": "app-hummus-small",
+          "label": "Small",
+          "price": 25.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": null
+          },
+          "serves_text": "Serves 10+",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "app-hummus-large",
+          "label": "Large",
+          "price": 56.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 25,
+            "max": 25
+          },
+          "serves_text": "Serves 25",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "app-chicken-tenders",
+      "name": "Chicken Tenders",
+      "category": "Appetizers",
+      "description": "With ranch and BBQ sauce.",
+      "dietary_tags": [],
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_source_rows": [],
+      "allergen_note": "Plain tenders have no exact allergen row. Do not treat as allergen-free.",
+      "variants": [
+        {
+          "id": "app-chicken-tenders-half",
+          "label": "Half Pan",
+          "price": 52.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 10,
+            "max": 10
+          },
+          "serves_text": "20 tenders (assumed 2 per guest)",
+          "serves_basis": "assumption",
+          "available": true
+        },
+        {
+          "id": "app-chicken-tenders-full",
+          "label": "Full Pan",
+          "price": 122.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 25,
+            "max": 25
+          },
+          "serves_text": "50 tenders (assumed 2 per guest)",
+          "serves_basis": "assumption",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "app-fruit-platter",
+      "name": "Fresh Fruit Platter (Seasonal)",
+      "category": "Appetizers",
+      "description": "Cantaloupe, pineapple, watermelon, green grapes.",
+      "dietary_tags": [
+        "vegan"
+      ],
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_source_rows": [],
+      "allergen_note": "No matching row on the source allergen table. Do not treat as allergen-free.",
+      "variants": [
+        {
+          "id": "app-fruit-platter-25",
+          "label": "Platter",
+          "price": 80.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 25,
+            "max": 25
+          },
+          "serves_text": "Serves 25",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pkg-pasta-duo",
+      "name": "The Pasta Duo",
+      "category": "Catering Packages",
+      "description": "Includes two pastas and a Caesar or garden salad. Served buffet style with freshly baked breadsticks.",
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "dietary_note": "Vegetarian only if vegetarian pastas and the garden salad are selected. Caesar salad contains fish.",
+      "allergens": [],
+      "allergen_status": "depends_on_selection",
+      "allergen_source_rows": [],
+      "allergen_note": "Depends on the two pastas and salad selected. Confirm with the caterer.",
+      "variants": [
+        {
+          "id": "pkg-pasta-duo-pp",
+          "label": "Per person",
+          "price": 13.49,
+          "pricing_unit": "per_person",
+          "serves": {
+            "min": 1,
+            "max": 1
+          },
+          "serves_text": "Per person",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pkg-sfg-classic",
+      "name": "Classic Package",
+      "category": "Catering Packages",
+      "description": "Boneless chicken breast, tri tip, and choice of two signature sides. Served buffet style with freshly baked breadsticks.",
+      "dietary_tags": [],
+      "allergens": [],
+      "allergen_status": "depends_on_selection",
+      "allergen_source_rows": [],
+      "allergen_note": "Depends on the two signature sides selected. Confirm with the caterer.",
+      "variants": [
+        {
+          "id": "pkg-sfg-classic-pp",
+          "label": "Per person",
+          "price": 20.99,
+          "pricing_unit": "per_person",
+          "serves": {
+            "min": 1,
+            "max": 1
+          },
+          "serves_text": "Per person",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "source_name": "SFG Classic",
+      "available": true
+    },
+    {
+      "id": "pan-tri-tip",
+      "name": "Tri Tip",
+      "category": "A La Carte Pans",
+      "description": "Tri tip pan. Flavor not specified on the catering menu.",
+      "dietary_tags": [],
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_source_rows": [],
+      "allergen_note": "Preparation flavor is not specified, so the allergen row cannot be matched.",
+      "variants": [
+        {
+          "id": "pan-tri-tip-half",
+          "label": "Half",
+          "price": 102.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 12
+          },
+          "serves_text": "Serves 12",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "pan-tri-tip-full",
+          "label": "Full",
+          "price": 255.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 25,
+            "max": 25
+          },
+          "serves_text": "Serves 25",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pan-pulled-pork",
+      "name": "Pulled Pork",
+      "category": "A La Carte Pans",
+      "description": "Pulled pork pan.",
+      "dietary_tags": [],
+      "allergens": [
+        "soy"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Pulled Pork"
+      ],
+      "variants": [
+        {
+          "id": "pan-pulled-pork-half",
+          "label": "Half",
+          "price": 75.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 12
+          },
+          "serves_text": "Serves 12",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "pan-pulled-pork-full",
+          "label": "Full",
+          "price": 180.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 25,
+            "max": 25
+          },
+          "serves_text": "Serves 25",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pan-chicken-breast",
+      "name": "Boneless Chicken Breast",
+      "category": "A La Carte Pans",
+      "description": "Boneless chicken breast pan. Flavor not specified on the catering menu.",
+      "dietary_tags": [],
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_source_rows": [],
+      "allergen_note": "Preparation flavor is not specified, so the allergen row cannot be matched.",
+      "variants": [
+        {
+          "id": "pan-chicken-breast-half",
+          "label": "Half",
+          "price": 45.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 12
+          },
+          "serves_text": "Serves 12",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "pan-chicken-breast-full",
+          "label": "Full",
+          "price": 106.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 25,
+            "max": 25
+          },
+          "serves_text": "Serves 25",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pan-breadsticks",
+      "name": "Freshly Baked Breadsticks",
+      "category": "A La Carte Pans",
+      "description": "Freshly baked breadsticks.",
+      "dietary_tags": [],
+      "allergens": [
+        "milk",
+        "soy",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Freshly Baked Breadsticks"
+      ],
+      "variants": [
+        {
+          "id": "pan-breadsticks-half",
+          "label": "Half",
+          "price": 15.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 12
+          },
+          "serves_text": "24 pieces (assumed 2 per guest)",
+          "serves_basis": "assumption",
+          "available": true
+        },
+        {
+          "id": "pan-breadsticks-full",
+          "label": "Full",
+          "price": 36.0,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 30,
+            "max": 30
+          },
+          "serves_text": "60 pieces (assumed 2 per guest)",
+          "serves_basis": "assumption",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pasta-marinara",
+      "name": "Marinara",
+      "category": "Pastas",
+      "description": "Marinara pasta.",
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergens": [
+        "milk",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Marinara"
+      ],
+      "variants": [
+        {
+          "id": "pasta-marinara-half",
+          "label": "Half",
+          "price": 41.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "pasta-marinara-full",
+          "label": "Full",
+          "price": 82.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pasta-mac-cheese",
+      "name": "Macaroni & Cheese",
+      "category": "Pastas",
+      "description": "Macaroni and cheese.",
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergens": [
+        "milk",
+        "soy",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Macaroni & Cheese"
+      ],
+      "variants": [
+        {
+          "id": "pasta-mac-cheese-half",
+          "label": "Half",
+          "price": 46.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "pasta-mac-cheese-full",
+          "label": "Full",
+          "price": 87.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "pasta-pesto",
+      "name": "Pesto",
+      "category": "Pastas",
+      "description": "Pesto pasta.",
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergens": [
+        "milk",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Pesto"
+      ],
+      "allergen_note": "The source allergen table lists milk, wheat, and gluten but not tree nuts. Pesto traditionally contains pine nuts; confirm for a nut allergy.",
+      "variants": [
+        {
+          "id": "pasta-pesto-half",
+          "label": "Half",
+          "price": 46.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "pasta-pesto-full",
+          "label": "Full",
+          "price": 87.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "salad-garden",
+      "name": "Garden",
+      "category": "Salads",
+      "description": "Garden salad.",
+      "dietary_tags": [
+        "vegan",
+        "gluten_sensitive"
+      ],
+      "allergens": [],
+      "allergen_status": "listed_none",
+      "allergen_source_rows": [
+        "Garden Salad"
+      ],
+      "variants": [
+        {
+          "id": "salad-garden-half",
+          "label": "Half",
+          "price": 39.49,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "salad-garden-full",
+          "label": "Full",
+          "price": 68.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "salad-caesar",
+      "name": "Caesar",
+      "category": "Salads",
+      "description": "Caesar salad.",
+      "dietary_tags": [],
+      "allergens": [
+        "egg",
+        "fish",
+        "milk",
+        "soy",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Caesar Salad"
+      ],
+      "variants": [
+        {
+          "id": "salad-caesar-half",
+          "label": "Half",
+          "price": 39.49,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 8,
+            "max": 10
+          },
+          "serves_text": "Serves 8-10",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "salad-caesar-full",
+          "label": "Full",
+          "price": 68.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 20,
+            "max": 25
+          },
+          "serves_text": "Serves 20-25",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "salad-cobb",
+      "name": "Cobb",
+      "category": "Salads",
+      "description": "Cobb salad.",
+      "dietary_tags": [
+        "gluten_sensitive"
+      ],
+      "allergens": [
+        "egg",
+        "milk",
+        "soy"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Cobb Salad with Chicken",
+        "Cobb Salad with Quinoa"
+      ],
+      "variants": [
+        {
+          "id": "salad-cobb-half",
+          "label": "Half",
+          "price": 58.49,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "salad-cobb-full",
+          "label": "Full",
+          "price": 105.99,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "side-garlic-mashed",
+      "name": "Garlic Mashed Potatoes",
+      "category": "Sides",
+      "description": "Garlic mashed potatoes.",
+      "dietary_tags": [
+        "vegetarian",
+        "gluten_sensitive"
+      ],
+      "allergens": [
+        "milk"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Garlic Mashed Potatoes"
+      ],
+      "variants": [
+        {
+          "id": "side-garlic-mashed-half",
+          "label": "Half",
+          "price": 41.49,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "side-garlic-mashed-full",
+          "label": "Full",
+          "price": 83.69,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "side-coleslaw",
+      "name": "Nutty Coleslaw",
+      "category": "Sides",
+      "description": "Nutty coleslaw.",
+      "dietary_tags": [
+        "vegan",
+        "gluten_sensitive"
+      ],
+      "allergens": [
+        "peanut"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Nutty Coleslaw"
+      ],
+      "variants": [
+        {
+          "id": "side-coleslaw-half",
+          "label": "Half",
+          "price": 41.49,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "side-coleslaw-full",
+          "label": "Full",
+          "price": 83.69,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "side-roasted-vegetables",
+      "name": "Roasted Vegetables",
+      "category": "Sides",
+      "description": "Roasted vegetables.",
+      "dietary_tags": [
+        "vegan",
+        "gluten_sensitive"
+      ],
+      "allergens": [],
+      "allergen_status": "listed_none",
+      "allergen_source_rows": [
+        "Roasted Vegetables"
+      ],
+      "variants": [
+        {
+          "id": "side-roasted-vegetables-half",
+          "label": "Half",
+          "price": 41.49,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        },
+        {
+          "id": "side-roasted-vegetables-full",
+          "label": "Full",
+          "price": 83.69,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 36,
+            "max": 40
+          },
+          "serves_text": "Serves 36-40",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "side-cornbread",
+      "name": "Cornbread Casserole",
+      "category": "Sides",
+      "description": "Cornbread casserole.",
+      "dietary_tags": [
+        "vegetarian"
+      ],
+      "allergens": [
+        "milk",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Cornbread Casseole"
+      ],
+      "variants": [
+        {
+          "id": "side-cornbread-half",
+          "label": "Half",
+          "price": 41.49,
+          "pricing_unit": "per_tray",
+          "serves": {
+            "min": 12,
+            "max": 14
+          },
+          "serves_text": "Serves 12-14",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "dessert-cookie-platter",
+      "name": "Freshly Baked Cookie Platter",
+      "category": "Desserts",
+      "description": "Four dozen freshly baked cookies. One dozen each of chocolate chip, oatmeal raisin, white chocolate macadamia nut, and lemon.",
+      "dietary_tags": [],
+      "allergens": [
+        "egg",
+        "milk",
+        "peanut",
+        "soy",
+        "tree_nuts",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Chocolate Chunk Cookie",
+        "Oatmeal Raisin Cookie",
+        "White Chocolate Macadamia Cookie",
+        "Lemon Cookie"
+      ],
+      "allergen_note": "Union of the four cookie allergen rows. Peanut is listed on the white chocolate macadamia row; tree nuts include macadamia.",
+      "variants": [
+        {
+          "id": "dessert-cookie-platter-48",
+          "label": "Platter",
+          "price": 50.0,
+          "pricing_unit": "per_platter",
+          "serves": {
+            "min": 24,
+            "max": 24
+          },
+          "serves_text": "48 cookies (assumed 2 per guest)",
+          "serves_basis": "assumption",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "dessert-brownie",
+      "name": "Individual Fudge Brownie",
+      "category": "Desserts",
+      "description": "Individual fudge brownie.",
+      "dietary_tags": [],
+      "allergens": [
+        "egg",
+        "soy",
+        "wheat",
+        "gluten"
+      ],
+      "allergen_status": "listed",
+      "allergen_source_rows": [
+        "Famous Fudge Brownies"
+      ],
+      "variants": [
+        {
+          "id": "dessert-brownie-pp",
+          "label": "Per person",
+          "price": 3.29,
+          "pricing_unit": "per_person",
+          "serves": {
+            "min": 1,
+            "max": 1
+          },
+          "serves_text": "Per person",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    },
+    {
+      "id": "bev-sodas-water",
+      "name": "Assorted Sodas & Bottled Water",
+      "category": "Beverages",
+      "description": "Assorted sodas and bottled water.",
+      "dietary_tags": [],
+      "allergens": [],
+      "allergen_status": "unknown",
+      "allergen_source_rows": [],
+      "allergen_note": "No matching row on the source allergen table. Do not treat as allergen-free.",
+      "variants": [
+        {
+          "id": "bev-sodas-water-pp",
+          "label": "Per person",
+          "price": 2.25,
+          "pricing_unit": "per_person",
+          "serves": {
+            "min": 1,
+            "max": 1
+          },
+          "serves_text": "Per person",
+          "serves_basis": "published",
+          "available": true
+        }
+      ],
+      "available": true
+    }
+  ]
+}

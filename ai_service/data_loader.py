@@ -6,7 +6,8 @@ from pathlib import Path
 from .context import ServerContext
 
 ROOT = Path(__file__).resolve().parents[1]
-DATASETS = {'sample': ROOT / 'data' / 'sample', 'full': ROOT / 'data'}
+# demo = frozen menu for the presentation/eval (data/demo/build_demo.py); sample = small dev fixture.
+DATASETS = {'demo': ROOT / 'data' / 'demo', 'sample': ROOT / 'data' / 'sample', 'full': ROOT / 'data'}
 
 
 def load_context(dataset='sample', now=None):
