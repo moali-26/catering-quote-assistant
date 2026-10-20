@@ -83,6 +83,7 @@ def _check_quote_readiness(menu, rules, request, *, now, capacity=None):
             raise QuoteError('allergens must be a list of normalized allergen names')
         if not set(allergens).issubset(set(menu.get('allergen_definitions', []))):
             review.append('unrecognized_allergen_requires_clarification')
+            blockers.append('unrecognized_allergen_requires_clarification')
         items = {item['id']:item for item in menu['items']}
         for line in quote['lines']:
             item = items[line['item_id']]
