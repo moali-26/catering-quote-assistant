@@ -86,3 +86,29 @@ Validation: price > 0, ≤ $10,000, at most 2 decimals (`"4.29"`, `4.29` or `"$4
 - Rules (minimums, fees, tax) and capacity are not owner-editable; they stay in `data/demo/`.
 - The Postgres adapter has mocked contract tests only; it has not run against a live database.
 - Adding new items or editing allergens/dietary tags is out of scope for the minimum build.
+
+## Refresh an existing chat (B/D)
+
+Bind the loader to the server-verified business ID, once per conversation. Reloading
+only when creating a new chat is insufficient: an owner may edit prices while a
+customer is still chatting. Use the same current-menu loader for chat and quotes:
+
+```python
+from ai_service import Conversation
+
+def fresh_chat_context():
+    return ServerContext(menu=menus.current_menu(trusted_owner_id),
+                         rules=rules, capacity=capacity)
+
+chat = Conversation(llm, fresh_chat_context(), messages=saved_messages,
+                    context_loader=fresh_chat_context)
+```
+
+The loader runs before each customer turn, so both search and pricing use the new
+menu. If loading fails, the turn stops without using cached data. Each new customer
+turn clears submission readiness; the model must evaluate the current request again
+before the submit action is enabled. Use `TurnResult.ready_to_submit` to update the UI.
+The callback is server code and must not accept owner IDs from model/customer fields.
+Static file demos may omit the callback. D still needs to wire this into the real chat
+endpoint. QuoteService must continue reloading current data at submit/approve time;
+show its returned total if prices changed after the last chat turn.
