@@ -34,3 +34,23 @@
     pops.filter((p) => p.open && !p.contains(event.target)).forEach((p) => { p.open = false; });
   });
 })();
+
+// Home page menu: show the featured dishes first, with a button to expand to the full menu.
+// Without JavaScript the whole menu stays visible.
+(function () {
+  const board = document.querySelector('.menu-board[data-collapsible]');
+  const button = document.querySelector('.menu-more button');
+  if (!board || !button) return;
+  const set = (open) => {
+    board.classList.toggle('is-collapsed', !open);
+    button.setAttribute('aria-expanded', String(open));
+    button.textContent = open ? button.dataset.less : button.dataset.more;
+  };
+  set(false);
+  button.hidden = false;
+  button.addEventListener('click', () => {
+    const open = button.getAttribute('aria-expanded') !== 'true';
+    set(open);
+    if (!open) board.scrollIntoView({ block: 'start', behavior: 'smooth' });
+  });
+})();

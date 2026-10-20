@@ -95,8 +95,10 @@ def _price_from(item: dict) -> dict:
     }
 
 
-def menu_highlights(dataset: str = 'sample', limit: int = 8, menu: dict = None) -> list:
-    """Items for the home page: the owner's current menu when given, available items only."""
+def menu_highlights(dataset: str = 'sample', limit: int = None, menu: dict = None, featured: int = 8) -> list:
+    """Items for the home page: the owner's current menu when given, available items only.
+    Every available item by default, so the page lists everything the assistant can quote;
+    the first `featured` are shown before "Show the full menu"."""
     source = business(dataset)['menu']
     menu = menu or source
     scrub = make_scrubber(source)  # branding lives in the dataset file
@@ -111,6 +113,7 @@ def menu_highlights(dataset: str = 'sample', limit: int = 8, menu: dict = None) 
             'description': scrub(item.get('description', '')),
             'tags': [DIETARY_LABELS[t] for t in item.get('dietary_tags', []) if t in DIETARY_LABELS],
             'price': _price_from(dict(item, variants=variants)),
+            'featured': len(shown) < featured,
         })
         if len(shown) == limit:
             break

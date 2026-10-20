@@ -54,6 +54,19 @@ class AppPagesTest(unittest.TestCase):
         self.assertIn('from $25.00', html)
         self.assertIn('Gluten-sensitive', html)
 
+    def test_home_lists_every_dish_the_assistant_can_quote(self):
+        import html as html_lib
+        from app import catalog
+        client = make_client(APP_DATASET='demo', APP_ENV='development')
+        page = html_lib.unescape(client.get('/').text)
+        items = [i for i in catalog.business('demo')['menu']['items'] if i.get('available', True) is True]
+        self.assertGreater(len(items), 8)
+        for item in items:
+            self.assertIn(item['name'], page)
+        # The first eight are featured; the rest sit behind the show-more button.
+        self.assertEqual(page.count('class="menu-item menu-extra"'), len(items) - 8)
+        self.assertIn(f'Show the full menu ({len(items) - 8} more dishes)', page)
+
     def test_home_does_not_link_to_inactive_sign_in_as_a_quote_action(self):
         html = self.client.get('/').text
         self.assertNotIn('Start a quote request</a>', html)
