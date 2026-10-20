@@ -35,7 +35,7 @@ from .chat import (ChatConflict, ChatLimit, ChatNotFound, ChatService, PostgresC
                    SQLiteConversationStore, visible_messages)
 
 HERE = Path(__file__).resolve().parent
-STATIC_VERSION = '10'
+STATIC_VERSION = '12'
 NOTICE_COOKIE = 'cqa_notice'
 REFRESH_MAX_AGE = 60 * 60 * 24 * 30
 logger = logging.getLogger('app')

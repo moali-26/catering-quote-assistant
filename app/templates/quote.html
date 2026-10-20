@@ -5,21 +5,33 @@
 {% set ready = q.readiness %}
 {% block title %}Quote · {{ event_time(ev.event_at) }} · {{ business.name }}{% endblock %}
 {% block content %}
-<section class="workspace">
-  <div class="wrap">
-    <a class="back-link" href="{{ '/owner' if user.is_owner else '/quotes' }}">← {{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
+{% set head %}
+    <a class="back-link" href="{{ '/owner' if user.is_owner else '/quotes' }}"><span aria-hidden="true">←</span> {{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
     <header class="workspace-head">
       <div>
-        <p class="eyebrow">Version {{ q.version }}{% if q.event_passed %} · Event passed{% endif %}</p>
+        <p class="eyebrow">{{ 'Order ' ~ q.quote_id[:8] | upper ~ ' · ' if user.is_owner else '' }}Version {{ q.version }}{% if q.event_passed %} · Event passed{% endif %}</p>
         <h1 class="section-title">{{ event_time(ev.event_at) }}</h1>
       </div>
       {{ status_chip(q.status, q.status_label) }}
     </header>
+{% endset %}
+{% if user.is_owner %}<div class="kitchen-detail-band"><div class="wrap">{{ head }}</div></div>{% endif %}
+<section class="workspace workspace-detail">
+  <div class="wrap">
+    {% if not user.is_owner %}{{ head }}{% endif %}
 
     <div class="detail-grid">
-      <div class="ticket-wrap ticket-wrap-flat">
+      <div class="ticket-wrap ticket-wrap-flat detail-ticket">
         <article class="ticket" aria-label="Itemized quote">
-          <header class="ticket-head"><span>Order ticket</span><span>v{{ q.version }}</span></header>
+          <header class="ticket-head">
+            <p class="ticket-brand">{{ business.name | trim('.') }}</p>
+            <p class="ticket-meta"><span>Order {{ q.quote_id[:8] | upper }}</span><span>v{{ q.version }}</span></p>
+          </header>
+          <dl class="ticket-facts">
+            <div><dt>Guests</dt><dd>{{ ev.headcount or '—' }}</dd></div>
+            <div><dt>Service</dt><dd>{{ (ev.service_mode or '—') | replace('_', ' ') | capitalize }}</dd></div>
+            <div><dt>Date</dt><dd>{{ event_time(ev.event_at).split(' · ')[0].split(', ', 1)[-1] }}</dd></div>
+          </dl>
           {% if q.pricing %}
           <table class="ticket-lines">
             <caption class="sr-only">Itemized quote</caption>
@@ -28,7 +40,7 @@
               {% for line in q.pricing.lines %}
               <tr>
                 <td>{{ scrub(line.name) }}<span class="ticket-sub">{{ line.label }} · {{ line.unit_price_display }} each</span></td>
-                <td class="num">{{ line.quantity }}</td>
+                <td class="num qty">{{ line.quantity }}</td>
                 <td class="num">{{ line.line_total_display }}</td>
               </tr>
               {% endfor %}
@@ -47,7 +59,7 @@
           <p class="ticket-request">This version can’t be priced until the missing details are filled in.</p>
           {% endif %}
           <footer class="ticket-foot">
-            <p>Prices from the menu · not a booking</p>
+            <div class="ticket-foot-text"><p>Prices from the menu · not a booking</p><span class="barcode" aria-hidden="true"></span></div>
             <p class="stamp stamp-{{ tone(q.status) }}"><span class="sr-only">Status: </span>{{ q.status_label }}</p>
           </footer>
         </article>
@@ -80,6 +92,7 @@
         <form class="panel panel-action" method="post" action="/quotes/{{ q.quote_id }}/approve">
           <h2 class="panel-title">Review and approve</h2>
           <p class="muted">Tick each item once you’ve checked it. The customer can accept only after you approve.</p>
+          <p class="check-progress" data-check-progress aria-live="polite" hidden></p>
           <input type="hidden" name="revision" value="{{ q.revision }}">
           <fieldset class="checklist">
             <legend class="sr-only">Review items</legend>
@@ -89,10 +102,11 @@
           </fieldset>
           <button class="btn btn-primary btn-block" type="submit">Approve quote</button>
         </form>
+        <script src="/static/js/review.js?v={{ static_version }}" defer></script>
         {% elif user.is_owner and q.status == 'draft' %}
-        <section class="panel"><h2 class="panel-title">Not ready to approve</h2><p class="muted">Resolve the items above first. Contact the customer to fill in what’s missing.</p></section>
+        <section class="panel panel-status"><span class="panel-icon" aria-hidden="true">⚠</span><div><h2 class="panel-title">Not ready to approve</h2><p class="muted">Resolve the items above first. Contact the customer to fill in what’s missing.</p></div></section>
         {% elif user.is_owner and q.status == 'owner_approved' %}
-        <section class="panel"><h2 class="panel-title">Waiting for the customer</h2><p class="muted">You approved this version. The customer will accept or decline it from My Quotes.</p></section>
+        <section class="panel panel-status"><span class="panel-icon is-ready" aria-hidden="true">✓</span><div><h2 class="panel-title">Waiting for the customer</h2><p class="muted">You approved this version. The customer will accept or decline it from My Quotes.</p></div></section>
         {% endif %}
 
         {% if not user.is_owner %}
@@ -112,7 +126,11 @@
             </div>
           </section>
           {% elif q.status == 'draft' %}
-          <section class="panel"><h2 class="panel-title">With the owner</h2><p class="muted">The owner is checking portions, allergens and availability. Come back to My Quotes to see when it’s approved.</p></section>
+          <section class="panel panel-status"><span class="panel-icon" aria-hidden="true">⏳</span><div><h2 class="panel-title">With the owner</h2><p class="muted">The owner is checking portions, allergens and availability. Come back to My Quotes to see when it’s approved.</p></div></section>
+          {% elif q.status == 'customer_accepted' %}
+          <section class="panel panel-status"><span class="panel-icon is-ready" aria-hidden="true">✓</span><div><h2 class="panel-title">Accepted</h2><p class="muted">The owner can see your response. Nothing has been charged.</p></div></section>
+          {% elif q.status == 'customer_declined' %}
+          <section class="panel panel-status"><span class="panel-icon" aria-hidden="true">✕</span><div><h2 class="panel-title">Declined</h2><p class="muted">This quote is closed.{% if requests_open %} <a href="/chat">Start a new request</a> whenever you’re ready.{% endif %}</p></div></section>
           {% endif %}
         {% endif %}
 

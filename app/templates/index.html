@@ -4,39 +4,40 @@
 <section class="hero">
   <div class="wrap hero-grid">
     <div class="hero-copy">
-      <p class="eyebrow">Catering quotes{% if business.place %} · {{ business.place }}{% endif %}</p>
+      <p class="eyebrow"><span class="eyebrow-dot" aria-hidden="true"></span>Catering quotes{% if business.place %} · {{ business.place }}{% endif %}</p>
       <h1 class="display">Plan the food for your event in <mark>one conversation.</mark></h1>
-      <p class="lede">Tell our assistant your date, headcount and dietary needs. It prices every tray from {{ business.name }}’s menu, and the owner checks the quote before you confirm.</p>
+      <p class="lede">Tell our assistant your date, headcount and dietary needs. It prices every tray from {{ business.name | trim('.') }}’s menu, and the owner checks the quote before you confirm.</p>
       <div class="cta-row">
         {% if user %}
-        <a class="btn btn-primary" href="{{ '/owner' if user.is_owner else ('/chat' if requests_open else '/quotes') }}">{{ 'Open the quote inbox' if user.is_owner else ('Start a quote request' if requests_open else 'Go to My Quotes') }}</a>
-        <a class="btn btn-quiet" href="#menu">Browse the menu</a>
+        <a class="btn btn-primary btn-lg" href="{{ '/owner' if user.is_owner else ('/chat' if requests_open else '/quotes') }}">{{ 'Open the quote inbox' if user.is_owner else ('Start a quote request' if requests_open else 'Go to My Quotes') }} <span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-quiet btn-lg" href="#menu">Browse the menu</a>
         {% elif requests_open %}
-        <a class="btn btn-primary" href="/login?mode=signup&next=/chat">Start a quote request</a>
-        <a class="btn btn-quiet" href="/login">Sign in</a>
+        <a class="btn btn-primary btn-lg" href="/login?mode=signup&next=/chat">Start a quote request <span class="btn-arrow" aria-hidden="true">→</span></a>
+        <a class="btn btn-quiet btn-lg" href="/login">Sign in</a>
         {% elif accounts_open %}
-        <a class="btn btn-primary" href="/login?mode=signup">Create an account</a>
-        <a class="btn btn-quiet" href="#menu">Browse the menu</a>
+        <a class="btn btn-primary btn-lg" href="/login?mode=signup">Create an account</a>
+        <a class="btn btn-quiet btn-lg" href="#menu">Browse the menu</a>
         {% else %}
-        <a class="btn btn-primary" href="#how">See how it works</a>
-        <a class="btn btn-quiet" href="#menu">Browse the menu</a>
+        <a class="btn btn-primary btn-lg" href="#how">See how it works</a>
+        <a class="btn btn-quiet btn-lg" href="#menu">Browse the menu</a>
         {% endif %}
       </div>
       {% if not requests_open %}<p class="launch-note">Online quote requests are coming soon.</p>{% endif %}
       <ul class="assurances" aria-label="How pricing works">
-        <li>Prices come from the menu, never guessed</li>
-        <li>Allergens are flagged for the owner</li>
-        <li>Nothing is charged when you accept</li>
+        <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" /></svg>Prices come from the menu, never guessed</li>
+        <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" /></svg>Allergens are flagged for the owner</li>
+        <li><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M4 10.5l4 4 8-9" /></svg>Nothing is charged when you accept</li>
       </ul>
     </div>
 
     {% if example %}
     <figure class="ticket-stage" aria-labelledby="ticket-caption">
-      <div class="ticket-wrap">
+      <div class="rail" aria-hidden="true"></div>
+      <div class="ticket-wrap ticket-hanging">
       <article class="ticket">
         <header class="ticket-head">
-          <span>Order ticket</span>
-          <span>Example</span>
+          <p class="ticket-brand">{{ business.name | trim('.') }}</p>
+          <p class="ticket-meta"><span>Order ticket</span><span>Example</span></p>
         </header>
         <blockquote class="ticket-request">“{{ example.request_text }}”</blockquote>
         <dl class="ticket-facts">
@@ -51,7 +52,7 @@
             {% for line in example.lines %}
             <tr>
               <td>{{ line.name }}<span class="ticket-sub">{{ line.label }} · {{ line.unit }} each</span></td>
-              <td class="num">{{ line.quantity }}</td>
+              <td class="num qty">{{ line.quantity }}</td>
               <td class="num">{{ line.total }}</td>
             </tr>
             {% endfor %}
@@ -64,8 +65,11 @@
           </tfoot>
         </table>
         <footer class="ticket-foot">
-          <p>Draft · not yet confirmed</p>
-          {% if example.needs_review %}<p class="stamp"><span class="sr-only">Status: </span>Awaiting<br>owner review</p>{% endif %}
+          <div class="ticket-foot-text">
+            <p>Draft · not yet confirmed</p>
+            <span class="barcode" aria-hidden="true"></span>
+          </div>
+          {% if example.needs_review %}<p class="stamp stamp-pending"><span class="sr-only">Status: </span>Awaiting<br>owner review</p>{% endif %}
         </footer>
       </article>
       </div>
@@ -75,19 +79,34 @@
   </div>
 </section>
 
-<section id="how" class="section">
+<section id="how" class="section section-how">
   <div class="wrap">
-    <h2 class="section-title">How a quote comes together</h2>
+    <div class="section-head">
+      <h2 class="section-title">How a quote comes together</h2>
+      <p class="muted">About five minutes of chat. No forms to fill in.</p>
+    </div>
     <ol class="steps">
-      <li>
+      <li class="step">
+        <div class="step-art step-art-chat" aria-hidden="true">
+          <span class="mini-bubble mini-bubble-in">Lunch for 40 on Friday?</span>
+          <span class="mini-bubble mini-bubble-out">Happy to help. Pickup or delivery?</span>
+        </div>
         <h3>Describe your event</h3>
         <p>Date, headcount, delivery or pickup, and any dietary needs. The assistant asks about anything missing before it prices.</p>
       </li>
-      <li>
+      <li class="step">
+        <div class="step-art step-art-ticket" aria-hidden="true">
+          <span class="mini-line"><span>Pasta Duo ×40</span><span>$539.60</span></span>
+          <span class="mini-line"><span>Delivery</span><span>$65.00</span></span>
+          <span class="mini-line mini-total"><span>Total</span><span>$765.72</span></span>
+        </div>
         <h3>Get an itemized draft</h3>
         <p>Every line uses the menu’s price. Delivery and tax are calculated from the caterer’s rules, so the total adds up.</p>
       </li>
-      <li>
+      <li class="step">
+        <div class="step-art step-art-stamp" aria-hidden="true">
+          <span class="mini-stamp">Approved</span>
+        </div>
         <h3>Owner reviews, you confirm</h3>
         <p>The owner checks portions and allergens, then approves. You accept or decline from My Quotes, whenever suits you.</p>
       </li>
@@ -101,27 +120,42 @@
       <h2 class="section-title">On the menu</h2>
       <p class="muted">A selection of what the assistant can quote. Starting prices shown.</p>
     </div>
-    <ul class="menu-grid">
-      {% for item in menu %}
-      <li class="menu-card">
-        <p class="menu-cat">{{ item.category }}</p>
-        <h3>{{ item.name }}</h3>
-        <p class="menu-desc">{{ item.description }}</p>
-        {% if item.tags %}<ul class="tags">{% for tag in item.tags %}<li>{{ tag }}</li>{% endfor %}</ul>{% endif %}
-        <p class="menu-price"><span class="price">{% if item.price.several %}from {% endif %}{{ item.price.amount }}</span> <span class="muted">{{ item.price.unit }}</span></p>
-        {% if item.price.serves %}<p class="menu-serves">{{ item.price.serves }}</p>{% endif %}
-      </li>
+    <div class="menu-board">
+      {% set cats = [] %}{% for i in menu %}{% if i.category not in cats %}{% set _ = cats.append(i.category) %}{% endif %}{% endfor %}
+      {% for cat in cats %}
+      <section class="menu-group" aria-labelledby="menu-cat-{{ loop.index }}">
+        <h3 class="menu-cat" id="menu-cat-{{ loop.index }}">{{ cat }}</h3>
+        <ul class="menu-list">
+          {% for item in menu if item.category == cat %}
+          <li class="menu-item">
+            <p class="menu-line">
+              <span class="menu-name">{{ item.name }}</span>
+              <span class="menu-leader" aria-hidden="true"></span>
+              <span class="price">{% if item.price.several %}from {% endif %}{{ item.price.amount }}</span>
+            </p>
+            <p class="menu-desc">{{ item.description }}</p>
+            <p class="menu-meta">
+              <span>{{ item.price.unit }}{% if item.price.serves and item.price.serves != item.price.unit | capitalize %} · {{ item.price.serves }}{% endif %}</span>
+              {% for tag in item.tags %}<span class="tag">{{ tag }}</span>{% endfor %}
+            </p>
+          </li>
+          {% endfor %}
+        </ul>
+      </section>
       {% endfor %}
-    </ul>
+    </div>
     <p class="fine-print">Gluten-sensitive means the caterer marks the item GF; it is not a gluten-free certification. Allergy needs are always confirmed by the owner.</p>
   </div>
 </section>
 
 <section class="section section-cta">
   <div class="wrap cta-band">
-    <h2 class="display-sm">Have a date and a headcount? That’s enough to start.</h2>
+    <div>
+      <p class="cta-note">Ready when you are</p>
+      <h2 class="display-sm">Have a date and a headcount? That’s enough to start.</h2>
+    </div>
     {% if requests_open %}
-    <a class="btn btn-primary btn-on-dark" href="{{ '/chat' if user else '/login?mode=signup&next=/chat' }}">Start a quote request</a>
+    <a class="btn btn-primary btn-on-dark btn-lg" href="{{ '/chat' if user else '/login?mode=signup&next=/chat' }}">Start a quote request <span class="btn-arrow" aria-hidden="true">→</span></a>
     {% else %}
     <p class="cta-note">Online requests are coming soon.</p>
     {% endif %}

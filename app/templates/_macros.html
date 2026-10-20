@@ -2,9 +2,18 @@
 <span class="chip chip-{{ tone(status) }}">{{ label }}</span>
 {%- endmacro %}
 
+{% macro day_badge(value) -%}
+{%- set parts = event_time(value).split(', ') -%}
+<span class="quote-row-day" aria-hidden="true">
+  {%- if parts | length > 1 -%}<b>{{ parts[1].split(' ')[1] if parts[1].split(' ') | length > 1 else '—' }}</b><small>{{ parts[1].split(' ')[0] }}</small>
+  {%- else -%}<b>—</b><small>TBC</small>{%- endif -%}
+</span>
+{%- endmacro %}
+
 {% macro quote_row(card, href) -%}
 <li class="quote-row">
   <a href="{{ href }}">
+    {{ day_badge(card.event_at) }}
     <span class="quote-row-main">
       <span class="quote-row-date">{{ event_time(card.event_at) }}</span>
       <span class="quote-row-meta">{% if card.headcount %}{{ card.headcount }} guests · {% endif %}Version {{ card.version }}{% if card.event_passed %} · Event passed{% endif %}</span>

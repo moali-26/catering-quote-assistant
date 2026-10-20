@@ -40,12 +40,18 @@
 
   function apply(data) {
     if (data.messages) { messages.innerHTML = data.messages; announce(data.messages); }
-    if (data.draft) draft.innerHTML = data.draft;
+    if (data.draft) {
+      const before = draft.querySelector('[data-total]')?.dataset.total || '';
+      draft.innerHTML = data.draft;
+      const ticket = draft.querySelector('[data-total]');
+      // The receipt "prints" again whenever the priced total changes.
+      if (ticket && ticket.dataset.total && ticket.dataset.total !== before) ticket.classList.add('is-printing');
+    }
     if (data.revision) revision.value = data.revision;
     const jump = document.getElementById('chat-jump');
     if (jump) jump.hidden = !data.ready;
     showError(data.error);
-    scrollDown();
+    requestAnimationFrame(scrollDown);
   }
 
   form.addEventListener('submit', async (event) => {

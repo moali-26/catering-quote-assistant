@@ -1,38 +1,56 @@
 {% extends "base.html" %}
 {% from "_macros.html" import quote_row %}
 {% block title %}Quote inbox · {{ business.name }}{% endblock %}
+{% block body_class %}page-owner{% endblock %}
 {% block content %}
 {% set waiting = quotes | selectattr('status', 'equalto', 'draft') | list %}
 {% set others = quotes | rejectattr('status', 'equalto', 'draft') | list %}
-<section class="workspace">
-  <div class="wrap">
-    <header class="workspace-head">
-      <div>
-        <p class="eyebrow">{{ business.name }} · Owner</p>
-        <h1 class="section-title">Quote inbox</h1>
-      </div>
-      <dl class="stats">
-        <div><dt>Needs review</dt><dd>{{ waiting | length }}</dd></div>
-        <div><dt>All requests</dt><dd>{{ quotes | length }}</dd></div>
-      </dl>
-    </header>
-
-    {% if not quotes %}
-    <div class="empty">
-      <h2>No requests yet</h2>
-      <p class="muted">When a customer submits a request, it lands here for your review. Nothing is shown to you until they submit.</p>
+<div class="kitchen-band">
+  <div class="wrap kitchen-head">
+    <div>
+      <p class="eyebrow">{{ business.name | trim('.') }} · Owner</p>
+      <h1 class="section-title">Quote inbox</h1>
     </div>
-    {% else %}
-    <h2 class="list-title">Needs your review</h2>
-    {% if waiting %}
-    <ul class="quote-list">{% for card in waiting %}{{ quote_row(card, '/quotes/' ~ card.quote_id) }}{% endfor %}</ul>
-    {% else %}
-    <p class="muted list-empty">You’re all caught up.</p>
-    {% endif %}
+    <dl class="kitchen-stats">
+      <div class="{{ 'is-hot' if waiting }}"><dt>Needs review</dt><dd>{{ waiting | length }}</dd></div>
+      <div><dt>All requests</dt><dd>{{ quotes | length }}</dd></div>
+    </dl>
+  </div>
+</div>
+
+<section class="workspace workspace-owner">
+  <div class="wrap">
+    <div class="pass">
+      <div class="pass-rail" aria-hidden="true"></div>
+      <h2 class="sr-only">Needs your review</h2>
+      {% if waiting %}
+      <ul class="pass-tickets">
+        {% for card in waiting %}
+        <li class="pass-ticket" style="--i: {{ loop.index0 }}">
+          <a href="/quotes/{{ card.quote_id }}" aria-label="Review {{ event_time(card.event_at) }}{% if card.headcount %}, {{ card.headcount }} guests{% endif %}{% if card.total %}, {{ card.total.display }}{% endif %}">
+            <div class="ticket">
+              <div class="ticket-head">
+                <p class="ticket-meta"><span>Order {{ card.quote_id[:8] | upper }}</span><span>v{{ card.version }}</span></p>
+              </div>
+              <p class="pass-when"><b>{{ event_time(card.event_at).split(' · ')[0] }}</b><span>{{ event_time(card.event_at).split(' · ')[1] if ' · ' in event_time(card.event_at) else '' }}{% if card.event_passed %} · Event passed{% endif %}</span></p>
+              <p class="pass-row"><span>Guests</span><span>{{ card.headcount or '—' }}</span></p>
+              <p class="pass-row is-total"><span>Total</span><span>{{ card.total.display if card.total else '—' }}</span></p>
+              <span class="pass-open">Review ticket →</span>
+            </div>
+          </a>
+        </li>
+        {% endfor %}
+      </ul>
+      {% elif quotes %}
+      <div class="pass-empty"><b>The rail is clear.</b><span class="muted">You’re all caught up. New requests hang here until you review them.</span></div>
+      {% else %}
+      <div class="pass-empty"><b>No requests yet</b><span class="muted">When a customer submits a request, it lands here for your review. Nothing is shown to you until they submit.</span></div>
+      {% endif %}
+    </div>
+
     {% if others %}
-    <h2 class="list-title">Approved and answered</h2>
+    <h2 class="list-title">Approved and answered <span class="count">{{ others | length }}</span></h2>
     <ul class="quote-list">{% for card in others %}{{ quote_row(card, '/quotes/' ~ card.quote_id) }}{% endfor %}</ul>
-    {% endif %}
     {% endif %}
   </div>
 </section>
