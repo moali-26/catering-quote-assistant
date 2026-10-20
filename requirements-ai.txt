@@ -1,0 +1,3 @@
+# AI conversation service. Install ONE of these once the team picks a provider.
+# anthropic
+# openai
