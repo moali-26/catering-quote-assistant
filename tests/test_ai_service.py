@@ -116,6 +116,22 @@ class ConversationTests(Base):
         self.assertEqual(record['versions'][-1]['readiness']['pricing']['total_cents'],
                          convo.latest_quote['result']['pricing']['total_cents'])
 
+    def test_chat_to_quote_service_submit_and_my_quotes(self):
+        import tempfile
+        from pathlib import Path
+        from quote_engine.service import QuoteService
+        from quote_engine.storage import SQLiteQuoteStore
+        convo = self.convo([call('evaluate_catering_quote', FULL_ARGS), reply_with_total])
+        convo.send('...')
+        with tempfile.TemporaryDirectory() as folder:
+            service = QuoteService(SQLiteQuoteStore(Path(folder) / 'q.sqlite3'),
+                                   context_for=self.ctx.quote_service_context, clock=self.ctx.now)
+            view = service.submit(convo.submission_request(), actor_id='cust-1', owner_id='owner-1')
+            self.assertEqual(view['pricing']['amounts']['total_cents']['cents'],
+                             convo.latest_quote['result']['pricing']['total_cents'])
+            mine = service.list_quotes(actor_id='cust-1', workspace='customer')
+            self.assertEqual(len(mine), 1)
+
     def test_model_cannot_supply_tax_or_distance(self):
         convo = self.convo([call('evaluate_catering_quote', dict(FULL_ARGS, tax_location='Torrance')),
                             say('Let me fix that.')])

@@ -47,9 +47,21 @@ turn = convo.send(customer_text)
 
 `submission_request()` returns the last evaluated arguments plus server-resolved `tax_location` and `delivery_miles`, without `budget_usd`. The submit endpoint must still re-run checks via C's workflow functions with current data; the conversation result is not authorization.
 
+**Submit through C's `QuoteService`** and share the same context so chat pricing and the saved quote resolve the address identically:
+
+```python
+from quote_engine.service import QuoteService
+
+service = QuoteService(store, context_for=context.quote_service_context, clock=context.now)
+if turn.ready_to_submit:
+    view = service.submit(convo.submission_request(), actor_id=auth_customer_id, owner_id=business_owner_id)
+```
+
+`QuoteService` overwrites tax/miles from `context_for`, so the values in the request are not trusted. `tests/test_ai_service.py::test_chat_to_quote_service_submit_and_my_quotes` covers chat → submit → My Quotes with the SQLite store.
+
 ## Open items / decisions needed
 
-1. **Provider and API key** — team decision. Adding another provider means one ~50-line file in `providers/`.
+1. **Provider: Claude API (decided Oct 19).** `pip install -r requirements-ai.txt`, set `ANTHROPIC_API_KEY` (never commit it). Default model `claude-sonnet-5-5`; override with `ANTHROPIC_MODEL`. Live-model testing still pending.
 2. **Address → tax location and miles** — `context.demo_location_resolver` is a DEMO table (Culver City 15 mi, Torrance 3 mi). Unknown cities return `needs_server_context`. Needs a real resolver or owner verification (D/C).
 3. **Final dataset** — defaults to `data/sample`; `--dataset full` loads the full primary menu. A must confirm the frozen subset.
 4. **Chat persistence** — D decides whether to store `convo.messages`; only submitted quotes must persist per the plan.

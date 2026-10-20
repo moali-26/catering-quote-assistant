@@ -57,6 +57,13 @@ class ServerContext:
         city = self.rules.get('delivery', {}).get('origin', {}).get('city')
         return city if city in self.rules.get('tax', {}).get('rates', {}) else None
 
+    def quote_service_context(self, owner_id, request) -> Dict[str, Any]:
+        """Use as QuoteService(context_for=...) so chat pricing and submission resolve the
+        address the same way. Single-business demo: owner_id is not used to pick data yet."""
+        tax_location, miles = self.location_for(request)
+        return {'menu': self.menu, 'rules': self.rules, 'capacity': self.capacity,
+                'tax_location': tax_location, 'delivery_miles': miles}
+
     def location_for(self, arguments: Dict[str, Any]) -> Tuple[Optional[str], Optional[float]]:
         """Resolve tax_location and delivery_miles for the current tool arguments."""
         mode = arguments.get('service_mode') if isinstance(arguments, dict) else None

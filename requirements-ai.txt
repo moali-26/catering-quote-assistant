@@ -1,3 +1,2 @@
-# AI conversation service. Install ONE of these once the team picks a provider.
-# anthropic
-# openai
+# AI conversation service. Team chose the Claude API (Anthropic).
+anthropic
