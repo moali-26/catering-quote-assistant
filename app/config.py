@@ -50,6 +50,7 @@ def load_settings() -> Settings:
         supabase_url=supabase_url,
         supabase_key=supabase_key,
         owner_ids=_owner_ids(os.environ.get('OWNER_USER_IDS', '')),
-        database_url=os.environ.get('QUOTE_DATABASE_URL') or None,
+        # Tolerate stray spaces/quotes pasted into the dashboard.
+        database_url=(os.environ.get('QUOTE_DATABASE_URL') or '').strip().strip('"\'').strip() or None,
         auth_backend=backend,
     )
