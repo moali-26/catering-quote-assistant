@@ -1,0 +1,3 @@
+# Local development and tests (the app's page tests use FastAPI's TestClient).
+-r requirements.txt
+httpx==0.28.1

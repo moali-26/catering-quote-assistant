@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}{{ business.name }} · Catering quotes{% endblock %}</title>
+  <meta name="description" content="Request a catering quote from {{ business.name | trim('.') }}: describe your event, get an itemized draft, and confirm once the owner reviews it.">
+  <meta name="theme-color" content="#17241E">
+  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+  <link rel="stylesheet" href="/static/css/app.css?v={{ static_version }}">
+</head>
+<body class="{% block body_class %}{% endblock %}">
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="/" aria-label="{{ business.name }} home">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path d="M9 15h14M9 19h10M9 23h7" stroke="var(--paper)" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="brand-name">{{ business.name }}</span>
+      </a>
+      <nav class="site-nav" aria-label="Main">
+        {% block nav %}
+        <a href="/#how">How it works</a>
+        <a href="/#menu">Menu</a>
+        <a class="btn btn-small btn-ghost" href="/login">Sign in</a>
+        {% endblock %}
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <p><strong>{{ business.name }}</strong>{% if business.place %} · {{ business.place }}{% endif %}</p>
+      <p class="muted">Menu prices from the caterer’s published menu{% if business.captured_at %}, captured {{ business.captured_at }}{% endif %}. Quotes are drafts until the owner approves them.</p>
+      <p class="muted">Class project prototype · UCLA Anderson MSBA.</p>
+    </div>
+  </footer>
+</body>
+</html>

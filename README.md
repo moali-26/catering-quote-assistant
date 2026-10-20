@@ -1,5 +1,9 @@
 # Catering Quote Assistant
 
+## Web app
+
+The web app is being built in `app/` (FastAPI, server-rendered pages, deploys to Render). This first version has the public home page; sign-in, quote screens and chat follow. Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
+
 ## Current project plan
 
 **Team handoff:** [Integration notes by teammate](docs/team-integration-notes.md). Selected deployment direction: **Supabase PostgreSQL + Auth**; implementation pending. Python quote logic stays shared, and SQLite remains local-only.
