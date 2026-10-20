@@ -1,6 +1,6 @@
 # Owner Menu Editing (Part A) — Backend + Handoff to D
 
-The owner can change an item's **name, description and availability**, and a size's **price and availability**. Everything else (IDs, pricing units, serving sizes, dietary tags, allergens) is fixed in the minimum build. Python backend, storage and tests are done; **the page and HTTP routes are D's**, and the Supabase migration has not been applied yet.
+The owner can change an item's **name, description and availability**, and a size's **price and availability**. Everything else (IDs, pricing units, serving sizes, dietary tags, allergens) is fixed in the minimum build. The backend, owner page and HTTP routes are implemented. See the deployment update below for DB setup and validation.
 
 ```sh
 python3 -m unittest tests.test_menu_admin -v
@@ -112,3 +112,41 @@ The callback is server code and must not accept owner IDs from model/customer fi
 Static file demos may omit the callback. D still needs to wire this into the real chat
 endpoint. QuoteService must continue reloading current data at submit/approve time;
 show its returned total if prices changed after the last chat turn.
+
+## Owner menu app integration — October 20, 2026
+
+- `/owner/menu` edits existing item names/descriptions/availability and variant prices/availability.
+  Only the configured primary business owner may access these routes. Existing Auth and
+  same-origin POST protection apply. IDs/servings/allergens remain fixed; no new-item or CSV UI.
+- Each save carries a menu revision; stale tabs receive a 409 with current values rather
+  than overwriting another edit. Invalid values return 400. Templates escape owner text.
+- `QuoteApp.context` reads the owner's current menu on each access. Chat reloads it each
+  turn and on draft restoration; submit/revise/approve use the same reader. Public menu
+  highlights and example prices also use current data. DB failures do not use old prices.
+- Before initial seeding only, a missing menu row uses the frozen file. The owner may
+  initialize it once; duplicate initialization never replaces saved edits.
+- Historical quotes retain their snapshots. If prices change, an owner can use
+  `Create draft with current prices` on a pending quote. This creates a new version and
+  requires review again. Accepted/approved quotes cannot be repriced through this route.
+
+### Shared database setup performed
+
+On October 20, the existing `202610190002_menu_storage.sql` migration was applied to
+Supabase project `catering-quote-assistant`. The existing owner's menu was initialized
+from `data/demo/menu.json` without overwriting any existing row. Verified: revision 1,
+22 items, RLS enabled. Quote and conversation records were not modified. Do not rerun
+this CREATE TABLE migration on the existing project. No new credentials are required:
+the app uses its existing server `QUOTE_DATABASE_URL` connection.
+
+### Validation and rollout
+
+273 local tests pass, including owner/customer permissions, invalid/stale edits, existing
+chat refresh, new-quote pricing, historical totals, public menu availability, DB failures,
+and explicit repricing. Browser-tested local initialization and price editing with the
+SQLite preview. The Supabase table/seed were verified through the dashboard; the new
+web routes have not yet been deployed or tested against the production connection.
+
+After this PR is merged/deployed: sign in as owner, open Edit menu, verify the 22 items,
+and perform a coordinated price/availability edit while a test customer chats. Verify
+new quotes reflect edits, saved quotes retain totals, and pending quotes can be repriced.
+Restore demo prices after testing. No Render environment-variable change is required.

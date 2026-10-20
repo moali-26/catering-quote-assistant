@@ -53,6 +53,9 @@ SERVER_ERROR_COPY = ('Something went wrong on our side',
                      'Reload the page in a moment. If it keeps happening, try again in a few minutes.')
 FALLBACK_BUSINESS = {'name': 'Catering Quote Assistant', 'place': '', 'captured_at': ''}
 NOTICES = {
+    'repriced': ('success', 'A new draft was created using current menu prices. Review it before approving.'),
+    'reprice-needed': ('warning', 'Menu prices changed. Create a draft with current prices below, then review it.'),
+    'menu-saved': ('success', 'Menu saved. New quotes use the updated menu; saved quotes keep their original prices.'),
     'signed-out': ('info', 'You’re signed out.'),
     'approved': ('success', 'Quote approved. The customer can now accept or decline it.'),
     'accepted': ('success', 'You accepted this quote. The owner will see your response.'),
@@ -158,7 +161,8 @@ def build_chat_store(settings):
     return SQLiteConversationStore(folder / 'chat.sqlite3')
 
 
-def create_app(*, auth_backend=None, quote_app=None, chat_service=None, billing_app=None) -> FastAPI:
+def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_service=None,
+               billing_app=None) -> FastAPI:
     settings = load_settings()
     backend = auth_backend if auth_backend is not None else build_backend(settings)
     owner_ids = settings.owner_ids
@@ -191,6 +195,17 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, billing_
         store = build_chat_store(settings)
         factory = build_llm_factory(settings, quotes.context.now)
         chat = ChatService(store, quotes=quotes, llm_factory=factory, owner_id=business_owner_id) if store else None
+    # Database-backed menu reads share one source with the owner editor.
+    if menu_service is None and settings.database_url:
+        from menu_admin import MenuService
+        from menu_admin.postgres_storage import PostgresMenuStore
+        menu_service = MenuService(PostgresMenuStore(settings.database_url), clock=quotes._context.now)
+    if menu_service is None and settings.auth_backend == 'memory' and auth_backend is None:
+        from menu_admin import MenuService, SQLiteMenuStore
+        menu_service = MenuService(SQLiteMenuStore(HERE.parent / 'var' / 'menus.sqlite3'), clock=quotes._context.now)
+    if menu_service is not None and business_owner_id:
+        quotes.menu_service, quotes.menu_owner_id = menu_service, business_owner_id
+    app.state.menus = menu_service
     app.state.chat = chat
     billing = billing_app if billing_app is not None else build_billing(settings, owner_ids)
     app.state.billing = billing
@@ -303,8 +318,12 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, billing_
     # ---- public pages ----------------------------------------------------
     @app.api_route('/', methods=PAGE_METHODS, response_class=HTMLResponse)
     def home(request: Request):
-        return page(request, 'index.html', menu=catalog.menu_highlights(settings.dataset),
-                    example=catalog.example_quote(settings.dataset))
+        try:
+            current_menu = quotes.context.menu
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        return page(request, 'index.html', menu=catalog.menu_highlights(settings.dataset, current_menu=current_menu),
+                    example=catalog.example_quote(settings.dataset, current_menu=current_menu))
 
     @app.api_route('/healthz', methods=PAGE_METHODS)
     def healthz():
@@ -376,7 +395,8 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, billing_
         except QuoteError as exc:
             logger.info('Quote action refused for %s: %s', quote_id, exc)
             message = str(exc).lower()
-            notice = ('acknowledge' if 'acknowledg' in message else
+            notice = ('reprice-needed' if 'menu or pricing changed' in message or 'delivery or tax context changed' in message else
+                      'acknowledge' if 'acknowledg' in message else
                       'conflict' if 'stale' in message or 'revision' in message else 'failed')
             return redirect(f'/quotes/{quote_id}', notice=notice)
         return redirect(f'/quotes/{quote_id}', notice=success)
@@ -425,6 +445,21 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, billing_
         return stop or quote_action(request, user, quote_id, lambda: quotes.service.approve(
             quote_id, actor_id=user.id, expected_revision=revision,
             acknowledged_reviews=[code for code in ack if isinstance(code, str)]), 'approved')
+
+    @app.post('/quotes/{quote_id}/reprice')
+    def reprice(request: Request, quote_id: str, revision: int = Form(...)):
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        quote_id = quote_id.lower()
+        def action():
+            service = quotes.service
+            record = service.store.get(quote_id, actor_id=user.id)
+            if record['owner_id'] != user.id or record['versions'][-1]['status'] != 'draft':
+                raise QuoteError('only the owner can reprice a draft')
+            service.revise(quote_id, record['versions'][-1]['request'], actor_id=user.id,
+                           expected_revision=revision)
+        return quote_action(request, user, quote_id, action, 'repriced')
 
     @app.post('/quotes/{quote_id}/respond')
     def respond(request: Request, quote_id: str, revision: int = Form(...), decision: str = Form(...)):
@@ -503,6 +538,76 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, billing_
         except QuoteStorageUnavailable:
             return JSONResponse({'error': 'storage unavailable'}, status_code=503)  # Stripe retries
         return JSONResponse({'received': True})
+
+    # ---- owner menu ------------------------------------------------------
+    from menu_admin import MenuConflict, MenuEditError, MenuNotFound
+    from menu_admin.postgres_storage import MenuStorageUnavailable
+
+    def menu_access(request):
+        user, stop = require(request, 'owner')
+        if stop:
+            return user, stop
+        if user.id != business_owner_id:
+            return user, error_page(request, 404)
+        if menu_service is None:
+            return user, error_page(request, 503)
+        return user, None
+
+    def menu_page(request, user, *, message=None, status=200):
+        try:
+            view = menu_service.owner_view(business_owner_id, actor_id=user.id)
+        except MenuNotFound:
+            view = None
+        except MenuStorageUnavailable:
+            return error_page(request, 503)
+        return page(request, 'menu.html', menu=view, message=message, status_code=status)
+
+    @app.get('/owner/menu', response_class=HTMLResponse)
+    def owner_menu(request: Request):
+        user, stop = menu_access(request)
+        return stop or menu_page(request, user)
+
+    @app.post('/owner/menu/initialize')
+    def initialize_menu(request: Request):
+        user, stop = menu_access(request)
+        if stop:
+            return stop
+        try:
+            menu_service.seed(business_owner_id, quotes._context.menu)
+        except MenuConflict:
+            pass  # Never overwrite an already initialized menu.
+        except MenuStorageUnavailable:
+            return error_page(request, 503)
+        return redirect('/owner/menu')
+
+    @app.post('/owner/menu/update', response_class=HTMLResponse)
+    def update_menu(request: Request, revision: int = Form(...), item_id: str = Form(...),
+                    variant_id: Optional[str] = Form(None), name: Optional[str] = Form(None),
+                    description: Optional[str] = Form(None), price: Optional[str] = Form(None),
+                    available: str = Form('false')):
+        user, stop = menu_access(request)
+        if stop:
+            return stop
+        if available not in ('true', 'false'):
+            return menu_page(request, user, message='Invalid availability value.', status=400)
+        changes = {'available': available == 'true'}
+        if variant_id:
+            changes['price'] = price
+        else:
+            changes.update(name=name, description=description)
+        try:
+            menu_service.update(business_owner_id,
+                [dict(item_id=item_id, variant_id=variant_id, set=changes)],
+                actor_id=user.id, expected_revision=revision)
+        except MenuConflict:
+            return menu_page(request, user, message='The menu changed in another tab. Review the current values and try again.', status=409)
+        except MenuEditError as exc:
+            return menu_page(request, user, message=str(exc), status=400)
+        except MenuNotFound:
+            return error_page(request, 404)
+        except MenuStorageUnavailable:
+            return error_page(request, 503)
+        return redirect('/owner/menu', notice='menu-saved')
 
     # ---- customer chat ---------------------------------------------------
     def chat_fragments(record, *, error=None):

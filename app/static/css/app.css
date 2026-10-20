@@ -816,3 +816,11 @@ html.fx-on .hero::after { opacity: 1; }
   *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
   .display mark { background-size: 100% 100%; }
 }
+
+/* Owner editor: ordinary forms, usable without JavaScript. */
+.menu-edit-card {border:1px solid var(--line, #ccc);border-radius:12px;padding:1rem;margin:1rem 0;}
+.menu-edit-card summary {cursor:pointer;font-weight:600;overflow-wrap:anywhere;}
+.menu-edit-form {display:grid;gap:.8rem;max-width:42rem;padding:1rem 0;border-bottom:1px solid #ddd;}
+.menu-edit-form label {display:block;}
+.menu-edit-form input:not([type=checkbox]), .menu-edit-form textarea {display:block;width:100%;max-width:100%;padding:.6rem;border:1px solid #888;border-radius:6px;background:#fff;color:#222;}
+.menu-edit-form textarea {min-height:5rem;}

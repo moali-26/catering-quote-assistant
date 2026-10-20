@@ -130,6 +130,15 @@
         <section class="panel panel-status"><span class="panel-icon is-ready">{{ icon_ok }}</span><div><h2 class="panel-title">Waiting for the customer</h2><p class="muted">You approved this version. The customer will accept or decline it from My Quotes.</p></div></section>
         {% endif %}
 
+        {% if user.is_owner and q.status == 'draft' %}
+        <form class="panel" method="post" action="/quotes/{{ q.quote_id }}/reprice">
+          <h2 class="panel-title">Menu prices changed?</h2>
+          <p class="muted">Create a new draft using current prices. The previous version stays in the history; you must review the new draft before approval.</p>
+          <input type="hidden" name="revision" value="{{ q.revision }}">
+          <button class="btn btn-quiet" type="submit">Create draft with current prices</button>
+        </form>
+        {% endif %}
+
         {% if not user.is_owner %}
           {% if q.actions.accept %}
           <section class="panel panel-action panel-respond" aria-labelledby="respond-title">

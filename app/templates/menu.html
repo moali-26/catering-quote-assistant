@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Edit menu · {{ business.name }}{% endblock %}
+{% block content %}
+<section class="wrap section">
+  <p class="eyebrow">OWNER · MENU</p><h1>Edit your menu</h1>
+  <p>Update names, descriptions, prices and availability. Saved quotes keep their original prices.</p>
+  {% if message %}<p class="flash flash-warning" role="alert">{{ message }}</p>{% endif %}
+  {% if not menu %}
+    <p>Start with the prepared catering menu. This will not replace an existing menu.</p>
+    <form method="post" action="/owner/menu/initialize"><button class="btn" type="submit">Initialize menu</button></form>
+  {% else %}
+    <p class="muted">Save one section at a time. Serving sizes and allergen information are fixed for this demo.</p>
+    {% for item in menu['items'] %}
+      <details class="menu-edit-card"><summary>{{ item.name }} · {{ item.category }}{% if not item.available %} · Unavailable{% endif %}</summary>
+        <form class="menu-edit-form" method="post" action="/owner/menu/update">
+          <input type="hidden" name="revision" value="{{ menu.revision }}"><input type="hidden" name="item_id" value="{{ item.item_id }}">
+          <label>Name <input name="name" value="{{ item.name }}" required maxlength="120"></label>
+          <label>Description <textarea name="description" maxlength="600">{{ item.description or '' }}</textarea></label>
+          <label><input type="checkbox" name="available" value="true" {% if item.available %}checked{% endif %}> Item available</label>
+          <button class="btn btn-small" type="submit">Save item details</button>
+        </form>
+        {% for variant in item.variants %}
+        <form class="menu-edit-form" method="post" action="/owner/menu/update">
+          <input type="hidden" name="revision" value="{{ menu.revision }}"><input type="hidden" name="item_id" value="{{ item.item_id }}"><input type="hidden" name="variant_id" value="{{ variant.variant_id }}">
+          <strong>{{ variant.label }}</strong><p class="muted">{{ variant.serves or '' }} · {{ variant.pricing_unit | replace('_', ' ') }}</p>
+          <label>Price (USD) <input type="number" name="price" value="{{ '%.2f' | format(variant.price) }}" min="0.01" max="10000" step="0.01" required></label>
+          <label><input type="checkbox" name="available" value="true" {% if variant.available %}checked{% endif %}> Size available</label>
+          <button class="btn btn-small" type="submit">Save price &amp; availability</button>
+        </form>
+        {% endfor %}
+      </details>
+    {% endfor %}
+  {% endif %}
+</section>
+{% endblock %}

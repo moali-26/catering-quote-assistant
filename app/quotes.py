@@ -9,6 +9,7 @@ from typing import Optional
 from ai_service.data_loader import load_context
 from quote_engine.postgres_storage import QuoteStorageUnavailable
 from quote_engine.service import QuoteService
+from quote_engine.storage import QuoteNotFound
 
 from .catalog import make_scrubber
 
@@ -56,7 +57,9 @@ class QuoteApp:
 
     def __init__(self, settings, *, store=None, context=None):
         self.settings = settings
-        self.context = context or load_context(settings.dataset)
+        self._context = context or load_context(settings.dataset)
+        self.menu_service = None
+        self.menu_owner_id = None
         self.scrub = make_scrubber(self.context.menu)  # keep the provenance name off every screen
         self.items = {}
         for item in self.context.menu.get('items', []):
@@ -68,11 +71,34 @@ class QuoteApp:
         self._service: Optional[QuoteService] = None
 
     @property
+    def context(self):
+        if self.menu_service is None:
+            return self._context
+        from dataclasses import replace
+        from menu_admin import MenuNotFound
+        from menu_admin.postgres_storage import MenuStorageUnavailable
+        try:
+            menu = self.menu_service.current_menu(self.menu_owner_id)
+        except MenuNotFound:
+            # Before the owner's one-time initialization, use the frozen seed.
+            return self._context
+        except MenuStorageUnavailable as exc:
+            raise QuoteStorageUnavailable('menu storage unavailable') from exc
+        if menu['meta']['dataset_id'] != self._context.menu['meta']['dataset_id']:
+            raise QuoteStorageUnavailable('menu dataset does not match business rules')
+        return replace(self._context, menu=menu)
+
+    def current_quote_context(self, owner_id, request):
+        if self.menu_owner_id is not None and owner_id != self.menu_owner_id:
+            raise QuoteNotFound('quote not found')
+        return self.context.quote_service_context(owner_id, request)
+
+    @property
     def service(self) -> QuoteService:
         if self._service is None:
             store = self._store or self._default_store()
-            self._service = QuoteService(store, context_for=self.context.quote_service_context,
-                                         clock=self.context.now)
+            self._service = QuoteService(store, context_for=self.current_quote_context,
+                                         clock=self._context.now)
         return self._service
 
     def _default_store(self):
