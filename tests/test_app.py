@@ -18,7 +18,6 @@ def make_client(**env):
     with mock.patch.dict(os.environ, env):
         app = create_app()
     catalog.business.cache_clear()
-    catalog.example_quote.cache_clear()
     return TestClient(app, raise_server_exceptions=False)
 
 

@@ -92,4 +92,4 @@ Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, the
 
 ## Next
 
-Owner menu editing page on A's `menu_admin` (needs `202610190002_menu_storage.sql` applied and the menu seeded), and customer revisions of a submitted quote through the chat.
+Owner menu editing is implemented at `/owner/menu`, with current DB menu reads for chat, quotes and public prices. See [menu-editing.md](menu-editing.md) for rollout status. Customer revisions of a submitted quote through chat remain outside this change; owners can explicitly reprice a pending draft.
