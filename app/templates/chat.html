@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}New quote request · {{ business.name }}{% endblock %}
+{% block body_class %}page-chat{% endblock %}
+{% block content %}
+<section class="workspace">
+  <div class="wrap">
+    <header class="workspace-head">
+      <div>
+        <p class="eyebrow">New quote request</p>
+        <h1 class="section-title">Plan your catering</h1>
+      </div>
+      {% if conversation %}
+      <form method="post" action="/chat/new"><button class="btn btn-small btn-quiet" type="submit">Start over</button></form>
+      {% endif %}
+    </header>
+
+    {% if unavailable %}
+    <div class="empty">
+      <h2>The assistant isn’t available right now</h2>
+      <p class="muted">Online quote requests are paused. Try again later; any requests you already sent are in My Quotes.</p>
+      <a class="btn btn-quiet" href="/quotes">Go to My Quotes</a>
+    </div>
+    {% else %}
+    <div class="chat-grid">
+      <section class="chat-card" aria-label="Conversation with the quote assistant">
+        <div class="chat-log" id="chat-log">
+          <div id="chat-messages">{{ fragments.messages | safe }}</div>
+          <div class="bubble bubble-assistant bubble-typing" id="chat-typing" hidden><span></span><span></span><span></span><span class="sr-only">The assistant is replying…</span></div>
+        </div>
+        <div class="sr-only" id="chat-announce" aria-live="polite" aria-atomic="true"></div>
+        <form class="composer" id="chat-form" method="post" action="/chat/send">
+          <input type="hidden" name="conversation_id" value="{{ conversation.conversation_id }}">
+          <input type="hidden" name="revision" value="{{ conversation.revision }}" id="chat-revision">
+          <label class="sr-only" for="chat-input">Message the assistant</label>
+          <textarea id="chat-input" name="message" rows="2" maxlength="1200" required
+                    placeholder="Describe your event: date, guests, pickup or delivery, allergies…"></textarea>
+          <button class="btn btn-primary composer-send" type="submit">Send</button>
+          <a class="chat-jump" id="chat-jump" href="#chat-draft"{% if not fragments.ready %} hidden{% endif %}>Your draft is ready · review and send ↓</a>
+          <p class="composer-error" id="chat-error" role="alert"{% if not fragments.error %} hidden{% endif %}>{{ fragments.error or '' }}</p>
+        </form>
+      </section>
+      <aside class="chat-side" id="chat-draft" aria-label="Your draft quote">{{ fragments.draft | safe }}</aside>
+    </div>
+    <script src="/static/js/chat.js?v={{ static_version }}" defer></script>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

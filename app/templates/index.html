@@ -9,10 +9,10 @@
       <p class="lede">Tell our assistant your date, headcount and dietary needs. It prices every tray from {{ business.name }}’s menu, and the owner checks the quote before you confirm.</p>
       <div class="cta-row">
         {% if user %}
-        <a class="btn btn-primary" href="{{ '/owner' if user.is_owner else '/quotes' }}">{{ 'Open the quote inbox' if user.is_owner else 'Go to My Quotes' }}</a>
+        <a class="btn btn-primary" href="{{ '/owner' if user.is_owner else ('/chat' if requests_open else '/quotes') }}">{{ 'Open the quote inbox' if user.is_owner else ('Start a quote request' if requests_open else 'Go to My Quotes') }}</a>
         <a class="btn btn-quiet" href="#menu">Browse the menu</a>
         {% elif requests_open %}
-        <a class="btn btn-primary" href="/login?mode=signup">Start a quote request</a>
+        <a class="btn btn-primary" href="/login?mode=signup&next=/chat">Start a quote request</a>
         <a class="btn btn-quiet" href="/login">Sign in</a>
         {% elif accounts_open %}
         <a class="btn btn-primary" href="/login?mode=signup">Create an account</a>
@@ -121,7 +121,7 @@
   <div class="wrap cta-band">
     <h2 class="display-sm">Have a date and a headcount? That’s enough to start.</h2>
     {% if requests_open %}
-    <a class="btn btn-primary btn-on-dark" href="/login?mode=signup">Start a quote request</a>
+    <a class="btn btn-primary btn-on-dark" href="{{ '/chat' if user else '/login?mode=signup&next=/chat' }}">Start a quote request</a>
     {% else %}
     <p class="cta-note">Online requests are coming soon.</p>
     {% endif %}

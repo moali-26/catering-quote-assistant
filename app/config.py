@@ -13,6 +13,7 @@ class Settings:
     owner_ids: Tuple[str, ...] = ()
     database_url: Optional[str] = None
     auth_backend: Optional[str] = None  # 'supabase', 'memory' (development only) or None
+    llm_provider: Optional[str] = None  # 'anthropic', 'openai' or None (chat disabled)
 
     @property
     def is_production(self) -> bool:
@@ -31,8 +32,8 @@ def _owner_ids(raw: str) -> Tuple[str, ...]:
 def load_settings() -> Settings:
     env = os.environ.get('APP_ENV', 'development')
     dataset = os.environ.get('APP_DATASET', 'sample')
-    if dataset not in ('sample', 'full'):
-        raise ValueError("APP_DATASET must be 'sample' or 'full'")
+    if dataset not in ('demo', 'sample', 'full'):
+        raise ValueError("APP_DATASET must be 'demo', 'sample' or 'full'")
     supabase_url = (os.environ.get('SUPABASE_URL') or '').rstrip('/') or None
     supabase_key = os.environ.get('SUPABASE_PUBLISHABLE_KEY') or None
     requested = os.environ.get('AUTH_BACKEND', '').strip().lower()
@@ -53,4 +54,19 @@ def load_settings() -> Settings:
         # Tolerate stray spaces/quotes pasted into the dashboard.
         database_url=(os.environ.get('QUOTE_DATABASE_URL') or '').strip().strip('"\'').strip() or None,
         auth_backend=backend,
+        llm_provider=_llm_provider(),
     )
+
+
+def _llm_provider() -> Optional[str]:
+    """LLM_PROVIDER picks the chat model; default Claude when its key is present."""
+    requested = os.environ.get('LLM_PROVIDER', '').strip().lower()
+    if requested in ('anthropic', 'claude'):
+        return 'anthropic' if os.environ.get('ANTHROPIC_API_KEY') else None
+    if requested in ('openai', 'gpt'):
+        return 'openai' if os.environ.get('OPENAI_API_KEY') and os.environ.get('OPENAI_MODEL') else None
+    if requested == 'scripted':
+        return 'scripted' if os.environ.get('APP_ENV', 'development') != 'production' else None
+    if requested:
+        raise ValueError("LLM_PROVIDER must be 'anthropic', 'openai' or 'scripted' (local only)")
+    return 'anthropic' if os.environ.get('ANTHROPIC_API_KEY') else None

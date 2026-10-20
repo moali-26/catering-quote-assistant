@@ -1,6 +1,6 @@
 # Web App (D)
 
-Status (Oct 20, 2026): **PR 2 of 3.** Shared sign-in for customers and owners, My Quotes, quote detail, owner inbox and approval are working on top of C's `QuoteService`. The customer chat that creates new requests is the next PR; until then the home page invites people to create an account but does not offer "Start a quote request".
+Status (Oct 20, 2026): **PR 3 of 3.** Customers can now request a quote through the AI chat: the assistant asks for missing details, prices from the menu through C's engine, and the customer sends the draft to the owner. Sign-in, My Quotes, the owner inbox and approval are from PR 2.
 
 ## Pages and actions
 
@@ -9,6 +9,10 @@ Status (Oct 20, 2026): **PR 2 of 3.** Shared sign-in for customers and owners, M
 | `/` | Everyone | Home page, menu, example ticket priced by the quote engine |
 | `/login`, `/login?mode=signup` | Everyone | Sign in or create a customer account (Supabase Auth) |
 | `POST /login`, `POST /signup`, `POST /logout` | Everyone | Sets or clears HTTP-only session cookies |
+| `/chat` | Customers | The quote assistant: conversation on the left, live draft ticket on the right |
+| `POST /chat/send` | Customers | One message to B's `Conversation`; returns the updated messages and draft (JSON for the page script, redirect without JavaScript) |
+| `POST /chat/submit` | Customers | `QuoteService.submit` with the conversation's last evaluated request; links the quote to the conversation |
+| `POST /chat/new` | Customers | Start a fresh request |
 | `/quotes` | Customers | My Quotes: own requests only (`list_quotes(workspace="customer")`) |
 | `/owner` | Owner | Quote inbox: needs review / approved and answered (`workspace="owner"`) |
 | `/quotes/{id}` | The quote's customer or owner | Itemized ticket, event details, blockers, review checklist or accept/decline, history |
@@ -17,6 +21,15 @@ Status (Oct 20, 2026): **PR 2 of 3.** Shared sign-in for customers and owners, M
 | `/healthz` | Monitoring | `{"status": "ok"}` |
 
 Browser forms send only the quote ID, the revision they displayed and the chosen action. Prices, totals, status and permissions all come from `quote_view` / `QuoteService`, which recheck every action.
+
+## Customer chat
+
+- **Who does what:** the model reads the customer's words, asks questions and picks menu items; `quote_engine` prices them and checks rules; the price guard rejects any dollar amount the model invents. The draft panel shows code-computed amounts only.
+- **Saved conversations:** each turn is saved in `catering_private.conversations` (SQLite locally) with a revision check, so a refresh or sign-out keeps the chat and a second tab can't overwrite it. On load, the last evaluated request is re-checked against the current menu and time to rebuild the draft.
+- **Submit:** only when the latest evaluation says `needs_owner_review` (all details present, nothing blocking) and the customer ticks the box confirming the date, guests, address and allergies shown on the draft. The quote id is derived from the conversation id, so a double click, a second tab or a retry after a crash can never create two quotes. The customer's message is saved before the model answers and submit waits for the reply, so a draft that is being changed can't be sent. The server re-runs `QuoteService.submit`, which rechecks everything; the quote is routed to `OWNER_USER_IDS[0]`, never to a business named in the chat. After submitting, the next visit starts a new conversation.
+- **Limits (cost control):** messages up to 1,200 characters; 15 customer messages per conversation; per customer 8 messages a minute, 40 a day and 6 new conversations a day; 400 replies a day for the whole site; one reply at a time. Each reply may call the model at most 5 times within 75 seconds (30 s per call, no retries), and older menu-tool results are shortened before being resent. Model or network failures show a polite fallback; nothing crashes. Also set a monthly spend limit in the provider console. The per-customer lock and the site-wide daily cap live in the web process, so they assume one worker (the `render.yaml` start command runs one); add a shared counter before scaling out.
+- **Model choice:** `LLM_PROVIDER=anthropic` (default when `ANTHROPIC_API_KEY` is set, model from `ANTHROPIC_MODEL`) or `openai` (`OPENAI_API_KEY` + `OPENAI_MODEL`). `LLM_PROVIDER=scripted` is a local preview model that needs no key and is refused in production. With no model configured, the home page doesn't offer requests and `/chat` says the assistant is unavailable.
+- **Dataset:** `APP_DATASET=demo` is A's frozen 22-item menu for the presentation (`render.yaml` now sets it).
 
 ## Accounts and roles
 
@@ -48,7 +61,7 @@ Browser forms send only the quote ID, the revision they displayed and the chosen
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements-dev.txt
 python -m unittest discover -s tests            # app tests skip without FastAPI installed
-AUTH_BACKEND=memory uvicorn app.main:app --reload
+AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app --reload
 ```
 
 `AUTH_BACKEND=memory` is a local preview with no Supabase: it creates `owner@example.com` and `customer@example.com` (password `catering-demo`) and one submitted quote in `var/quotes.sqlite3`. It is refused when `APP_ENV=production`. Without `QUOTE_DATABASE_URL`, local runs use that SQLite file; production requires Postgres.
@@ -60,8 +73,9 @@ AUTH_BACKEND=memory uvicorn app.main:app --reload
 | `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY` | Render | Enables sign-in. Publishable key only; never the secret key |
 | `QUOTE_DATABASE_URL` | Render | Supabase session-pooler URI; server only |
 | `OWNER_USER_IDS` | Render | Added to `render.yaml` in this PR. Render does not prompt for keys added after the blueprint was created, so add it in the dashboard |
-| `ANTHROPIC_API_KEY` | Render | Used by the chat PR |
-| `APP_ENV`, `APP_DATASET` | `render.yaml` | `production`, `sample` |
+| `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` | Render | Claude for the chat (default provider) |
+| `LLM_PROVIDER`, `OPENAI_API_KEY`, `OPENAI_MODEL` | Render | Optional: `LLM_PROVIDER=openai` to test with OpenAI |
+| `APP_ENV`, `APP_DATASET` | `render.yaml` | `production`, `demo` |
 
 ## Design notes
 
@@ -74,6 +88,6 @@ AUTH_BACKEND=memory uvicorn app.main:app --reload
 
 Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, then `202610200001_conversations.sql`. Both are server-only (RLS on, no browser grants). Verified on PostgreSQL 16, including C's `tests/integration` live test.
 
-## Next PR
+## Next
 
-Customer chat (`ai_service.Conversation`) saved per customer in `catering_private.conversations`, submit to `QuoteService.submit` with `business_owner_id`, and customer revisions; then `requests_open` turns on the home page "Start a quote request" button.
+Owner menu editing page on A's `menu_admin` (needs `202610190002_menu_storage.sql` applied and the menu seeded), and customer revisions of a submitted quote through the chat.
