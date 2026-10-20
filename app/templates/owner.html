@@ -11,10 +11,13 @@
       <p class="eyebrow">{{ business.name | trim('.') }} · Owner</p>
       <h1 class="section-title">Quote inbox</h1>
     </div>
+    <div class="kitchen-actions">
+    <a class="btn btn-small btn-kitchen" href="/owner/menu">Edit menu</a>
     <dl class="kitchen-stats">
       <div class="{{ 'is-hot' if waiting }}"><dt>Needs review</dt><dd>{{ waiting | length }}</dd></div>
       <div><dt>All requests</dt><dd>{{ quotes | length }}</dd></div>
     </dl>
+    </div>
   </div>
 </div>
 

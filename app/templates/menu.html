@@ -1,35 +1,170 @@
 {% extends "base.html" %}
-{% block title %}Edit menu · {{ business.name }}{% endblock %}
+{% block title %}Menu · {{ business.name }}{% endblock %}
+{% block body_class %}page-owner page-menu{% endblock %}
 {% block content %}
-<section class="wrap section">
-  <p class="eyebrow">OWNER · MENU</p><h1>Edit your menu</h1>
-  <p>Update names, descriptions, prices and availability. Saved quotes keep their original prices.</p>
-  {% if message %}<p class="flash flash-warning" role="alert">{{ message }}</p>{% endif %}
-  {% if not menu %}
-    <p>Start with the prepared catering menu. This will not replace an existing menu.</p>
-    <form method="post" action="/owner/menu/initialize"><button class="btn" type="submit">Initialize menu</button></form>
-  {% else %}
-    <p class="muted">Save one section at a time. Serving sizes and allergen information are fixed for this demo.</p>
-    {% for item in menu['items'] %}
-      <details class="menu-edit-card"><summary>{{ item.name }} · {{ item.category }}{% if not item.available %} · Unavailable{% endif %}</summary>
-        <form class="menu-edit-form" method="post" action="/owner/menu/update">
-          <input type="hidden" name="revision" value="{{ menu.revision }}"><input type="hidden" name="item_id" value="{{ item.item_id }}">
-          <label>Name <input name="name" value="{{ item.name }}" required maxlength="120"></label>
-          <label>Description <textarea name="description" maxlength="600">{{ item.description or '' }}</textarea></label>
-          <label><input type="checkbox" name="available" value="true" {% if item.available %}checked{% endif %}> Item available</label>
-          <button class="btn btn-small" type="submit">Save item details</button>
-        </form>
-        {% for variant in item.variants %}
-        <form class="menu-edit-form" method="post" action="/owner/menu/update">
-          <input type="hidden" name="revision" value="{{ menu.revision }}"><input type="hidden" name="item_id" value="{{ item.item_id }}"><input type="hidden" name="variant_id" value="{{ variant.variant_id }}">
-          <strong>{{ variant.label }}</strong><p class="muted">{{ variant.serves or '' }} · {{ variant.pricing_unit | replace('_', ' ') }}</p>
-          <label>Price (USD) <input type="number" name="price" value="{{ '%.2f' | format(variant.price) }}" min="0.01" max="10000" step="0.01" required></label>
-          <label><input type="checkbox" name="available" value="true" {% if variant.available %}checked{% endif %}> Size available</label>
-          <button class="btn btn-small" type="submit">Save price &amp; availability</button>
-        </form>
-        {% endfor %}
-      </details>
-    {% endfor %}
-  {% endif %}
+<div class="kitchen-band">
+  <div class="wrap kitchen-head">
+    <div>
+      <a class="back-link" href="/owner"><span aria-hidden="true">←</span> Quote inbox</a>
+      <p class="eyebrow">{{ business.name | trim('.') }} · Owner</p>
+      <h1 class="section-title">Menu</h1>
+      <p class="kitchen-sub">Prices and availability apply to new requests as soon as you save.</p>
+    </div>
+    {% if menu_groups %}
+    <dl class="kitchen-stats">
+      <div><dt>Dishes</dt><dd>{{ stats['items'] }}</dd></div>
+      <div class="{{ 'is-hot' if stats.off }}"><dt>Off the menu</dt><dd>{{ stats.off }}</dd></div>
+      <div class="stat-time"><dt>Last edit</dt><dd>{{ updated if history else 'Not yet' }}</dd></div>
+    </dl>
+    {% endif %}
+  </div>
+</div>
+
+<section class="workspace workspace-menu">
+  <div class="wrap">
+    {% if not menu_groups %}
+    <div class="empty">
+      {% if setup == 'storage' %}
+      <h2>The menu can’t be loaded right now</h2>
+      <p class="muted">The menu storage isn’t reachable. Try again in a minute. Until it’s back, new quotes are paused rather than priced from a menu that may be out of date. On a brand-new database, the menu table may not exist yet (see docs/menu-editing.md).</p>
+      {% elif setup == 'not-main-owner' %}
+      <h2>Only the main owner account can edit the menu</h2>
+      <p class="muted">Sign in with the business’s main owner account to make changes.</p>
+      {% else %}
+      <h2>Menu editing isn’t available right now</h2>
+      <p class="muted">The menu needs a database. Quotes keep using the standard menu in the meantime.</p>
+      {% endif %}
+      <a class="btn btn-quiet" href="/owner">Back to the quote inbox</a>
+    </div>
+    {% else %}
+
+    <div class="menu-tools">
+      <label class="menu-search">
+        <span class="sr-only">Find a dish</span>
+        <svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="8.5" cy="8.5" r="5.5"/><path d="M13 13l4 4"/></svg>
+        <input type="search" placeholder="Find a dish…" data-menu-search autocomplete="off">
+      </label>
+      <nav class="menu-chips" aria-label="Categories">
+        {% for group in menu_groups %}<a href="#cat-{{ loop.index }}">{{ group.name }}</a>{% endfor %}
+      </nav>
+      <a class="menu-preview" href="/#menu" target="_blank" rel="noopener">See the customer menu <span aria-hidden="true">↗</span></a>
+    </div>
+
+    <form class="menu-editor" method="post" action="/owner/menu" data-menu-form novalidate>
+      <input type="hidden" name="revision" value="{{ revision }}">
+      {% if errors %}
+      <div class="form-error menu-errors" role="alert">
+        <b>{{ errors | length }} change{{ 's' if errors | length != 1 }} need{{ '' if errors | length != 1 else 's' }} fixing.</b> Nothing was saved yet.
+      </div>
+      {% endif %}
+      <div class="menu-layout">
+        <div class="menu-main">
+          {% for group in menu_groups %}
+          {% set gi = loop.index %}
+          <section class="menu-section" id="cat-{{ gi }}" aria-labelledby="cat-title-{{ gi }}" data-menu-section>
+            <h2 class="menu-section-title" id="cat-title-{{ gi }}">{{ group.name }} <span>{{ group['items'] | length }}</span></h2>
+            {% for item in group['items'] %}
+            {% set iid = item.item_id %}
+            <article class="dish{{ ' is-off' if not item.available }}{{ ' has-error' if item.errors or item.variants | selectattr('errors') | list }}" data-dish data-search="{{ (item.name ~ ' ' ~ item.saved_name ~ ' ' ~ group.name) | lower }}">
+              <div class="dish-head">
+                <label class="sr-only" for="n-{{ iid }}">Dish name</label>
+                <input class="dish-name{{ ' is-invalid' if item.errors.name }}" id="n-{{ iid }}" name="m:{{ iid }}:name" value="{{ item.name }}" data-saved="{{ item.saved_name }}" maxlength="120" autocomplete="off"
+                       {% if item.errors.name %}aria-invalid="true" aria-describedby="e-n-{{ iid }}"{% endif %}>
+                <label class="switch" title="Offer this dish">
+                  <input type="checkbox" aria-label="Offer {{ item.saved_name }}" name="m:{{ iid }}:available" value="1"{% if item.available %} checked{% endif %} data-saved="{{ 'true' if item.saved_available else 'false' }}">
+                  <span class="switch-track" aria-hidden="true"></span>
+                  <span class="switch-text"><span class="on">On the menu</span><span class="off">Off the menu</span></span>
+                </label>
+              </div>
+              {% if item.errors.name %}<p class="field-error" id="e-n-{{ iid }}">{{ item.errors.name }}</p>{% endif %}
+              {% if item.errors.available %}<p class="field-error">{{ item.errors.available }}</p>{% endif %}
+              <label class="sr-only" for="d-{{ iid }}">Description of {{ item.saved_name }}</label>
+              <textarea class="dish-desc{{ ' is-invalid' if item.errors.description }}" id="d-{{ iid }}" name="m:{{ iid }}:description" data-saved="{{ item.saved_description }}" rows="2" maxlength="600" placeholder="Add a short description"
+                        {% if item.errors.description %}aria-invalid="true" aria-describedby="e-d-{{ iid }}"{% endif %}>{{ item.description }}</textarea>
+              {% if item.errors.description %}<p class="field-error" id="e-d-{{ iid }}">{{ item.errors.description }}</p>{% endif %}
+
+              <table class="dish-sizes">
+                <caption class="sr-only">Sizes and prices for {{ item.saved_name }}</caption>
+                <thead><tr><th scope="col">Size</th><th scope="col">Serves</th><th scope="col" class="num">Price</th><th scope="col" class="num">Offered</th></tr></thead>
+                <tbody>
+                  {% for v in item.variants %}
+                  {% set vid = v.variant_id %}
+                  <tr class="{{ 'is-off' if not v.available }}">
+                    <th scope="row">{{ v.label }}</th>
+                    <td class="muted">{{ v.serves or '—' }}</td>
+                    <td class="num">
+                      <label class="price-field{{ ' is-invalid' if v.errors.price }}">
+                        <span aria-hidden="true">$</span>
+                        <span class="sr-only">Price for {{ item.saved_name }}, {{ v.label }}</span>
+                        <input name="m:{{ iid }}:{{ vid }}:price" value="{{ v.price }}" data-saved="{{ v.saved_price }}" inputmode="decimal" autocomplete="off" size="7"
+                               {% if v.errors.price %}aria-invalid="true" aria-describedby="e-p-{{ vid }}"{% endif %}>
+                      </label>
+                      {% if v.errors.price %}<span class="field-error" id="e-p-{{ vid }}">{{ v.errors.price }}</span>{% endif %}
+                      {% if v.errors.available %}<span class="field-error">{{ v.errors.available }}</span>{% endif %}
+                    </td>
+                    <td class="num">
+                      <label class="switch switch-sm" title="Offer this size">
+                        <input type="checkbox" name="m:{{ iid }}:{{ vid }}:available" value="1"{% if v.available %} checked{% endif %} data-saved="{{ 'true' if v.saved_available else 'false' }}">
+                        <span class="switch-track" aria-hidden="true"></span>
+                        <span class="sr-only">Offer {{ item.saved_name }}, {{ v.label }}</span>
+                      </label>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+
+              <p class="dish-meta">
+                {% for tag in item.dietary_tags %}<span class="tag">{{ tag | replace('_', ' ') | capitalize }}</span>{% endfor %}
+                <span class="locked"><svg viewBox="0 0 16 16" aria-hidden="true"><rect x="3" y="7" width="10" height="7" rx="1.5"/><path d="M5.5 7V5a2.5 2.5 0 0 1 5 0v2"/></svg>Allergens and portions are fixed</span>
+              </p>
+              <span class="dish-stamp" aria-hidden="true">86’d</span>
+            </article>
+            {% endfor %}
+          </section>
+          {% endfor %}
+          <p class="menu-noresults" data-menu-empty hidden>No dish matches that search.</p>
+        </div>
+
+        <aside class="menu-side" aria-label="About menu changes">
+          <div class="ticket-wrap ticket-wrap-flat" data-sheen>
+            <div class="ticket">
+              <div class="ticket-head"><p class="ticket-brand">Change log</p><p class="ticket-meta"><span>Latest first</span><span>{{ history | length }}</span></p></div>
+              {% if history %}
+              <ol class="change-log">
+                {% for h in history %}
+                <li><b>{{ h.who }}</b><span>{{ h.what }}</span><small>{{ h.when }}</small></li>
+                {% endfor %}
+              </ol>
+              {% else %}
+              <p class="change-empty">No edits yet. Changes you save show up here.</p>
+              {% endif %}
+            </div>
+          </div>
+          <section class="panel menu-rules">
+            <h2 class="panel-title">How changes work</h2>
+            <ul class="plain-list">
+              <li>New requests, the assistant and the home page use your changes right away.</li>
+              <li>Approved quotes keep the prices they were approved with.</li>
+              <li>A request waiting for review keeps its old prices; you’ll get a “Reprice” button on it.</li>
+              <li>Allergens, portions and sizes are fixed so allergy checks stay correct.</li>
+            </ul>
+          </section>
+        </aside>
+      </div>
+
+      <div class="save-bar" data-save-bar>
+        <div class="wrap save-bar-row">
+          <p class="save-status" data-save-status aria-live="polite">Edit any dish, then save.</p>
+          <div class="save-actions">
+            <button type="reset" class="btn btn-quiet btn-small" data-discard>Discard changes</button>
+            <button type="submit" class="btn btn-primary" data-save>Save changes</button>
+          </div>
+        </div>
+      </div>
+    </form>
+    <script src="/static/js/menu.js?v={{ static_version }}" defer></script>
+    {% endif %}
+  </div>
 </section>
 {% endblock %}

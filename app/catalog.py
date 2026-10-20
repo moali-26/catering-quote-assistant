@@ -95,25 +95,31 @@ def _price_from(item: dict) -> dict:
     }
 
 
-def menu_highlights(dataset: str = 'sample', limit: int = 8, *, current_menu=None) -> list:
-    menu = current_menu if current_menu is not None else business(dataset)['menu']
-    scrub = make_scrubber(menu)
-    return [
-        {
+def menu_highlights(dataset: str = 'sample', limit: int = 8, menu: dict = None) -> list:
+    """Items for the home page: the owner's current menu when given, available items only."""
+    source = business(dataset)['menu']
+    menu = menu or source
+    scrub = make_scrubber(source)  # branding lives in the dataset file
+    shown = []
+    for item in menu.get('items', []):
+        variants = [v for v in item.get('variants', []) if v.get('available', True) is True]
+        if item.get('available', True) is not True or not variants:
+            continue
+        shown.append({
             'name': scrub(item['name']),
             'category': item.get('category', ''),
             'description': scrub(item.get('description', '')),
             'tags': [DIETARY_LABELS[t] for t in item.get('dietary_tags', []) if t in DIETARY_LABELS],
-            'price': _price_from(item),
-        }
-        for item in [dict(i, variants=[v for v in i['variants'] if v.get('available', True)])
-                     for i in menu.get('items', []) if i.get('available', True)
-                     and any(v.get('available', True) for v in i['variants'])][:limit]
-    ]
+            'price': _price_from(dict(item, variants=variants)),
+        })
+        if len(shown) == limit:
+            break
+    return shown
 
 
 def example_quote(dataset: str = 'sample', *, current_menu=None):
-    """Price the fixture's worked example with the real engine, or None if absent."""
+    """Price the fixture's worked example with the real engine (on the owner's current menu
+    when given), or None if absent or if the owner took one of its dishes off the menu."""
     path = DATASETS[dataset] / 'inquiries.json'
     if not path.exists():  # demo menu has no fixture; its items include the sample's, so reuse that example
         path = DATASETS['sample'] / 'inquiries.json'
@@ -129,14 +135,14 @@ def example_quote(dataset: str = 'sample', *, current_menu=None):
     if headcount:
         request['headcount'] = headcount
     data = dict(business(dataset))
+    scrub = make_scrubber(data['menu'])  # branding lives in the dataset file
     if current_menu is not None:
         data['menu'] = current_menu
-    scrub = make_scrubber(data['menu'])
     from quote_engine.pricing import QuoteError
     try:
         quote = calculate_quote(data['menu'], data['rules'], request)
     except QuoteError:
-        return None  # Example selections may have been disabled by the owner.
+        return None  # an example dish may be off the menu
     return {
         'request_text': scrub((inquiry or {}).get('text', '')),
         'headcount': quote['headcount'],
