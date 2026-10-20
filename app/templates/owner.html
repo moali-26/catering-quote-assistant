@@ -26,7 +26,7 @@
       {% if waiting %}
       <ul class="pass-tickets">
         {% for card in waiting %}
-        <li class="pass-ticket" style="--i: {{ loop.index0 }}">
+        <li class="pass-ticket" style="--i: {{ loop.index0 }}" data-sheen>
           <a href="/quotes/{{ card.quote_id }}" aria-label="Review {{ event_time(card.event_at) }}{% if card.headcount %}, {{ card.headcount }} guests{% endif %}{% if card.total %}, {{ card.total.display }}{% endif %}">
             <div class="ticket">
               <div class="ticket-head">

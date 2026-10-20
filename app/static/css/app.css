@@ -734,6 +734,56 @@ p { margin: 0; }
   .nav-cta { padding: .4rem .7rem; font-size: .85rem; }
 }
 
+/* ---------- Desktop finish: themed cursor and light on paper (fx.js; pointer devices only) ---------- */
+html.fx-on, html.fx-on * { cursor: none; }
+html.fx-on :is(input:not([type="checkbox"]):not([type="radio"]), textarea, [contenteditable="true"]) { cursor: text; }
+.fx-dot, .fx-ring { position: fixed; left: 0; top: 0; z-index: 9999; pointer-events: none; border-radius: 50%; will-change: transform; }
+.fx-dot { width: 0; height: 0; }
+.fx-dot::before { content: ''; position: absolute; width: 7px; height: 7px; margin: -3.5px 0 0 -3.5px; border-radius: 50%; background: var(--ink); transition: background-color .2s ease, transform .2s ease; }
+.fx-ring { width: 0; height: 0; }
+.fx-ring::before { /* sized with transforms only, so moving and morphing never triggers layout */
+  content: ''; position: absolute; width: 52px; height: 52px; margin: -26px 0 0 -26px; border-radius: 50%;
+  border: 2px solid rgba(23, 36, 30, .5); background: transparent; transform: scale(.66);
+  transition: transform .28s var(--ease-out), border-radius .28s var(--ease-out), background-color .2s ease, border-color .2s ease, opacity .2s ease;
+}
+.fx-ring::after { /* label shown in "stamp" mode */
+  content: 'Open'; position: absolute; translate: -50% -50%; font: 700 .62rem/1 var(--font-mono); letter-spacing: .16em; text-transform: uppercase;
+  color: var(--tomato); rotate: -8deg; opacity: 0; transition: opacity .2s ease;
+}
+.fx-ring.is-link::before { transform: scale(1); border-color: transparent; background: rgba(46, 107, 78, .14); }
+.fx-dot.is-link::before { background: var(--herb); }
+.fx-ring.is-ticket::before { border-radius: 7px; border: 3px double var(--tomato); background: rgba(255, 254, 250, .55); transform: translate(46px, 40px) rotate(-8deg) scale(1.42, .73); }
+.fx-ring.is-ticket::after { opacity: 1; margin: 40px 0 0 46px; }
+.fx-ring.is-dark::before { border-color: rgba(242, 193, 78, .8); }
+.fx-ring.is-dark.is-link::before { background: rgba(255, 255, 255, .16); border-color: rgba(255, 255, 255, .35); }
+.fx-dot.is-dark::before { background: var(--mustard); }
+.fx-ring.is-down::before { transform: scale(.52); }
+.fx-ring.is-link.is-down::before { transform: scale(.85); }
+.fx-ring.is-text::before, .fx-dot.is-text::before, .fx-ring.is-gone::before, .fx-dot.is-gone::before { opacity: 0; transform: scale(0); }
+.fx-ink { /* the click lands like a rubber stamp */
+  position: fixed; z-index: 9998; width: 30px; height: 30px; margin: -15px 0 0 -15px; border-radius: 50%; pointer-events: none;
+  border: 3px double rgba(46, 107, 78, .55); animation: ink 520ms var(--ease-out) forwards;
+}
+.fx-ink.is-dark { border-color: rgba(242, 193, 78, .7); }
+@keyframes ink { from { opacity: .9; transform: scale(.35) rotate(-20deg); } to { opacity: 0; transform: scale(1.9) rotate(0deg); } }
+
+.fx-toggle { margin-left: 1rem; padding: .15rem .55rem; border: 1px solid var(--line); border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: .72rem; }
+.fx-toggle:hover { border-color: var(--ink); color: var(--ink); }
+.fx-toggle[hidden] { display: none; }
+
+/* paper catches the light under the pointer */
+.fx-sheen { position: absolute; inset: 0; z-index: 1; pointer-events: none; opacity: 0; mix-blend-mode: soft-light; transition: opacity .45s ease;
+  background: radial-gradient(circle at var(--sx, 50%) var(--sy, 0%), rgba(255, 255, 255, .95), rgba(255, 255, 255, 0) 42%); will-change: opacity; }
+.is-lit .fx-sheen { opacity: 1; }
+[data-tilt] .ticket { transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)); transition: transform .5s var(--ease-out); }
+[data-tilt].ticket-wrap { filter: drop-shadow(0 1px 1px rgba(23, 36, 30, .08)) drop-shadow(var(--shx, 0px) var(--shy, 16px) 24px rgba(23, 36, 30, .17)); transition: filter .5s var(--ease-out); }
+[data-magnetic] { translate: var(--mgx, 0px) var(--mgy, 0px); transition: translate .3s var(--ease-out), background-color .18s ease, box-shadow .18s ease; }
+.hero::after { /* warm light that follows the pointer across the pass */
+  content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0; transition: opacity .6s ease;
+  background: radial-gradient(520px circle at var(--mx, 70%) var(--my, 40%), rgba(242, 193, 78, .16), transparent 70%);
+}
+html.fx-on .hero::after { opacity: 1; }
+
 /* ---------- Desktop chat workspace: one screen, like an app ---------- */
 @media (min-width: 881px) and (max-height: 860px) {
   .page-chat .chat-side #send-panel .muted { display: none; }

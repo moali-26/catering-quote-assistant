@@ -1,6 +1,6 @@
 {% if not draft %}
 <p class="side-label"><span>Your draft</span><span>Waiting</span></p>
-<div class="ticket-wrap ticket-wrap-flat draft-blank">
+<div class="ticket-wrap ticket-wrap-flat draft-blank" data-sheen>
   <div class="ticket">
     <div class="ticket-head">
       <p class="ticket-brand">{{ business.name | trim('.') }}</p>
@@ -21,7 +21,7 @@
 {% else %}
 {% set p = draft.pricing %}
 <p class="side-label"><span>Your draft</span><span>{{ 'Ready to send' if draft.ready else ('Can’t send yet' if draft.blocking_reasons else 'In progress') }}</span></p>
-<div class="ticket-wrap ticket-wrap-flat ticket-compact" data-total="{{ p.total_cents if p else '' }}">
+<div class="ticket-wrap ticket-wrap-flat ticket-compact" data-sheen data-total="{{ p.total_cents if p else '' }}">
   <article class="ticket" aria-label="Draft quote">
     <header class="ticket-head">
       <p class="ticket-brand">{{ business.name | trim('.') }}</p>
