@@ -1,4 +1,5 @@
 """Price explicit selections using trusted menu/rules snapshots."""
+from copy import deepcopy
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 
 
@@ -61,7 +62,7 @@ def _calculate_quote(menu, rules, request):
     if not config:
         raise QuoteError('service mode configuration is missing')
     minimum = config['order_minimum']
-    if headcount < minimum['guest_count']:
+    if headcount < positive_int(minimum['guest_count'], 'minimum guest count'):
         raise QuoteError('headcount below service minimum')
     selections = request.get('selections')
     if not isinstance(selections, list) or not selections:
@@ -143,4 +144,4 @@ def _calculate_quote(menu, rules, request):
             'flags': sorted(set(flags)), 'requires_owner_review': True,
             'pending_checks': ['event_details', 'lead_time', 'capacity',
                                'allergen_and_dietary_review', 'portion_coverage'],
-            'rules_assumptions': list(rules.get('assumptions', []))}
+            'rules_assumptions': deepcopy(list(rules.get('assumptions', [])))}

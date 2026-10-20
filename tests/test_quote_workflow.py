@@ -109,3 +109,9 @@ class WorkflowTests(unittest.TestCase):
         with self.assertRaises(QuoteError): self.approve(now=datetime.fromisoformat('2026-10-17T12:00:00-07:00'))
         with self.assertRaises(QuoteError):
             create_quote(self.menu,self.rules,self.request,owner_id='',customer_id='c',now=self.now)
+
+    def test_acknowledgment_cannot_bypass_unrecognized_allergen(self):
+        self.request['allergens'] = ['nuts']
+        revised = self.revise(self.quote)
+        with self.assertRaises(QuoteError):
+            self.approve(revised)

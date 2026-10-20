@@ -72,3 +72,9 @@ class ReadinessTests(unittest.TestCase):
     def test_wrong_dataset(self):
         self.capacity['meta']['dataset_id']='other'
         with self.assertRaises(QuoteError):self.check()
+
+    def test_unrecognized_allergen_blocks_approval(self):
+        self.request['allergens'] = ['nuts']
+        result = self.check()
+        self.assertEqual(result['status'], 'blocked')
+        self.assertIn('unrecognized_allergen_requires_clarification', result['blocking_reasons'])
