@@ -1,0 +1,16 @@
+{% macro status_chip(status, label) -%}
+<span class="chip chip-{{ tone(status) }}">{{ label }}</span>
+{%- endmacro %}
+
+{% macro quote_row(card, href) -%}
+<li class="quote-row">
+  <a href="{{ href }}">
+    <span class="quote-row-main">
+      <span class="quote-row-date">{{ event_time(card.event_at) }}</span>
+      <span class="quote-row-meta">{% if card.headcount %}{{ card.headcount }} guests · {% endif %}Version {{ card.version }}{% if card.event_passed %} · Event passed{% endif %}</span>
+    </span>
+    <span class="quote-row-total">{{ card.total.display if card.total else '—' }}</span>
+    {{ status_chip(card.status, card.status_label) }}
+  </a>
+</li>
+{%- endmacro %}

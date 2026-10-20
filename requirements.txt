@@ -1,7 +1,9 @@
-# Everything the deployed web app needs (Render runs: pip install -r requirements.txt).
+# Everything the deployed web app needs (Render runs: pip install -r requirements.txt). Includes E's billing (stripe).
 -r requirements-ai.txt
 -r requirements-postgres.txt
 fastapi==0.150.0
 uvicorn[standard]==0.54.0
 jinja2==3.1.6
 python-multipart==0.0.32
+httpx==0.28.1
+stripe==14.4.1  # billing uses dict-style .get() on Stripe objects, removed in stripe 15+

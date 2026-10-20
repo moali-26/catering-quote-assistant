@@ -1,3 +1,2 @@
-# Local development and tests (the app's page tests use FastAPI's TestClient).
+# Local development and tests (FastAPI's TestClient uses httpx, already in requirements.txt).
 -r requirements.txt
-httpx==0.28.1

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% from "_macros.html" import quote_row %}
+{% block title %}Quote inbox · {{ business.name }}{% endblock %}
+{% block content %}
+{% set waiting = quotes | selectattr('status', 'equalto', 'draft') | list %}
+{% set others = quotes | rejectattr('status', 'equalto', 'draft') | list %}
+<section class="workspace">
+  <div class="wrap">
+    <header class="workspace-head">
+      <div>
+        <p class="eyebrow">{{ business.name }} · Owner</p>
+        <h1 class="section-title">Quote inbox</h1>
+      </div>
+      <dl class="stats">
+        <div><dt>Needs review</dt><dd>{{ waiting | length }}</dd></div>
+        <div><dt>All requests</dt><dd>{{ quotes | length }}</dd></div>
+      </dl>
+    </header>
+
+    {% if not quotes %}
+    <div class="empty">
+      <h2>No requests yet</h2>
+      <p class="muted">When a customer submits a request, it lands here for your review. Nothing is shown to you until they submit.</p>
+    </div>
+    {% else %}
+    <h2 class="list-title">Needs your review</h2>
+    {% if waiting %}
+    <ul class="quote-list">{% for card in waiting %}{{ quote_row(card, '/quotes/' ~ card.quote_id) }}{% endfor %}</ul>
+    {% else %}
+    <p class="muted list-empty">You’re all caught up.</p>
+    {% endif %}
+    {% if others %}
+    <h2 class="list-title">Approved and answered</h2>
+    <ul class="quote-list">{% for card in others %}{{ quote_row(card, '/quotes/' ~ card.quote_id) }}{% endfor %}</ul>
+    {% endif %}
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

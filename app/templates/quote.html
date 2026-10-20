@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% from "_macros.html" import status_chip %}
+{% set q = quote %}
+{% set ev = q.event %}
+{% set ready = q.readiness %}
+{% block title %}Quote · {{ event_time(ev.event_at) }} · {{ business.name }}{% endblock %}
+{% block content %}
+<section class="workspace">
+  <div class="wrap">
+    <a class="back-link" href="{{ '/owner' if user.is_owner else '/quotes' }}">← {{ 'Quote inbox' if user.is_owner else 'My Quotes' }}</a>
+    <header class="workspace-head">
+      <div>
+        <p class="eyebrow">Version {{ q.version }}{% if q.event_passed %} · Event passed{% endif %}</p>
+        <h1 class="section-title">{{ event_time(ev.event_at) }}</h1>
+      </div>
+      {{ status_chip(q.status, q.status_label) }}
+    </header>
+
+    <div class="detail-grid">
+      <div class="ticket-wrap ticket-wrap-flat">
+        <article class="ticket" aria-label="Itemized quote">
+          <header class="ticket-head"><span>Order ticket</span><span>v{{ q.version }}</span></header>
+          {% if q.pricing %}
+          <table class="ticket-lines">
+            <caption class="sr-only">Itemized quote</caption>
+            <thead><tr><th scope="col">Item</th><th scope="col" class="num">Qty</th><th scope="col" class="num">Amount</th></tr></thead>
+            <tbody>
+              {% for line in q.pricing.lines %}
+              <tr>
+                <td>{{ scrub(line.name) }}<span class="ticket-sub">{{ line.label }} · {{ line.unit_price_display }} each</span></td>
+                <td class="num">{{ line.quantity }}</td>
+                <td class="num">{{ line.line_total_display }}</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+            {% set a = q.pricing.amounts %}
+            <tfoot>
+              <tr><th scope="row" colspan="2">Food subtotal</th><td class="num">{{ a.food_subtotal_cents.display }}</td></tr>
+              {% if a.delivery_fee_cents.cents %}<tr><th scope="row" colspan="2">Delivery</th><td class="num">{{ a.delivery_fee_cents.display }}</td></tr>{% endif %}
+              {% if a.service_charge_cents.cents %}<tr><th scope="row" colspan="2">Service charge</th><td class="num">{{ a.service_charge_cents.display }}</td></tr>{% endif %}
+              {% if a.staffing_fee_cents.cents %}<tr><th scope="row" colspan="2">Staffing</th><td class="num">{{ a.staffing_fee_cents.display }}</td></tr>{% endif %}
+              <tr><th scope="row" colspan="2">Tax</th><td class="num">{{ a.tax_cents.display }}</td></tr>
+              <tr class="ticket-total"><th scope="row" colspan="2">Total</th><td class="num">{{ a.total_cents.display }}</td></tr>
+            </tfoot>
+          </table>
+          {% else %}
+          <p class="ticket-request">This version can’t be priced until the missing details are filled in.</p>
+          {% endif %}
+          <footer class="ticket-foot">
+            <p>Prices from the menu · not a booking</p>
+            <p class="stamp stamp-{{ tone(q.status) }}"><span class="sr-only">Status: </span>{{ q.status_label }}</p>
+          </footer>
+        </article>
+      </div>
+
+      <div class="detail-side">
+        <section class="panel" aria-labelledby="event-title">
+          <h2 id="event-title" class="panel-title">Event details</h2>
+          <dl class="facts">
+            <div><dt>Guests</dt><dd>{{ ev.headcount or '—' }}</dd></div>
+            <div><dt>Service</dt><dd>{{ (ev.service_mode or '—') | replace('_', ' ') | capitalize }}</dd></div>
+            {% if ev.address %}<div class="facts-wide"><dt>Address</dt><dd>{{ ev.address }}</dd></div>{% endif %}
+            <div><dt>Allergies</dt><dd>{{ (ev.allergens | map('replace', '_', ' ') | join(', ')) if ev.allergens else 'None reported' }}</dd></div>
+            <div><dt>Dietary needs</dt><dd>{{ (ev.dietary_needs | map('replace', '_', ' ') | join(', ')) if ev.dietary_needs else 'None' }}</dd></div>
+            {% if ev.budget_usd %}<div><dt>Budget</dt><dd>${{ '{:,.2f}'.format(ev.budget_usd) }}</dd></div>{% endif %}
+          </dl>
+        </section>
+
+        {% if ready.missing_fields or ready.blocking_reasons %}
+        <section class="panel panel-warning" aria-labelledby="blocked-title">
+          <h2 id="blocked-title" class="panel-title">Needs attention before approval</h2>
+          <ul class="plain-list">
+            {% for field in ready.missing_fields %}<li>Missing: {{ field_label(field) }}</li>{% endfor %}
+            {% for code in ready.blocking_reasons %}<li>{{ review_label(code) }}</li>{% endfor %}
+          </ul>
+        </section>
+        {% endif %}
+
+        {% if user.is_owner and q.actions.approve %}
+        <form class="panel panel-action" method="post" action="/quotes/{{ q.quote_id }}/approve">
+          <h2 class="panel-title">Review and approve</h2>
+          <p class="muted">Tick each item once you’ve checked it. The customer can accept only after you approve.</p>
+          <input type="hidden" name="revision" value="{{ q.revision }}">
+          <fieldset class="checklist">
+            <legend class="sr-only">Review items</legend>
+            {% for code in q.approval_requires_acknowledgment %}
+            <label class="check"><input type="checkbox" name="ack" value="{{ code }}" required> <span>{{ review_label(code) }}</span></label>
+            {% endfor %}
+          </fieldset>
+          <button class="btn btn-primary btn-block" type="submit">Approve quote</button>
+        </form>
+        {% elif user.is_owner and q.status == 'draft' %}
+        <section class="panel"><h2 class="panel-title">Not ready to approve</h2><p class="muted">Resolve the items above first. Contact the customer to fill in what’s missing.</p></section>
+        {% elif user.is_owner and q.status == 'owner_approved' %}
+        <section class="panel"><h2 class="panel-title">Waiting for the customer</h2><p class="muted">You approved this version. The customer will accept or decline it from My Quotes.</p></section>
+        {% endif %}
+
+        {% if not user.is_owner %}
+          {% if q.actions.accept %}
+          <section class="panel panel-action" aria-labelledby="respond-title">
+            <h2 id="respond-title" class="panel-title">Your response</h2>
+            <p class="muted">The owner approved this quote. Accepting confirms you agree to it; it doesn’t charge you or book the date automatically.</p>
+            <div class="respond-row">
+              <form method="post" action="/quotes/{{ q.quote_id }}/respond">
+                <input type="hidden" name="revision" value="{{ q.revision }}"><input type="hidden" name="decision" value="accept">
+                <button class="btn btn-primary" type="submit">Accept quote</button>
+              </form>
+              <form method="post" action="/quotes/{{ q.quote_id }}/respond">
+                <input type="hidden" name="revision" value="{{ q.revision }}"><input type="hidden" name="decision" value="decline">
+                <button class="btn btn-quiet" type="submit">Decline</button>
+              </form>
+            </div>
+          </section>
+          {% elif q.status == 'draft' %}
+          <section class="panel"><h2 class="panel-title">With the owner</h2><p class="muted">The owner is checking portions, allergens and availability. Come back to My Quotes to see when it’s approved.</p></section>
+          {% endif %}
+        {% endif %}
+
+        {% if q.history | length > 1 %}
+        <section class="panel" aria-labelledby="history-title">
+          <h2 id="history-title" class="panel-title">History</h2>
+          <ol class="history">
+            {% for h in q.history | reverse %}
+            <li><span>Version {{ h.version }}</span><span class="muted">{{ h.status | replace('_', ' ') | capitalize }}</span><span class="price">{{ ('$' ~ '{:,.2f}'.format(h.total_cents / 100)) if h.total_cents is not none else '—' }}</span></li>
+            {% endfor %}
+          </ol>
+        </section>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

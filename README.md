@@ -2,7 +2,7 @@
 
 ## Web app
 
-The web app is being built in `app/` (FastAPI, server-rendered pages, deploys to Render). This first version has the public home page; sign-in, quote screens and chat follow. Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
+The web app is being built in `app/` (FastAPI, server-rendered pages, deploys to Render). It has sign-in for customers and owners, My Quotes and the owner quote inbox; the customer chat follows. Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
 
 ## Current project plan
 

@@ -1,24 +1,41 @@
 {% extends "base.html" %}
-{% block title %}Sign in · {{ business.name }}{% endblock %}
+{% set signup = mode == 'signup' %}
+{% block title %}{{ 'Create an account' if signup else 'Sign in' }} · {{ business.name }}{% endblock %}
 {% block body_class %}page-auth{% endblock %}
 {% block nav %}<a href="/">Back to home</a>{% endblock %}
 {% block content %}
 <section class="auth">
   <div class="auth-card">
-    <h1 class="display-sm">Sign in</h1>
-    <p class="muted">Customers see their quote requests in My Quotes. Owners go to the review dashboard.</p>
+    <nav class="auth-tabs" aria-label="Account">
+      <a href="/login{% if next %}?next={{ next | urlencode }}{% endif %}" {% if not signup %}aria-current="page" class="is-active"{% endif %}>Sign in</a>
+      <a href="/login?mode=signup{% if next %}&next={{ next | urlencode }}{% endif %}" {% if signup %}aria-current="page" class="is-active"{% endif %}>Create account</a>
+    </nav>
+    <h1 class="display-sm">{{ 'Create your account' if signup else 'Welcome back' }}</h1>
+    <p class="muted">{% if signup %}Create a customer account with your email. Your quote requests will be saved to it.{% else %}Customers go to My Quotes. Owners go to the quote inbox.{% endif %}</p>
+
+    {% if not accounts_open %}
     <div class="notice">
-      <strong>Accounts open in the next update.</strong>
-      Sign-in and sign-up are being connected now; this form is not active yet.
+      <strong>Sign-in isn’t available right now.</strong>
+      Accounts are being set up. Try again soon.
     </div>
-    <form class="form" action="/login" method="get">
+    {% endif %}
+    {% if error %}<p class="form-error" role="alert">{{ error }}</p>{% endif %}
+
+    <form class="form" method="post" action="{{ '/signup' if signup else '/login' }}" novalidate>
+      <input type="hidden" name="next" value="{{ next }}">
       <label for="email">Email</label>
-      <input id="email" type="email" aria-describedby="login-help" autocomplete="email" disabled>
+      <input id="email" name="email" type="email" value="{{ email }}" autocomplete="email" required {% if not accounts_open %}disabled{% endif %} {% if error %}aria-invalid="true"{% endif %}>
       <label for="password">Password</label>
-      <input id="password" type="password" autocomplete="current-password" disabled>
-      <button class="btn btn-primary btn-block" type="submit" disabled>Sign in</button>
+      <input id="password" name="password" type="password" minlength="8" required
+             autocomplete="{{ 'new-password' if signup else 'current-password' }}"
+             {% if signup %}aria-describedby="password-help"{% endif %} {% if not accounts_open %}disabled{% endif %}>
+      {% if signup %}<p id="password-help" class="fine-print">At least 8 characters.</p>{% endif %}
+      <button class="btn btn-primary btn-block" type="submit" {% if not accounts_open %}disabled{% endif %}>{{ 'Create account' if signup else 'Sign in' }}</button>
     </form>
-    <p id="login-help" class="fine-print">New here? You’ll be able to create a customer account from this page.</p>
+    <p class="fine-print">
+      {% if signup %}Already have an account? <a href="/login{% if next %}?next={{ next | urlencode }}{% endif %}">Sign in</a>.
+      {% else %}New here? <a href="/login?mode=signup{% if next %}&next={{ next | urlencode }}{% endif %}">Create a customer account</a>.{% endif %}
+    </p>
   </div>
 </section>
 {% endblock %}
