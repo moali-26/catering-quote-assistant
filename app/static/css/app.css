@@ -827,6 +827,9 @@ p { margin: 0; }
 .is-printing .stamp { animation: stamp-in .4s var(--ease-spring) .95s both; }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .nav-email { display: none; } /* half-screen windows: keep the store name and role label whole */
+}
 @media (max-width: 960px) {
   .auth-shell { grid-template-columns: minmax(0, 1fr); justify-items: center; }
   .auth-aside { display: none; }
@@ -980,7 +983,7 @@ html.fx-on .hero::after { opacity: 1; }
 }
 @media (min-width: 881px) {
   .page-chat { --chat-h: max(34rem, calc(100dvh - 4.25rem - 8.6rem)); }
-  .page-chat .workspace { padding: 1.4rem 0 1.6rem; }
+  .page-chat .workspace { padding: 1.4rem 0 1.6rem; overflow-x: clip; } /* the draft column's side margin may pass the page gutter */
   .page-chat .workspace-head { margin-bottom: 1rem; align-items: center; }
   .page-chat .workspace-head .section-title { font-size: 1.9rem; }
   .page-chat .chat-grid { align-items: stretch; }
