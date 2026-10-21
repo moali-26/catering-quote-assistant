@@ -3,16 +3,16 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>{% block title %}{{ business.name }} · Catering quotes{% endblock %}</title>
+  {% set role = 'owner' if user and user.is_owner else ('customer' if user else 'guest') %}
+  <title>{% if role == 'owner' %}Owner · {% elif role == 'customer' %}Customer · {% endif %}{% block title %}{{ business.name }} · Catering quotes{% endblock %}</title>
   <meta name="description" content="Request a catering quote from {{ business.name | trim('.') }}: describe your event, get an itemized draft, and confirm once the owner reviews it.">
-  <meta name="theme-color" content="{{ '#17241E' if user and user.is_owner else '#F2F4EE' }}">
+  <meta name="theme-color" content="{{ '#13233D' if user and user.is_owner else '#F2F4EE' }}">
   <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
   <link rel="stylesheet" href="/static/css/app.css?v={{ static_version }}">
 </head>
-{% set role = 'owner' if user and user.is_owner else ('customer' if user else 'guest') %}
 {% set path = request.url.path if request else '' %}
 <body class="role-{{ role }} {% block body_class %}{% endblock %}">
   <a class="skip-link" href="#main">Skip to content</a>
@@ -21,7 +21,7 @@
       <a class="brand" href="{{ '/owner' if role == 'owner' else '/' }}" aria-label="{{ business.name }} {{ 'quote inbox' if role == 'owner' else 'home' }}">
         <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path class="brand-mark-lines" d="M9 15h14M9 19h10M9 23h7" stroke-width="2" stroke-linecap="round"/></svg>
         <span class="brand-name">{{ business.name }}</span>
-        {% if role == 'owner' %}<span class="role-tag">Kitchen</span>{% endif %}
+        {% if role != 'guest' %}<span class="role-tag role-tag-{{ role }}">{{ 'Owner' if role == 'owner' else 'Customer' }}</span>{% endif %}
       </a>
       <nav class="site-nav" aria-label="Main">
         {% block nav %}

@@ -144,7 +144,11 @@ p { margin: 0; }
 .brand-mark-lines { stroke: var(--page); }
 .brand:hover .brand-mark { transform: rotate(-8deg) translateY(-1px); }
 .brand-name { font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; letter-spacing: -.015em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.role-tag { flex-shrink: 0; padding: .15rem .5rem; border-radius: 6px; background: var(--mustard); color: var(--ink); font: 600 .68rem/1.4 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+/* who is signed in, at a glance: a pill next to the brand on every signed-in page */
+.role-tag { display: inline-flex; align-items: center; gap: .45rem; flex-shrink: 0; padding: .32rem .75rem .32rem .6rem; border-radius: 999px; font: 700 .74rem/1.2 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; }
+.role-tag::before { content: ''; width: .5rem; height: .5rem; border-radius: 50%; background: currentColor; box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent); }
+.role-tag-owner { background: var(--mustard); color: var(--ink); box-shadow: 0 0 0 1px rgba(255, 255, 255, .18) inset, 0 6px 16px -8px rgba(242, 193, 78, .7); }
+.role-tag-customer { background: var(--herb); color: #fff; box-shadow: 0 6px 16px -8px rgba(31, 78, 56, .7); }
 .role-owner .brand-mark { color: var(--mustard); }
 .role-owner .brand-mark-lines { stroke: var(--ink); }
 
@@ -823,11 +827,15 @@ p { margin: 0; }
 .is-printing .stamp { animation: stamp-in .4s var(--ease-spring) .95s both; }
 
 /* ---------- Responsive ---------- */
+@media (max-width: 1024px) {
+  .nav-email { display: none; } /* half-screen windows: keep the store name and role label whole */
+}
 @media (max-width: 960px) {
   .auth-shell { grid-template-columns: minmax(0, 1fr); justify-items: center; }
   .auth-aside { display: none; }
 }
 @media (max-width: 880px) {
+  .header-row:has(.role-tag-customer):has(.nav-cta) .brand-name { display: none; }
   .hero-grid { grid-template-columns: minmax(0, 1fr); }
   .ticket-stage { margin-top: 1rem; }
   .detail-grid { grid-template-columns: minmax(0, 1fr); }
@@ -975,7 +983,7 @@ html.fx-on .hero::after { opacity: 1; }
 }
 @media (min-width: 881px) {
   .page-chat { --chat-h: max(34rem, calc(100dvh - 4.25rem - 8.6rem)); }
-  .page-chat .workspace { padding: 1.4rem 0 1.6rem; }
+  .page-chat .workspace { padding: 1.4rem 0 1.6rem; overflow-x: clip; } /* the draft column's side margin may pass the page gutter */
   .page-chat .workspace-head { margin-bottom: 1rem; align-items: center; }
   .page-chat .workspace-head .section-title { font-size: 1.9rem; }
   .page-chat .chat-grid { align-items: stretch; }
