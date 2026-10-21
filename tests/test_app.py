@@ -63,9 +63,13 @@ class AppPagesTest(unittest.TestCase):
         self.assertGreater(len(items), 8)
         for item in items:
             self.assertIn(item['name'], page)
-        # The first eight are featured; the rest sit behind the show-more button.
-        self.assertEqual(page.count('class="menu-item menu-extra"'), len(items) - 8)
-        self.assertIn(f'Show the full menu ({len(items) - 8} more dishes)', page)
+        # Every dish is in the page; with JavaScript the board starts as a peek with a show-more button.
+        self.assertEqual(page.count('class="menu-item"'), len(items))
+        self.assertIn('data-collapsible', page)
+        self.assertIn(f'Show the full menu · {len(items)} dishes', page)
+        # Each category is its own labelled group with a dish count.
+        categories = {i['category'] for i in items}
+        self.assertEqual(page.count('class="menu-group"'), len(categories))
 
     def test_home_does_not_link_to_inactive_sign_in_as_a_quote_action(self):
         html = self.client.get('/').text
