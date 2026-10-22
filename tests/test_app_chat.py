@@ -451,7 +451,13 @@ class ChatTest(unittest.TestCase):
             ana.post('/chat/new')
             response = ana.post('/chat/new')
         self.assertEqual(response.headers['location'], '/chat')
-        self.assertIn('today’s limit', ana.get('/chat').text)
+        self.assertIn('most new requests allowed today', ana.get('/chat').text)
+
+    def test_daily_limits_can_be_set_from_the_environment(self):
+        from app.chat import _limit
+        with mock.patch.dict(os.environ, {'X_LIMIT': '50', 'X_BAD': 'lots', 'X_ZERO': '0'}):
+            self.assertEqual((_limit('X_LIMIT', 6), _limit('X_BAD', 6), _limit('X_ZERO', 6), _limit('X_MISSING', 6)),
+                             (50, 6, 6, 6))
 
     def test_chat_off_without_model(self):
         from app.chat import ChatService, SQLiteConversationStore

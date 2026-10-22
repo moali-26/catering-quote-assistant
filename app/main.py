@@ -79,7 +79,10 @@ NOTICES = {
     'chat-empty': ('warning', 'Type a message first.'),
     'chat-submitted': ('info', 'That request was already sent to the owner. You’re in a new request now.'),
     'chat-long': ('warning', 'This conversation is getting long. Send it for review or start a new request.'),
-    'chat-daily': ('warning', 'You’ve reached today’s limit for the assistant. Try again tomorrow.'),
+    'chat-daily': ('warning', 'You’ve reached today’s message limit for the assistant. Try again tomorrow.'),
+    'chat-daily-total': ('warning', 'The assistant has reached today’s limit. Try again tomorrow.'),
+    'chat-new-limit': ('warning', 'You’ve started the most new requests allowed today. Continue your current '
+                                  'request below, or try again tomorrow.'),
     'chat-off': ('warning', 'The assistant isn’t available right now. Try again later.'),
     'chat-limit': ('warning', 'That message couldn’t be sent. Try again.'),
     'billing-paid': ('success', 'Payment confirmed with Stripe. Your Quote Kitchen subscription is active.'),
