@@ -1,5 +1,7 @@
 # Quote Kitchen — Catering Quote Assistant
 
+**Product requirements:** [docs/prd.md](docs/prd.md) — problem, goals, users, requirements, evaluation and roadmap.
+
 ## Web app
 
 The web app is in `app/` (FastAPI, server-rendered pages, deployed on Render). Customers sign in, request a quote through the AI chat (OpenAI `gpt-5.5`) and accept or decline it in My Quotes. The owner reviews and approves quotes in the quote inbox, edits the menu, and subscribes to the Quote Kitchen Subscription Plan through Stripe (test mode). Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
