@@ -1,6 +1,6 @@
-# Owner Software Plan (Stripe test mode)
+# Quote Kitchen Subscription Plan (Stripe test mode)
 
-The business owner subscribes to the Catering Quote Assistant (monthly plan) through Stripe Checkout. **Test mode only**: live keys are refused, and no real money moves. This is separate from food quotes; customers never pay in this app, and accepting a quote never charges anything.
+The business owner subscribes to Quote Kitchen (monthly plan) through Stripe Checkout. **Test mode only**: live keys are refused, and no real money moves. This is separate from food quotes; customers never pay in this app, and accepting a quote never charges anything.
 
 E built the Stripe module (`billing/`). This page covers how it's wired into the web app (`app/billing_app.py`, routes in `app/main.py`).
 
@@ -25,17 +25,17 @@ Owner inbox ──► /owner/billing ──► POST /owner/billing/checkout ─�
 
 | Route | Who | What |
 | --- | --- | --- |
-| `GET /owner/billing` | Owner | Plan status; "Buy the software plan" button when not yet paid |
+| `GET /owner/billing` | Owner | Plan status; "Subscribe with Stripe" button when not yet paid |
 | `POST /owner/billing/checkout` | Owner | Creates a Checkout Session and redirects to Stripe |
 | `GET /owner/billing/success` | Owner | Confirms with Stripe, records payment, redirects with a notice |
 | `POST /stripe/webhook` | Stripe | Signed `checkout.session.completed` / `async_payment_succeeded` |
 
-The owner inbox shows "Software plan: Active / Not purchased" linking to the billing page.
+The owner inbox shows "Quote Kitchen Subscription Plan · Active / Not subscribed" linking to the billing page.
 
 ## Setup (D or E, about 10 minutes)
 
 1. **Stripe dashboard, in Test mode** (toggle at the top right).
-2. **Product catalog → Add product:** e.g. "Catering Quote Assistant — Owner plan", recurring monthly price (e.g. $29.00 per month). Checkout runs in subscription mode, so a one-time price is refused. Copy the **price ID** (`price_...`).
+2. **Product catalog → Add product:** e.g. "Quote Kitchen Subscription Plan", recurring monthly price (e.g. $29.00 per month). Checkout runs in subscription mode, so a one-time price is refused. Copy the **price ID** (`price_...`).
 3. **Developers → API keys:** copy the **secret key** (`sk_test_...`). Never the live key.
 4. **Developers → Webhooks → Add endpoint:**
    - URL: `https://<your-render-app>.onrender.com/stripe/webhook`
@@ -43,7 +43,7 @@ The owner inbox shows "Software plan: Active / Not purchased" linking to the bil
    - Copy the **signing secret** (`whsec_...`).
 5. **Render → Environment:** set `STRIPE_SECRET_KEY`, `STRIPE_PRICE_ID`, `STRIPE_WEBHOOK_SECRET` (they're in `render.yaml` with `sync: false`; add them in the dashboard if the blueprint already exists).
 6. **Supabase SQL editor:** apply `supabase/migrations/202610200002_owner_billing.sql` (after `202610190001_quote_storage.sql`).
-7. **Try it:** sign in as the owner → "Software plan" → Buy → card `4242 4242 4242 4242`, any future date, any CVC → back on the plan page it shows **Plan active**.
+7. **Try it:** sign in as the owner → "Quote Kitchen Subscription Plan" → Subscribe with Stripe → card `4242 4242 4242 4242`, any future date, any CVC → back on the plan page it shows **Plan active**.
 
 Local development: without `QUOTE_DATABASE_URL`, payments are stored in `var/billing.sqlite3`. To test the webhook locally, use the Stripe CLI: `stripe listen --forward-to localhost:8000/stripe/webhook` and use the `whsec_` it prints.
 

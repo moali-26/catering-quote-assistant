@@ -10,7 +10,7 @@
     <div>
       <p class="eyebrow">{{ business.name | trim('.') }} · Owner</p>
       <h1 class="section-title">Quote inbox</h1>
-      <p class="plan-link"><a href="/owner/billing">Software plan: {{ 'Active' if plan and plan.paid else 'Not purchased' }} →</a></p>
+      <p class="plan-link"><a href="/owner/billing">Quote Kitchen Subscription Plan · {{ 'Active' if plan and plan.paid else 'Not subscribed' }} →</a></p>
     </div>
     <div class="kitchen-actions">
     <a class="btn btn-small btn-kitchen" href="/owner/menu">Edit menu</a>

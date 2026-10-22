@@ -38,7 +38,7 @@ from .chat import (ChatConflict, ChatLimit, ChatNotFound, ChatService, PostgresC
                    SQLiteConversationStore, visible_messages)
 
 HERE = Path(__file__).resolve().parent
-STATIC_VERSION = '36'
+STATIC_VERSION = '37'
 NOTICE_COOKIE = 'cqa_notice'
 REFRESH_MAX_AGE = 60 * 60 * 24 * 30
 logger = logging.getLogger('app')
@@ -52,7 +52,7 @@ ERROR_COPY = {
 CLIENT_ERROR_COPY = ('We couldn’t complete that request', 'Check the link or go back and try again.')
 SERVER_ERROR_COPY = ('Something went wrong on our side',
                      'Reload the page in a moment. If it keeps happening, try again in a few minutes.')
-FALLBACK_BUSINESS = {'name': 'Catering Quote Assistant', 'place': '', 'captured_at': ''}
+FALLBACK_BUSINESS = {'name': 'Quote Kitchen', 'place': '', 'captured_at': ''}
 NOTICES = {
     'signed-out': ('info', 'You’re signed out.'),
     'menu-saved': ('success', 'Menu saved. New requests and the home page use it right away.'),
@@ -82,7 +82,7 @@ NOTICES = {
     'chat-daily': ('warning', 'You’ve reached today’s limit for the assistant. Try again tomorrow.'),
     'chat-off': ('warning', 'The assistant isn’t available right now. Try again later.'),
     'chat-limit': ('warning', 'That message couldn’t be sent. Try again.'),
-    'billing-paid': ('success', 'Payment confirmed with Stripe. Your software plan is active.'),
+    'billing-paid': ('success', 'Payment confirmed with Stripe. Your Quote Kitchen subscription is active.'),
     'billing-pending': ('info', 'Stripe hasn’t confirmed the payment yet. Refresh this page in a moment.'),
     'billing-failed': ('warning', 'We couldn’t start or confirm that checkout. Nothing was charged here; try again.'),
     'billing-off': ('warning', 'Checkout isn’t set up on this server yet.'),
@@ -220,7 +220,7 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
         devseed.seed(backend, quotes)
 
     app = FastAPI(
-        title='Catering Quote Assistant',
+        title='Quote Kitchen',
         docs_url=None if settings.is_production else '/docs',
         redoc_url=None,
         openapi_url=None if settings.is_production else '/openapi.json',
@@ -668,7 +668,7 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
             quote_id, actor_id=user.id, expected_revision=revision, decision=decision),
             'accepted' if decision == 'accept' else 'declined')
 
-    # ---- owner software plan (Stripe test mode) ---------------------------
+    # ---- owner subscription: Quote Kitchen Subscription Plan (Stripe test mode) ----
     def base_url(request: Request) -> str:
         # Scheme is https behind Render thanks to --proxy-headers (see render.yaml).
         return f"{request.url.scheme}://{request.headers.get('host', '')}"
