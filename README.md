@@ -10,103 +10,35 @@ The web app is in `app/` (FastAPI, server-rendered pages, deployed on Render). C
 
 See [Overall Project Plan](docs/project-plan.md) for the October 19 scope, five-person responsibilities, deadlines, and acceptance checks. The app uses **one shared login for customers and owners**, with account-based **My Quotes** for returning customers. See [Quote Engine](docs/quote-engine.md) for implemented Python interfaces and tests. An optional [SQLite quote storage adapter](docs/quote-storage.md) is available for local development.
 
-The data inventory below records the October 18 data work. Its older rollout recommendations are superseded by the current plan.
+## Menu data
 
-**Data: Oct 18, 2026.** The repo has **two real caterers**: a full primary dataset and a simplified Korean dataset. Keep the repo private because it contains real source names and provenance.
+The app and final evaluation use the **22-item frozen demo menu** in `data/demo/`. Owner menu edits are stored in the configured database; this repository cleanup does not change those records.
 
-## What was done
+| Location | Purpose | Why retained |
+| --- | --- | --- |
+| `data/demo/` | Supported app/evaluation seed, rules and synthetic capacity | Core customer-to-owner workflow |
+| `data/sample/` | 9-item development fixture and example inquiries | Automated tests and offline demos |
+| `data/menu.json`, `data/rules.json`, `data/capacity.json` | Full 67-item source dataset | Demo rebuilding, provenance validation and full-dataset tests |
+| `data/raw/` | Stonefire source snapshots | Menu/rule/allergen provenance and parser inputs |
+| `data/allergens.json`, `data/parse_allergens.py` | Source allergen data and parser | Retains the data preparation workflow |
+| `data/caterers.json` | Retained source dataset index | Documents paths for the primary dataset |
 
-- Built the data layer first, because the pricing engine and agent both depend on it.
-- **Primary:** Stonefire Grill, Torrance, CA. Display alias **Sample Catering Co.** Full menu, prices, serving sizes, dietary tags, allergens, minimums, and lead times.
-- **Second:** Gok Jee Foods, Koreatown, Los Angeles. Display alias **Koreatown Catering Co.** Simplified Korean menu with 91 items, set menus, and tray prices.
-- Captured PDF and HTML proof for both sources.
-- Added synthetic capacity calendars and validators for both datasets.
+The unused second-caterer dataset and its source snapshots have been removed. No active menu IDs, prices, rules, allergens or evaluation cases were changed.
 
-## Current datasets
+Source: Stonefire Grill, Torrance, captured October 18, 2026. Quote Kitchen is the project brand; source attribution remains in the metadata. See [source log](data/source-log.md), [assumptions](data/assumptions.md) and [demo documentation](data/demo/README.md).
 
-| Caterer | Cuisine | Depth | Items | Variants | Notes |
-| --- | --- | --- | --- | --- | --- |
-| Stonefire Grill | American / BBQ | Full | 67 | 98 | Allergen table, full rules |
-| Gok Jee Foods | Korean | Simplified | 91 | 91 | No allergen table, minimal rules |
+Important limitations: gluten-sensitive does not mean gluten-free; package allergens can depend on selections; unknown allergens require confirmation. Capacity is synthetic and prices are a dated source snapshot.
 
-### Primary dataset: Stonefire Grill
+Validate the retained data:
 
-| Metric | Value |
-| --- | --- |
-| Price range | $1.99 – $255.00 |
-| Vegan / vegetarian / gluten-sensitive | 5 / 15 / 9 |
-| Allergens listed / none / unknown / depends on selection | 34 / 4 / 9 / 20 |
-
-**Published rules:** pickup 10-guest minimum, delivery 20-guest + $400 minimum, full service 30-guest minimum, delivery 48-hour notice, full service one-week notice, boxed meals 10 per selection and 48 hours, Culver City 11.25% / Torrance 10.75% tax.
-
-### Second dataset: Gok Jee Foods
-
-| Metric | Value |
-| --- | --- |
-| Price range | $5.00 – $1,090.00 |
-| Categories | 18 |
-| Set menus | 5, 10, and 20 people |
-| Vegetarian items | 2, explicitly labeled |
-| Allergens | Unknown for every item |
-| Estimated serving sizes | 35 piece-count or per-pound items |
-
-**Published details:** tray prices, set-menu sizes and contents, $5 per 10 people utensil add-on, prices exclude tax.
-
-## Key caveats
-
-1. **GF means gluten-sensitive, not gluten-free.** The primary caterer says it has no gluten-free items.
-2. **Gok Jee publishes no allergen table.** Every item is `unknown`; any allergy request must be flagged for caterer confirmation.
-3. **Gok Jee dietary tags are minimal.** Only two items are explicitly vegetarian. Do not assume the rest.
-4. **Package and boxed-meal allergens depend on selections.** They need caterer confirmation.
-5. **Prices are snapshot-dated and location-specific.** Stonefire prices are Torrance-only; Gok Jee prices are from its online menu.
-6. **Assumptions are documented.** See `data/assumptions.md` and `data/gokjee/assumptions.md`.
-
-## How to use it
-
-```powershell
+```sh
 python data/validate_dataset.py
-python data/gokjee/validate_gokjee.py
 python data/sample/validate_sample.py
+python data/demo/validate_demo.py
+python -m unittest discover -s tests
 ```
 
-Load `data/menu.json` and `data/rules.json` for the primary dataset. Load `data/gokjee/menu.json` and `data/gokjee/rules.json` for the Korean dataset. Use `meta.branding.display_name` in the UI, not `source.business_name`.
-
-### Lightweight sample fixture
-
-`data/sample/` is a fast test version of the primary dataset: 9 items, 15 variants, simplified rules, a 3-date capacity calendar, 5 inquiries, and one hand-checked expected quote. It uses the same item/variant IDs as the full dataset, so tests can switch between them. Use it for unit tests.
-
-### Demo menu
-
-`data/demo/` is the menu the web app and the evaluation use: 22 items taken unchanged from the primary dataset. See [data/demo/README.md](data/demo/README.md).
-
-## Cuisine coverage
-
-Current coverage is **American/BBQ + Korean**. Adding more cuisines means another transcription pass, another rule set, and more eval cases. These datasets are available references. The web app uses one supported subset (`data/demo/`); a second cuisine is optional future work.
-
-## Files
-
-- `data/caterers.json` — index of both caterer datasets for the app
-- `data/menu.json` — primary items, variants, dietary tags, allergens
-- `data/rules.json` — primary minimums, lead times, tax, delivery, staffing
-- `data/assumptions.md` — primary assumptions
-- `data/source-log.md` — primary candidate and provenance notes
-- `data/capacity.json` — primary synthetic availability
-- `data/gokjee/menu.json` — Korean items, prices, set menus
-- `data/gokjee/rules.json` — Korean minimums, tax, delivery
-- `data/gokjee/assumptions.md` — Korean assumptions
-- `data/gokjee/source-log.md` — Korean source and provenance
-- `data/gokjee/capacity.json` — Korean synthetic availability
-- `data/raw/` — PDF/HTML proof for both sources
-- `data/sample/menu.json` — 9-item lightweight fixture
-- `data/sample/rules.json` — simplified test rules
-- `data/sample/capacity.json` — 3-date test calendar
-- `data/sample/inquiries.json` — 5 test inquiries + expected quote
-- `data/sample/validate_sample.py` — fixture validator
-- `data/demo/` — 22-item demo menu used by the web app
-- `data/validate_dataset.py` — primary validator
-- `data/gokjee/validate_gokjee.py` — Korean validator
-- `DATA_STATUS.md` — longer status writeup
-
+Do not rerun `data/demo/build_demo.py` to apply live owner edits: it regenerates checked-in seed files from the full source dataset.
 
 ## Quote integration handoff
 

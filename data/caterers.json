@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "updated_at": "2026-10-18",
+  "updated_at": "2026-10-22",
   "note": "Use display_name in the app. business_name is retained for provenance only.",
   "sample_fixture": {
     "menu_path": "data/sample/menu.json",
@@ -21,18 +21,6 @@
       "rules_path": "data/rules.json",
       "capacity_path": "data/capacity.json",
       "validator": "data/validate_dataset.py"
-    },
-    {
-      "dataset_id": "gokjee-korean-catering-los-angeles",
-      "display_name": "Koreatown Catering Co.",
-      "business_name": "Gok Jee Foods",
-      "cuisine": "Korean",
-      "location": "Los Angeles, CA",
-      "depth": "simplified",
-      "menu_path": "data/gokjee/menu.json",
-      "rules_path": "data/gokjee/rules.json",
-      "capacity_path": "data/gokjee/capacity.json",
-      "validator": "data/gokjee/validate_gokjee.py"
     }
   ]
 }

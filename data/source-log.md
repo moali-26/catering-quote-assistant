@@ -1,6 +1,6 @@
 # Source Log
 
-Captured 2026-10-18. This file records the primary real business source behind the anonymized demo brand. The second, simplified Korean dataset has its own log at `data/gokjee/source-log.md`.
+Captured 2026-10-18. This file records the primary real business source behind the anonymized demo brand.
 
 ## Primary: Stonefire Grill (Torrance, CA)
 
@@ -36,28 +36,6 @@ Captured 2026-10-18. This file records the primary real business source behind t
 - GF means gluten-sensitive, not gluten-free.
 - Package and boxed-meal allergens depend on selections.
 
-## Second: Gok Jee Foods (Koreatown, Los Angeles)
-
-**Display name:** Koreatown Catering Co.
-
-**Why it was added:** real Korean caterer with public tray prices and set menus for 5/10/20 people. It adds a second cuisine without changing the primary quote flow.
-
-**Source URLs**
-
-- Menu list: http://www.gokjee.com/menulist.jsp?_pageid=P_E3MtzJaRCarlf1X8IAu0g
-- Menu data endpoint: http://www.gokjee.com/menuform.jsp
-- 2026 set-menu PDF: http://www.gokjee.com/2026-catering-set-menu_list.pdf
-
-**Proof saved:** `data/raw/gokjee-catering-menu-list-2026-10-18.pdf`, `data/raw/gokjee-menuform-2026-10-18.html`, and the original set-menu PDF.
-
-**What is real:** item names, prices, price units, set-menu sizes and contents, utensil add-on, "+ tax" note.
-
-**What is assumed:** 5-guest minimum, 48-hour lead time, delivery fee and radius, tax base, piece-count serving estimates.
-
-**Known caveats:** no published allergen table (all items unknown); no published dietary tags except explicit veg. items; HTTP-only site with an AJAX menu endpoint.
-
-See `data/gokjee/source-log.md` for the full notes.
-
 ## Rejected: Brent's Delicatessen (Northridge / Westlake Village, CA)
 
 **URL:** https://brentsdeli.com/catering/
@@ -78,7 +56,7 @@ See `data/gokjee/source-log.md` for the full notes.
 
 ## Why the primary dataset is one caterer
 
-The handoff's data plan is explicit: one caterer's public menu, with source URL and capture date. The primary dataset follows that exactly. The second Korean dataset is separate and simplified, so it adds cuisine variety without weakening the primary "real data" story. Each dataset has its own `meta.source`, `dataset_id`, rules, and assumptions.
+The handoff's data plan is explicit: one caterer's public menu, with source URL and capture date. The primary dataset follows that exactly. The retained dataset includes `meta.source`, `dataset_id`, rules, and assumptions.
 
 ## Still to confirm with the caterers (non-blocking)
 
@@ -86,4 +64,3 @@ The handoff's data plan is explicit: one caterer's public menu, with source URL 
 - Primary: full-service service charge and staffing rate
 - Primary: cancellation policy
 - Primary: whether delivery and service charges are taxable in their invoicing
-- Second: delivery fee, radius, minimum order, lead time, allergen and dietary details
