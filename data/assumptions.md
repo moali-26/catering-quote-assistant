@@ -2,7 +2,7 @@
 
 Every non-published value used by the pricing engine or constraint checks. Each line names the reason so it can be defended in Q&A.
 
-This file covers the **primary Stonefire dataset**. The simplified Korean dataset has its own assumptions in `data/gokjee/assumptions.md`.
+This file covers the **primary Stonefire dataset**.
 
 ## Data provenance
 
