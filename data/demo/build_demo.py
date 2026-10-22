@@ -4,7 +4,7 @@ Run from the repo root:  python3 data/demo/build_demo.py
 
 The demo menu is a SUBSET of data/menu.json. Item IDs, variant IDs, prices,
 serving sizes, dietary tags and allergens are copied unchanged, so provenance
-still points to data/raw/. Changes made here:
+still points to the source URLs in data/source-log.md. Changes made here:
   - only DEMO_ITEM_IDS are kept;
   - every item and variant gets "available": true (owner can switch off);
   - item names use the display aliases from meta.branding.item_aliases, so

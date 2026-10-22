@@ -21,7 +21,6 @@ The app and final evaluation use the **22-item frozen demo menu** in `data/demo/
 | `data/demo/` | Supported app/evaluation seed, rules and synthetic capacity | Core customer-to-owner workflow |
 | `data/sample/` | 9-item development fixture and example inquiries | Automated tests and offline demos |
 | `data/menu.json`, `data/rules.json`, `data/capacity.json` | Full 67-item source dataset | Demo rebuilding, provenance validation and full-dataset tests |
-| `data/raw/` | Stonefire source snapshots | Menu/rule/allergen provenance and parser inputs |
 | `data/allergens.json`, `data/parse_allergens.py` | Source allergen data and parser | Retains the data preparation workflow |
 | `data/caterers.json` | Retained source dataset index | Documents paths for the primary dataset |
 

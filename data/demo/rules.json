@@ -10,11 +10,7 @@
       "location": "Torrance, CA",
       "catering_url": "https://www.stonefiregrill.com/catering/",
       "faq_url": "https://www.stonefiregrill.com/contact/faqs/?faq_cat=catering",
-      "menu_url": "https://www.stonefiregrill.com/location/torrance/ca/catering-menu/",
-      "snapshots": [
-        "data/raw/stonefire-catering-faq-2026-10-18.pdf",
-        "data/raw/stonefire-torrance-catering-menu-2026-10-18.pdf"
-      ]
+      "menu_url": "https://www.stonefiregrill.com/location/torrance/ca/catering-menu/"
     },
     "legend": {
       "published": "Stated on the caterer's public site.",

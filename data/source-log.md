@@ -20,10 +20,7 @@ Captured 2026-10-18. This file records the primary real business source behind t
 
 **Proof saved**
 
-- `data/raw/stonefire-torrance-catering-menu-2026-10-18.pdf` (full menu)
-- `data/raw/stonefire-catering-faq-2026-10-18.pdf` (minimums, lead time, inclusions)
-- `data/raw/stonefire-allergen-info-2026-10-18.pdf` (allergen table)
-- Matching `.html` snapshots in `data/raw/`
+PDF and HTML captures of the menu, FAQ and allergen pages were taken on 2026-10-18 and used to build the JSON data. They are not kept in this repository because the pages belong to Stonefire Grill; the source URLs above are the reference.
 
 **What is real:** item names, descriptions, prices, serving sizes, dietary markers, published minimums, published lead times, service inclusions, payment policy, allergen rows.
 

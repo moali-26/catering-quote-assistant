@@ -1,6 +1,8 @@
 """Parse Stonefire Grill's allergen table into a normalized JSON map.
 
 Source snapshot: data/raw/stonefire-allergen-info-2026-10-18.html
+The snapshot is not committed (third-party page). To rerun, save
+https://www.stonefiregrill.com/allergen-info/ to that path first.
 The table's second column is a "None" marker, not an allergen.
 """
 
