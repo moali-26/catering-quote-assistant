@@ -1,6 +1,6 @@
 # Web App (D)
 
-Status (Oct 20, 2026): deployed on Render. Customers request quotes through the AI chat and send the draft to the owner; the owner reviews and approves quotes, **edits the menu** (A's `menu_admin`) and buys the **software plan** through Stripe test mode (see [billing.md](billing.md)).
+Status (Oct 20, 2026): deployed on Render. Customers request quotes through the AI chat and send the draft to the owner; the owner reviews and approves quotes, **edits the menu** (A's `menu_admin`) and subscribes to the **Quote Kitchen Subscription Plan** through Stripe test mode (see [billing.md](billing.md)).
 
 ## Pages and actions
 
@@ -21,7 +21,7 @@ Status (Oct 20, 2026): deployed on Render. Customers request quotes through the 
 | `POST /quotes/{id}/reprice` | Owner | New draft version of the same request at today's menu prices (`QuoteService.revise`) |
 | `/owner/menu` | Owner | Menu editor: name, description and availability per dish; price and availability per size; change log |
 | `POST /owner/menu` | Owner | Saves only the fields that changed, with the displayed menu revision (`MenuService.update`) |
-| `/owner/billing` | Owner | Software plan status and Stripe test checkout ([billing.md](billing.md)) |
+| `/owner/billing` | Owner | Quote Kitchen Subscription Plan status and Stripe test checkout ([billing.md](billing.md)) |
 | `POST /quotes/{id}/archive`, `POST /quotes/{id}/restore` | Owner | Hide a quote from the inbox, or bring it back |
 | `POST /owner/archive-answered` | Owner | Archive every approved or answered quote (quotes waiting for review stay) |
 | `/owner/archived` | Owner | Archived quotes, each with Restore |

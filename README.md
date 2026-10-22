@@ -1,8 +1,8 @@
-# Catering Quote Assistant
+# Quote Kitchen — Catering Quote Assistant
 
 ## Web app
 
-The web app is in `app/` (FastAPI, server-rendered pages, deployed on Render). Customers sign in, request a quote through the AI chat (OpenAI `gpt-5.5`) and accept or decline it in My Quotes. The owner reviews and approves quotes in the quote inbox, edits the menu, and buys the software plan through Stripe (test mode). Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
+The web app is in `app/` (FastAPI, server-rendered pages, deployed on Render). Customers sign in, request a quote through the AI chat (OpenAI `gpt-5.5`) and accept or decline it in My Quotes. The owner reviews and approves quotes in the quote inbox, edits the menu, and subscribes to the Quote Kitchen Subscription Plan through Stripe (test mode). Run it with `uvicorn app.main:app --reload` after `pip install -r requirements-dev.txt`. Setup, design notes and deployment steps: [docs/app.md](docs/app.md).
 
 ## Current project plan
 
@@ -115,7 +115,7 @@ Current coverage is **American/BBQ + Korean**. Adding more cuisines means anothe
 - [Offline demos and expected results](docs/quote-demo-checklist.md)
 - [Supabase setup](docs/supabase-setup.md)
 - [Owner menu editing](docs/menu-editing.md)
-- [Owner software plan (Stripe test mode)](docs/billing.md)
+- [Quote Kitchen Subscription Plan (Stripe test mode)](docs/billing.md)
 - [Evaluation](evaluation/README.md)
 
 Run `python3 -m examples.quote_journey_demo` for the offline saved-quote journey.

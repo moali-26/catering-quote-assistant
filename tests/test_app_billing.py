@@ -1,4 +1,4 @@
-"""Owner software plan in the web app: Stripe test checkout, confirmation, webhook (no network).
+"""Quote Kitchen Subscription Plan in the web app: Stripe test checkout, confirmation, webhook (no network).
 
 A fake Stripe client stands in for checkout.Session create/retrieve; webhook tests use
 Stripe's real signature verification with a locally signed payload.
@@ -134,7 +134,7 @@ class OwnerBillingAppTest(unittest.TestCase):
         owner = self.owner()
         page = owner.get('/owner/billing')
         self.assertEqual(page.status_code, 200)
-        self.assertIn('No plan purchased yet', page.text)
+        self.assertIn('Not subscribed yet', page.text)
         self.assertIn('4242 4242 4242 4242', page.text)
         response = owner.post('/owner/billing/checkout')
         self.assertEqual((response.status_code, response.headers['location']), (303, STRIPE_URL))
@@ -154,7 +154,7 @@ class OwnerBillingAppTest(unittest.TestCase):
         self.assertTrue(plan['paid'])
         self.assertEqual(plan['amount_total_cents'], 2900)
         self.assertIn('Plan active', owner.get('/owner/billing').text)
-        self.assertIn('Software plan: Active', owner.get('/owner').text)
+        self.assertIn('Quote Kitchen Subscription Plan · Active', owner.get('/owner').text)
 
     def test_unpaid_session_is_pending_not_paid(self):
         self.sessions.session = paid_session(payment_status='unpaid', status='open')

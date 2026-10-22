@@ -1,39 +1,65 @@
 {% extends "base.html" %}
-{% block title %}Software plan · {{ business.name }}{% endblock %}
-{% block body_class %}page-owner{% endblock %}
+{% block title %}Quote Kitchen Subscription Plan · {{ business.name }}{% endblock %}
+{% block body_class %}page-owner page-plan{% endblock %}
 {% block content %}
-<section class="workspace">
+{% set active = plan and plan.paid %}
+{% set icon_check %}<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M5 10.5l3.2 3.2L15 7"/></svg>{% endset %}
+<div class="kitchen-band">
+  <div class="wrap kitchen-head">
+    <div>
+      <a class="back-link" href="/owner"><span aria-hidden="true">←</span> Quote inbox</a>
+      <p class="eyebrow">Quote Kitchen · Owner</p>
+      <h1 class="section-title">Quote Kitchen Subscription Plan</h1>
+      <p class="kitchen-sub plan-lede">The monthly subscription for the tool you use to quote, review and approve catering orders. It’s separate from food quotes: customers never pay through this app.</p>
+    </div>
+  </div>
+</div>
+
+<section class="workspace workspace-plan">
   <div class="wrap">
-    <header class="workspace-head">
-      <div>
-        <p class="eyebrow">{{ business.name | trim('.') }} · Owner</p>
-        <h1 class="section-title">Software plan</h1>
-        <p class="signed-in">Signed in as {{ user.email }}</p>
+    <article class="plan-card{{ ' is-active' if active }}" aria-labelledby="plan-title">
+      <div class="plan-main">
+        <p class="plan-eyebrow">Monthly plan · Stripe test mode</p>
+        <h2 class="plan-title" id="plan-title">Quote Kitchen</h2>
+        <p class="plan-state"><span class="chip {{ 'chip-done' if active else 'chip-pending' }}">{{ 'Active' if active else 'Not subscribed' }}</span></p>
+        <ul class="plan-features">
+          <li>{{ icon_check }}AI quote assistant on your menu, for your customers</li>
+          <li>{{ icon_check }}Prices and rules checked by code, never guessed</li>
+          <li>{{ icon_check }}Owner review, approval and saved quotes</li>
+          <li>{{ icon_check }}Menu editor with live prices and availability</li>
+        </ul>
       </div>
-      <a class="btn btn-quiet" href="/owner">Back to quote inbox</a>
-    </header>
 
-    <p class="muted workspace-lede">This is your purchase of the Catering Quote Assistant itself. It is separate from food quotes: customers never pay through this app.</p>
-
-    {% if plan and plan.paid %}
-    <div class="notice">
-      <strong>Plan active</strong>
-      Paid {{ money(plan.amount_total_cents) if plan.amount_total_cents is not none else '' }}{% if plan.paid_at %} on {{ plan.paid_at[:10] }}{% endif %}. Payment confirmed with Stripe.
-    </div>
-    {% elif not configured %}
-    <div class="notice">
-      <strong>Checkout isn’t set up yet</strong>
-      Stripe test keys haven’t been configured on the server, so the plan can’t be purchased right now.
-    </div>
-    {% else %}
-    <div class="notice">
-      <strong>No plan purchased yet</strong>
-      Checkout runs in Stripe <b>test mode</b>: no real money moves. Use card 4242 4242 4242 4242, any future expiry date and any CVC.
-    </div>
-    <form method="post" action="/owner/billing/checkout" style="margin-top: 1rem">
-      <button class="btn btn-primary" type="submit">Buy the software plan <span class="btn-arrow" aria-hidden="true">→</span></button>
-    </form>
-    {% endif %}
+      <div class="plan-side">
+        {% if active %}
+        <div class="plan-status">
+          <span class="panel-icon is-ready">{{ icon_check }}</span>
+          <div>
+            <h3 class="panel-title">Plan active</h3>
+            <p class="muted">{% if plan.amount_total_cents is not none %}Paid {{ money(plan.amount_total_cents) }}{% if plan.paid_at %} on <span class="nowrap">{{ plan.paid_at[:10] }}</span>{% endif %}. {% endif %}Payment confirmed with Stripe.</p>
+          </div>
+        </div>
+        {% elif not configured %}
+        <div class="plan-status">
+          <div>
+            <h3 class="panel-title">Checkout isn’t set up yet</h3>
+            <p class="muted">Stripe test keys haven’t been configured on the server, so the plan can’t be purchased right now.</p>
+          </div>
+        </div>
+        {% else %}
+        <div class="plan-status">
+          <div>
+            <h3 class="panel-title">Not subscribed yet</h3>
+            <p class="muted">Checkout runs in Stripe <b>test mode</b>: no real money moves.</p>
+          </div>
+        </div>
+        <form method="post" action="/owner/billing/checkout">
+          <button class="btn btn-primary btn-block" type="submit">Subscribe with Stripe <span class="btn-arrow" aria-hidden="true">→</span></button>
+        </form>
+        <p class="plan-testcard">Test card <b>4242 4242 4242 4242</b> · any future date · any CVC</p>
+        {% endif %}
+      </div>
+    </article>
   </div>
 </section>
 {% endblock %}

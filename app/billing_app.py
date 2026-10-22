@@ -1,7 +1,7 @@
-"""Owner software plan (Stripe test mode) wired into the web app.
+"""Quote Kitchen Subscription Plan for the owner (Stripe test mode) wired into the web app.
 
 E's billing package talks to Stripe; this module decides what the app trusts and stores.
-This is the owner buying the software, never a customer paying for food.
+This is the owner subscribing to Quote Kitchen, never a customer paying for food.
 
 Paid state is recorded only after Stripe confirms it: the success page asks Stripe
 (verify_checkout) and the signed webhook re-fetches the session (handle_webhook).
@@ -180,5 +180,5 @@ def build_billing(settings, owner_ids, *, env=None) -> BillingApp:
         folder.mkdir(exist_ok=True)
         store = SQLiteBillingStore(folder / 'billing.sqlite3')
     if config is None:
-        logger.warning('Owner software plan checkout is off (needs STRIPE_SECRET_KEY and STRIPE_PRICE_ID)')
+        logger.warning('Quote Kitchen subscription checkout is off (needs STRIPE_SECRET_KEY and STRIPE_PRICE_ID)')
     return BillingApp(config, store, owner_ids=owner_ids)
