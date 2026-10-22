@@ -53,8 +53,23 @@
     </div>
 
     {% if others %}
-    <h2 class="list-title">Approved and answered <span class="count">{{ others | length }}</span></h2>
+    <div class="list-head">
+      <h2 class="list-title">Approved and answered <span class="count">{{ others | length }}</span></h2>
+      {% if archive_ready %}
+      <details class="confirm-pop">
+        <summary class="btn btn-small btn-quiet">Archive all</summary>
+        <div class="confirm-pop-body" role="group" aria-label="Archive all approved and answered quotes">
+          <b>Archive {{ others | length }} quote{{ 's' if others | length != 1 }}?</b>
+          <p class="muted">They leave the inbox but are kept. Quotes waiting for your review stay. You can restore any of them from Archived.</p>
+          <form method="post" action="/owner/archive-answered"><button class="btn btn-small btn-primary" type="submit">Archive all</button></form>
+        </div>
+      </details>
+      {% endif %}
+    </div>
     <ul class="quote-list">{% for card in others %}{{ quote_row(card, '/quotes/' ~ card.quote_id) }}{% endfor %}</ul>
+    {% endif %}
+    {% if archive_ready and archived_count %}
+    <p class="archive-link"><a href="/owner/archived"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="4" rx="1"/><path d="M4 7.5v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8M8 11h4"/></svg>Archived <span class="count">{{ archived_count }}</span></a></p>
     {% endif %}
   </div>
 </section>

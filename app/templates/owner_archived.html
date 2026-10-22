@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% from "_macros.html" import quote_row %}
+{% block title %}Archived quotes · {{ business.name }}{% endblock %}
+{% block body_class %}page-owner{% endblock %}
+{% block content %}
+<div class="kitchen-band kitchen-band-short">
+  <div class="wrap kitchen-head">
+    <div>
+      <a class="back-link" href="/owner"><span aria-hidden="true">←</span> Quote inbox</a>
+      <p class="eyebrow">{{ business.name | trim('.') }} · Owner</p>
+      <h1 class="section-title">Archived</h1>
+      <p class="kitchen-sub">Hidden from your inbox, nothing deleted. Customers still see their quotes as usual.</p>
+    </div>
+  </div>
+</div>
+
+<section class="workspace workspace-archived">
+  <div class="wrap">
+    {% if not archive_ready %}
+    <div class="empty"><h2>Archive isn’t available right now</h2><p class="muted">Your inbox shows every quote in the meantime.</p><a class="btn btn-quiet" href="/owner">Back to the quote inbox</a></div>
+    {% elif quotes %}
+    <h2 class="list-title">Archived quotes <span class="count">{{ quotes | length }}</span></h2>
+    <ul class="quote-list">
+      {% for card in quotes %}
+      {% call quote_row(card, '/quotes/' ~ card.quote_id) %}
+      <form class="row-action" method="post" action="/quotes/{{ card.quote_id }}/restore">
+        <button class="btn btn-small btn-quiet" type="submit" aria-label="Restore the quote for {{ event_time(card.event_at) }} to the inbox">Restore</button>
+      </form>
+      {% endcall %}
+      {% endfor %}
+    </ul>
+    {% else %}
+    <div class="empty"><h2>Nothing archived</h2><p class="muted">Open a quote and choose Archive, or use Archive all in the inbox, to tidy up finished requests.</p><a class="btn btn-quiet" href="/owner">Back to the quote inbox</a></div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

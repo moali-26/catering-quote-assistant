@@ -43,6 +43,10 @@ class PreviewLLM:
                                           'quantity': max(1, round(headcount / 40))})
         if not pickup:
             request['address'] = (street.group(0).strip() + ', Culver City, CA') if street else '9300 Culver Blvd, Culver City, CA'
+        choices = re.search(r'pasta duo[^.?!]*?\bwith\s+([^.?!]+)', text, re.I)
+        if choices:  # e.g. "The Pasta Duo ..., with marinara and mac & cheese, plus the garden salad"
+            parts = re.split(r',?\s*\bplus\b\s*(?:the\s+)?', choices.group(1).strip(), flags=re.I)
+            request['customer_notes'] = 'Pasta Duo: ' + '; '.join(x.strip(' ,') for x in parts if x.strip(' ,'))
         budget = re.search(r'\$\s?(\d{2,6})(?:\.\d{2})?', text)
         if budget:
             request['budget_usd'] = budget.group(1)

@@ -32,12 +32,13 @@ from .config import load_settings
 from .dbcheck import HINTS, check_database, describe_dsn
 from .quotes import QuoteApp
 from .billing_app import build_billing
+from .archive import ArchiveUnavailable, build_archive
 from billing import BillingError
 from .chat import (ChatConflict, ChatLimit, ChatNotFound, ChatService, PostgresConversationStore,
                    SQLiteConversationStore, visible_messages)
 
 HERE = Path(__file__).resolve().parent
-STATIC_VERSION = '34'
+STATIC_VERSION = '35'
 NOTICE_COOKIE = 'cqa_notice'
 REFRESH_MAX_AGE = 60 * 60 * 24 * 30
 logger = logging.getLogger('app')
@@ -86,6 +87,10 @@ NOTICES = {
     'billing-failed': ('warning', 'We couldn’t start or confirm that checkout. Nothing was charged here; try again.'),
     'billing-off': ('warning', 'Checkout isn’t set up on this server yet.'),
     'billing-canceled': ('info', 'Checkout canceled. Nothing was charged.'),
+    'archived': ('success', 'Quote archived. It’s under Archived at the bottom of the inbox.'),
+    'archived-all': ('success', 'Answered quotes archived. You can restore them from Archived.'),
+    'restored': ('success', 'Quote restored to the inbox.'),
+    'archive-off': ('warning', 'Archiving isn’t available right now. Nothing was changed.'),
 }
 
 SECURITY_HEADERS = {
@@ -95,6 +100,7 @@ SECURITY_HEADERS = {
     'Permissions-Policy': 'camera=(), microphone=(), geolocation=()',
 }
 PAGE_METHODS = ['GET', 'HEAD']
+OWNER_LIST_MAX = 300  # the inbox loads up to this many quotes (archived included), then hides the archived
 SAFE_METHODS = {'GET', 'HEAD', 'OPTIONS'}
 # Stripe calls this server-to-server: no Origin/Referer and no session. Its signature is the check.
 STRIPE_WEBHOOK_PATH = '/stripe/webhook'
@@ -165,6 +171,17 @@ def build_chat_store(settings):
     return SQLiteConversationStore(folder / 'chat.sqlite3')
 
 
+def note_lines(text) -> list:
+    """Customer notes as display lines: one per line or semicolon, first letter capitalized.
+    Plain text only (autoescaped in templates); wording is never changed beyond that."""
+    lines = []
+    for part in str(text or '').replace(';', '\n').splitlines():
+        part = part.strip().rstrip(';').strip()
+        if part:
+            lines.append(part[0].upper() + part[1:])
+    return lines
+
+
 def build_menu_service(settings, clock):
     """A's MenuService on the same storage as quotes (Postgres in production, SQLite locally)."""
     from menu_admin import MenuService, SQLiteMenuStore
@@ -179,7 +196,7 @@ def build_menu_service(settings, clock):
 
 
 def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_service=None,
-               billing_app=None) -> FastAPI:
+               billing_app=None, archive_app=None) -> FastAPI:
     settings = load_settings()
     backend = auth_backend if auth_backend is not None else build_backend(settings)
     owner_ids = settings.owner_ids
@@ -219,6 +236,8 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
     app.state.chat = chat
     billing = billing_app if billing_app is not None else build_billing(settings, owner_ids)
     app.state.billing = billing
+    archive = archive_app if archive_app is not None else build_archive(settings)
+    app.state.archive = archive
     if chat is None or not chat.available:
         logger.warning('Customer chat is off (needs LLM_PROVIDER/key, OWNER_USER_IDS and a database)')
     templates = Jinja2Templates(directory=str(HERE / 'templates'))
@@ -227,6 +246,7 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
     templates.env.globals.update(review_label=quotes.review_label, block_label=quotes.customer_block_label, field_label=quotes.field_label,
                                  event_time=quotes.event_time, tone=quotes.tone, scrub=quotes.scrub)
     templates.env.filters['chat_format'] = chat_format
+    templates.env.filters['note_lines'] = note_lines
     templates.env.globals['money'] = money
     app.mount('/static', StaticFiles(directory=str(HERE / 'static')), name='static')
     secure_cookies = settings.is_production
@@ -419,6 +439,16 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
             return error_page(request, 503)
         return page(request, template, quotes=cards, **extra)
 
+    def owner_cards(user):
+        """The owner's quotes, newest first, across storage pages (the store returns at most 100 a page)."""
+        cards, page_size = [], 100
+        while len(cards) < OWNER_LIST_MAX:
+            batch = quotes.service.list_quotes(actor_id=user.id, workspace='owner', limit=page_size, offset=len(cards))
+            cards.extend(batch)
+            if len(batch) < page_size:
+                break
+        return cards[:OWNER_LIST_MAX]
+
     @app.api_route('/quotes', methods=PAGE_METHODS, response_class=HTMLResponse)
     def my_quotes(request: Request):
         user, stop = require(request, 'customer')
@@ -433,7 +463,27 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
             plan = billing.status(user.id)
         except QuoteStorageUnavailable:
             plan = None  # the inbox still works if billing storage is down
-        return load_list(request, user, 'owner', 'owner.html', plan=plan)
+        try:
+            cards = owner_cards(user)
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        hidden = archive.archived_ids(user.id)  # None: archive unavailable, show everything as before
+        shown = [c for c in cards if not hidden or c['quote_id'] not in hidden]
+        return page(request, 'owner.html', quotes=shown, plan=plan, archive_ready=hidden is not None,
+                    archived_count=sum(1 for c in cards if hidden and c['quote_id'] in hidden))
+
+    @app.api_route('/owner/archived', methods=PAGE_METHODS, response_class=HTMLResponse)
+    def owner_archived(request: Request):
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        try:
+            cards = owner_cards(user)
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        hidden = archive.archived_ids(user.id)
+        return page(request, 'owner_archived.html', archive_ready=hidden is not None,
+                    quotes=[c for c in cards if hidden and c['quote_id'] in hidden])
 
     @app.api_route('/quotes/{quote_id}', methods=PAGE_METHODS, response_class=HTMLResponse)
     def quote_detail(request: Request, quote_id: str):
@@ -453,7 +503,58 @@ def create_app(*, auth_backend=None, quote_app=None, chat_service=None, menu_ser
                 menu_check = quotes.menu_check(quote_id, actor_id=user.id)
             except QuoteError:
                 logger.warning('Could not compare quote %s with the current menu', quote_id)
-        return page(request, 'quote.html', quote=view, menu_check=menu_check)
+        archived = None  # owner only: True/False, or None when the archive isn't available
+        if user.is_owner:
+            hidden = archive.archived_ids(user.id)
+            archived = None if hidden is None else quote_id in hidden
+        return page(request, 'quote.html', quote=view, menu_check=menu_check, archived=archived)
+
+    # ---- owner archive (hides quotes from the inbox; quote records are untouched) ----------
+    def own_quote(user, quote_id):
+        """The quote if this owner owns it; raises QuoteError (404) otherwise."""
+        record = quotes.service.store.get(quote_id, actor_id=user.id)
+        if record['owner_id'] != user.id:
+            raise QuoteError('not your quote')
+        return record
+
+    def archive_action(request: Request, quote_id: str, do, notice: str, back: str):
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        quote_id = quote_id.lower()
+        try:
+            own_quote(user, quote_id)
+            do(user.id, quote_id)
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        except QuoteError:
+            return error_page(request, 404)
+        except ArchiveUnavailable:
+            return redirect(f'/quotes/{quote_id}', notice='archive-off')
+        return redirect(back, notice=notice)
+
+    @app.post('/quotes/{quote_id}/archive')
+    def archive_quote(request: Request, quote_id: str):
+        return archive_action(request, quote_id, lambda owner, q: archive.archive(owner, [q]), 'archived', '/owner')
+
+    @app.post('/quotes/{quote_id}/restore')
+    def restore_quote(request: Request, quote_id: str):
+        return archive_action(request, quote_id, archive.restore, 'restored', f'/quotes/{quote_id.lower()}')
+
+    @app.post('/owner/archive-answered')
+    def archive_answered(request: Request):
+        """Archive every approved or answered quote in one go (never the ones waiting for review)."""
+        user, stop = require(request, 'owner')
+        if stop:
+            return stop
+        try:
+            cards = owner_cards(user)
+            archive.archive(user.id, [c['quote_id'] for c in cards if c['status'] != 'draft'])
+        except QuoteStorageUnavailable:
+            return error_page(request, 503)
+        except ArchiveUnavailable:
+            return redirect('/owner', notice='archive-off')
+        return redirect('/owner', notice='archived-all')
 
     @app.post('/quotes/{quote_id}/approve')
     def approve(request: Request, quote_id: str, revision: int = Form(...), ack: List[str] = Form([])):

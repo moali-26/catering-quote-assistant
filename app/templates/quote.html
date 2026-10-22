@@ -20,6 +20,16 @@
         </div>
         <h1 class="section-title">{{ event_time(ev.event_at) }}</h1>
       </div>
+      {% if user.is_owner and archived is not none %}
+      <div class="head-actions">
+        {% if archived %}
+        <span class="archived-tag">Archived</span>
+        <form method="post" action="/quotes/{{ q.quote_id }}/restore"><button class="btn btn-small btn-kitchen" type="submit">Restore to inbox</button></form>
+        {% else %}
+        <form method="post" action="/quotes/{{ q.quote_id }}/archive"><button class="btn btn-small btn-kitchen btn-archive" type="submit" title="Hide this quote from the inbox. You can restore it any time."><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="2.5" y="3.5" width="15" height="4" rx="1"/><path d="M4 7.5v8a1 1 0 0 0 1 1h10a1 1 0 0 0 1-1v-8M8 11h4"/></svg>Archive</button></form>
+        {% endif %}
+      </div>
+      {% endif %}
     </header>
     {% set st = q.status %}
     {% set answered = st in ('customer_accepted', 'customer_declined') %}
@@ -101,10 +111,10 @@
         </section>
 
         {% if ev.customer_notes %}
-        <section class="panel" aria-labelledby="customer-notes-title">
+        <section class="panel panel-notes" aria-labelledby="customer-notes-title">
           <h2 id="customer-notes-title" class="panel-title">Customer selections and notes</h2>
-          <p class="customer-notes">{{ ev.customer_notes }}</p>
-          <p class="muted">Customer requests for owner review; menu pricing and allergy checks still apply.</p>
+          <ul class="note-lines">{% for line in ev.customer_notes | note_lines %}<li>{{ line }}</li>{% endfor %}</ul>
+          <p class="muted">{{ 'To confirm with the customer. Menu prices and allergy checks still apply.' if user.is_owner else 'The owner confirms these requests. Menu prices and allergy checks still apply.' }}</p>
         </section>
         {% endif %}
 
