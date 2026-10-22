@@ -7,7 +7,7 @@
   <title>{% if role == 'owner' %}Owner · {% elif role == 'customer' %}Customer · {% endif %}{% block title %}{{ business.name }} · Catering quotes{% endblock %}</title>
   <meta name="description" content="Request a catering quote from {{ business.name | trim('.') }}: describe your event, get an itemized draft, and confirm once the owner reviews it.">
   <meta name="theme-color" content="{{ '#13233D' if user and user.is_owner else '#F2F4EE' }}">
-  <link rel="icon" href="/static/img/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/static/img/favicon.svg?v={{ static_version }}" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500..800&family=Figtree:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
@@ -18,9 +18,15 @@
   <a class="skip-link" href="#main">Skip to content</a>
   <header class="site-header">
     <div class="wrap header-row">
-      <a class="brand" href="{{ '/owner' if role == 'owner' else '/' }}" aria-label="{{ business.name }} {{ 'quote inbox' if role == 'owner' else 'home' }}">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path class="brand-mark-lines" d="M9 15h14M9 19h10M9 23h7" stroke-width="2" stroke-linecap="round"/></svg>
+      {% if role == 'owner' %}
+      <a class="brand brand-product" href="/owner" aria-label="Quote Kitchen, quote inbox">
+        <img class="qk-logo" src="/static/img/quote-kitchen-logo-light.svg?v={{ static_version }}" alt="" width="146" height="30">
+        <img class="qk-mark" src="/static/img/quote-kitchen-mark-light.svg?v={{ static_version }}" alt="" width="28" height="36">
+      {% else %}
+      <a class="brand" href="/" aria-label="{{ business.name }} home">
+        <span class="brand-monogram" aria-hidden="true">{{ business.name[:1] | upper }}</span>
         <span class="brand-name">{{ business.name }}</span>
+      {% endif %}
         {% if role != 'guest' %}<span class="role-tag role-tag-{{ role }}">{{ 'Owner' if role == 'owner' else 'Customer' }}</span>{% endif %}
       </a>
       <nav class="site-nav" aria-label="Main">
@@ -50,11 +56,11 @@
   <footer class="site-footer">
     <div class="wrap footer-row">
       <div class="footer-brand">
-        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true"><path d="M4 9l3-3 3 3 3-3 3 3 3-3 3 3 3-3 3 3v17a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2z" fill="currentColor"/><path class="brand-mark-lines" d="M9 15h14M9 19h10M9 23h7" stroke-width="2" stroke-linecap="round"/></svg>
+        <span class="brand-monogram brand-monogram-sm" aria-hidden="true">{{ business.name[:1] | upper }}</span>
         <p><strong>{{ business.name }}</strong>{% if business.place %} · {{ business.place }}{% endif %}</p>
       </div>
       <p class="muted">Menu prices from the caterer’s published menu{% if business.captured_at %}, captured {{ business.captured_at }}{% endif %}. Quotes are drafts until the owner approves them.</p>
-      <p class="muted footer-note">Powered by <b class="footer-product">Quote Kitchen</b> · Class project prototype · UCLA Anderson MSBA<button type="button" class="fx-toggle" data-fx-toggle hidden aria-pressed="true">Pointer effects: on</button></p>
+      <p class="muted footer-note"><span class="powered-by">Powered by <img class="powered-logo" src="/static/img/quote-kitchen-logo.svg?v={{ static_version }}" alt="Quote Kitchen" width="102" height="21"></span> · Class project prototype · UCLA Anderson MSBA<button type="button" class="fx-toggle" data-fx-toggle hidden aria-pressed="true">Pointer effects: on</button></p>
     </div>
   </footer>
   <script src="/static/js/ui.js?v={{ static_version }}" defer></script>

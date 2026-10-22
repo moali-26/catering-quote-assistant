@@ -20,7 +20,7 @@
     <article class="plan-card{{ ' is-active' if active }}" aria-labelledby="plan-title">
       <div class="plan-main">
         <p class="plan-eyebrow">Monthly plan · Stripe test mode</p>
-        <h2 class="plan-title" id="plan-title">Quote Kitchen</h2>
+        <h2 class="plan-title" id="plan-title"><img class="plan-logo" src="/static/img/quote-kitchen-logo.svg?v={{ static_version }}" alt="Quote Kitchen" width="260" height="54"></h2>
         <p class="plan-state"><span class="chip {{ 'chip-done' if active else 'chip-pending' }}">{{ 'Active' if active else 'Not subscribed' }}</span></p>
         <ul class="plan-features">
           <li>{{ icon_check }}AI quote assistant on your menu, for your customers</li>

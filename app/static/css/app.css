@@ -1094,3 +1094,20 @@ body.role-owner { background-color: var(--page); background-image: radial-gradie
 
 .plan-lede { max-width: 40rem; }
 .plan-card.is-active .plan-status .panel-icon svg { background: var(--card); box-shadow: 0 0 0 1px #b7d6c3; }
+
+/* ---------- Brand: Quote Kitchen (owner, product) and the caterer (customer) ---------- */
+.brand-product { gap: .75rem; }
+.qk-logo { display: block; width: auto; height: 2.3rem; max-width: none; transition: transform .4s var(--ease-spring); }
+.qk-mark { display: none; width: auto; height: 2.1rem; max-width: none; }
+.brand-product:hover .qk-logo { transform: translateY(-1px); }
+.brand-monogram { flex-shrink: 0; display: grid; place-items: center; width: 2rem; height: 2rem; border-radius: .6rem; background: var(--herb); color: #fff; font: 800 1.05rem/1 var(--font-display); letter-spacing: -.02em; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12) inset, 0 6px 14px -8px rgba(31, 78, 56, .8); transition: transform .4s var(--ease-spring); }
+.brand:hover .brand-monogram { transform: rotate(-6deg) translateY(-1px); }
+.brand-monogram-sm { width: 1.45rem; height: 1.45rem; border-radius: .45rem; font-size: .78rem; box-shadow: none; }
+.powered-by { display: inline-flex; align-items: center; gap: .45rem; white-space: nowrap; }
+.powered-logo { display: inline-block; height: 1.35rem; width: auto; max-width: none; vertical-align: middle; transform: translateY(-1px); }
+.plan-title { line-height: 0; }
+.plan-logo { display: block; height: clamp(2.6rem, 5vw, 3.4rem); width: auto; max-width: 100%; }
+@media (max-width: 640px) {
+  .qk-logo { display: none; }
+  .qk-mark { display: block; }
+}
