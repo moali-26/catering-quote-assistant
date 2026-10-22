@@ -14,12 +14,7 @@
       ],
       "allergen_url": "https://www.stonefiregrill.com/allergen-info/",
       "nutrition_url": "https://www.stonefiregrill.com/nutritional-info/",
-      "menu_pricing_note": "Menu pricing is valid for Torrance only.",
-      "snapshots": [
-        "data/raw/stonefire-torrance-catering-menu-2026-10-18.pdf",
-        "data/raw/stonefire-catering-faq-2026-10-18.pdf",
-        "data/raw/stonefire-allergen-info-2026-10-18.pdf"
-      ]
+      "menu_pricing_note": "Menu pricing is valid for Torrance only."
     },
     "branding": {
       "display_name": "Sample Catering Co.",

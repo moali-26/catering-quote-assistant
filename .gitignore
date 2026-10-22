@@ -19,3 +19,11 @@ Thumbs.db
 .env
 .env.*
 !.env.example
+# Local deliverables (docs, slides)
+deliverables/
+
+# Third-party page captures (parser inputs, not redistributed)
+data/raw/
+
+# Machine-specific editor/agent config
+.claude/
