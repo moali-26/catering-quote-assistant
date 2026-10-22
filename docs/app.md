@@ -22,6 +22,9 @@ Status (Oct 20, 2026): deployed on Render. Customers request quotes through the 
 | `/owner/menu` | Owner | Menu editor: name, description and availability per dish; price and availability per size; change log |
 | `POST /owner/menu` | Owner | Saves only the fields that changed, with the displayed menu revision (`MenuService.update`) |
 | `/owner/billing` | Owner | Software plan status and Stripe test checkout ([billing.md](billing.md)) |
+| `POST /quotes/{id}/archive`, `POST /quotes/{id}/restore` | Owner | Hide a quote from the inbox, or bring it back |
+| `POST /owner/archive-answered` | Owner | Archive every approved or answered quote (quotes waiting for review stay) |
+| `/owner/archived` | Owner | Archived quotes, each with Restore |
 | `/healthz` | Monitoring | `{"status": "ok"}` |
 
 Browser forms send only the quote ID, the revision they displayed and the chosen action. Prices, totals, status and permissions all come from `quote_view` / `QuoteService`, which recheck every action.
@@ -101,7 +104,11 @@ AUTH_BACKEND=memory LLM_PROVIDER=scripted APP_DATASET=demo uvicorn app.main:app 
 
 ## Database
 
-Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, `202610190002_menu_storage.sql`, `202610200001_conversations.sql`, then `202610200002_owner_billing.sql`. All are server-only (RLS on, no browser grants). The shared Supabase project already has all four applied and the owner's menu seeded (see [menu-editing.md](menu-editing.md)); don't rerun them there. Verified on PostgreSQL 16 with `tests/integration` (quotes, conversations, and A's `PostgresMenuStore`).
+Apply in order in the Supabase SQL editor: `202610190001_quote_storage.sql`, `202610190002_menu_storage.sql`, `202610200001_conversations.sql`, `202610200002_owner_billing.sql`, then `202610210001_quote_archive.sql`. All are server-only (RLS on, no browser grants). The shared Supabase project already has the first four applied and the owner's menu seeded (see [menu-editing.md](menu-editing.md)); don't rerun them there. Apply `202610210001_quote_archive.sql` once; until then the inbox works as before and the archive buttons are hidden. Verified on PostgreSQL 16 with `tests/integration` (quotes, conversations, menus and the archive).
+
+## Owner archive
+
+Archiving hides a quote from the owner's inbox; it never changes or deletes the quote. The quote record, its history and the customer's My Quotes stay as they are, and an archived quote still opens and works normally. Archived quote IDs live in `catering_private.quote_archive` (SQLite locally); Restore removes the row, and deleting a quote removes its row too. If that table can't be reached, the app shows every quote and hides the archive buttons.
 
 ## Next
 

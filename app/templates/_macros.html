@@ -22,5 +22,6 @@
     <span class="quote-row-total">{{ card.total.display if card.total else '—' }}</span>
     {{ status_chip(card.status, card.status_label) }}
   </a>
+  {%- if caller is defined %}{{ caller() }}{% endif %}
 </li>
 {%- endmacro %}

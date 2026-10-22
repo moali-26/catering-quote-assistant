@@ -1011,6 +1011,38 @@ html.fx-on .hero::after { opacity: 1; }
 /* Preserve customer choices as plain text, including long words and line breaks. */
 .customer-notes { white-space: pre-wrap; overflow-wrap: anywhere; }
 
+/* Customer selections and notes: an order slip on the ticket, one choice per line */
+.ticket-note { margin: 1rem 0 0; padding-top: .9rem; border-top: 1.5px dashed var(--rule); }
+.ticket-note-label { display: flex; justify-content: space-between; gap: .8rem; font: 600 .64rem/1.3 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.ticket-note-label span:last-child { color: var(--brass); }
+.note-lines { list-style: none; display: grid; gap: .32rem; margin: .6rem 0 0; padding: .6rem .8rem .65rem .75rem; border-left: 3px solid var(--mustard); border-radius: 0 8px 8px 0; background: rgba(242, 193, 78, .11); font: 500 .82rem/1.45 var(--font-mono); color: var(--ink); overflow-wrap: anywhere; }
+.note-lines li { display: grid; grid-template-columns: 1.1rem minmax(0, 1fr); }
+.note-lines li::before { content: '—'; color: var(--brass); }
+.ticket-note-hint { margin-top: .55rem; font: italic 400 .74rem/1.45 var(--font-body); color: var(--muted); }
+.ticket-note + .ticket-lines { margin-top: 1.1rem; }
+.panel-notes .note-lines { margin-top: .1rem; font-size: .86rem; }
+
+/* Owner archive */
+.head-actions { display: flex; flex-wrap: wrap; align-items: center; gap: .6rem; }
+.head-actions form { margin: 0; }
+.btn-archive { display: inline-flex; align-items: center; gap: .45rem; }
+.btn-archive svg, .archive-link svg { width: 1rem; height: 1rem; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; stroke-linecap: round; }
+.archived-tag { padding: .3rem .65rem; border: 1px dashed rgba(255, 255, 255, .35); border-radius: 999px; font: 600 .68rem/1.2 var(--font-mono); letter-spacing: .14em; text-transform: uppercase; color: var(--chrome-muted); }
+.list-head { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: .6rem 1rem; margin: 2.2rem 0 .9rem; }
+.list-head .list-title { margin: 0; }
+.archive-link { margin-top: 1.6rem; }
+.archive-link a { display: inline-flex; align-items: center; gap: .5rem; padding: .5rem .9rem; border: 1px dashed var(--line); border-radius: 999px; font: 600 .74rem/1.2 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color .15s ease, border-color .15s ease; }
+.archive-link a:hover { color: var(--ink); border-color: var(--accent); }
+.archive-link .count { display: inline-grid; place-items: center; min-width: 1.35rem; height: 1.35rem; padding: 0 .35rem; border-radius: 999px; background: var(--ink); color: var(--linen); font-size: .68rem; letter-spacing: 0; }
+.quote-row:has(> .row-action) { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: .7rem; }
+.row-action { margin: 0; }
+.kitchen-band-short { padding-bottom: clamp(1.6rem, 3vw, 2.2rem); }
+.workspace-archived { padding-top: 1rem; }
+@media (max-width: 640px) {
+  .quote-row:has(> .row-action) { grid-template-columns: minmax(0, 1fr); gap: .45rem; }
+  .row-action { justify-self: end; }
+}
+
 /* ---------- Owner theme: surfaces with depth ---------- */
 /* page: a soft light from the top so the blue reads as a room, not a flat fill */
 body.role-owner { background-color: var(--page); background-image: radial-gradient(120% 60% at 50% 0%, #f4f7fc 0%, rgba(244, 247, 252, 0) 70%); background-repeat: no-repeat; }

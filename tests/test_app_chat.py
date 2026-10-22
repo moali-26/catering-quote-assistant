@@ -183,7 +183,8 @@ class ChatTest(unittest.TestCase):
         self.send(ana, old_notes)
         self.script.add(evaluate(dict(REQUEST, customer_notes=notes)), say())
         data = self.send(ana, 'Change to Macaroni & Cheese and garden salad').json()
-        self.assertIn('Macaroni &amp; Cheese; garden salad.', data['draft'])
+        # shown one choice per line (split on ';' and newlines), text otherwise unchanged and escaped
+        self.assertIn('<li>Pasta Duo: Marinara and Macaroni &amp; Cheese</li><li>Garden salad.</li>', data['draft'])
         self.assertNotIn('Pesto', data['draft'])
         self.assertNotIn('<script>alert(1)</script>', data['draft'])
         page = ana.get('/chat').text
@@ -196,7 +197,7 @@ class ChatTest(unittest.TestCase):
         for client in (ana, owner):
             html = client.get(url).text
             self.assertIn('Customer selections and notes', html)
-            self.assertIn('Macaroni &amp; Cheese; garden salad.', html)
+            self.assertIn('<li>Pasta Duo: Marinara and Macaroni &amp; Cheese</li><li>Garden salad.</li>', html)
             self.assertNotIn('<script>alert(1)</script>', html)
         quote_id = url.split('/')[-1]
         record = self.quotes.service.store.get(quote_id, actor_id=OWNER_ID)
@@ -209,7 +210,7 @@ class ChatTest(unittest.TestCase):
         self.assertTrue(all(v['request']['customer_notes'] == notes for v in record['versions']))
         self.quotes.service.approve(quote_id, actor_id=OWNER_ID, expected_revision=record['revision'],
                                    acknowledged_reviews=record['versions'][-1]['readiness']['review_reasons'])
-        self.assertIn('Macaroni &amp; Cheese; garden salad.', ana.get(url).text)
+        self.assertIn('<li>Pasta Duo: Marinara and Macaroni &amp; Cheese</li><li>Garden salad.</li>', ana.get(url).text)
         stranger = self.client('bob@example.com')
         self.assertEqual(stranger.get(url).status_code, 404)
 
