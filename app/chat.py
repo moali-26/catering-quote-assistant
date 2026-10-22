@@ -41,21 +41,20 @@ MAX_MESSAGE_CHARS = 1200
 MAX_CUSTOMER_MESSAGES = 15          # per conversation
 
 
-def _limit(name, default):
-    """A positive whole number from the environment, else the default."""
+def _limit(name):
+    """An optional daily limit from the environment: a positive whole number, else None (no limit)."""
     try:
         value = int(os.environ.get(name, ''))
     except ValueError:
-        return default
-    return value if value > 0 else default
+        return None
+    return value if value > 0 else None
 
 
-# Daily limits reset at 00:00 UTC (5 pm Pacific in summer time, 4 pm in winter).
-# Messages per customer is what bounds model cost; new requests per day only stops
-# runaway "Start a new request" clicks, so it can be generous.
-DAILY_TURNS_PER_CUSTOMER = _limit('CHAT_DAILY_MESSAGES_PER_CUSTOMER', 40)
-DAILY_CONVERSATIONS_PER_CUSTOMER = _limit('CHAT_DAILY_REQUESTS_PER_CUSTOMER', 20)
-DAILY_TURNS_TOTAL = _limit('CHAT_DAILY_MESSAGES_TOTAL', 400)  # whole app, per process; set a hard spend limit at the provider too
+# Daily limits are off unless set on the server (they reset at 00:00 UTC). Model spend is
+# capped at the provider instead; the per-minute rate limit and per-request message cap stay.
+DAILY_TURNS_PER_CUSTOMER = _limit('CHAT_DAILY_MESSAGES_PER_CUSTOMER')
+DAILY_CONVERSATIONS_PER_CUSTOMER = _limit('CHAT_DAILY_REQUESTS_PER_CUSTOMER')
+DAILY_TURNS_TOTAL = _limit('CHAT_DAILY_MESSAGES_TOTAL')  # whole app, per process
 logger = logging.getLogger('app.chat')
 RATE_WINDOW_SECONDS = 60
 RATE_MAX_MESSAGES = 8
@@ -357,8 +356,9 @@ class ChatService:
             customer_id=customer_id, owner_id=self.owner_id)
 
     def start_new(self, customer_id):
-        created, _ = self.store.usage_since(customer_id=customer_id, since=_start_of_day())
-        if created >= DAILY_CONVERSATIONS_PER_CUSTOMER:
+        created, _ = (self.store.usage_since(customer_id=customer_id, since=_start_of_day())
+                      if DAILY_CONVERSATIONS_PER_CUSTOMER else (0, 0))
+        if DAILY_CONVERSATIONS_PER_CUSTOMER and created >= DAILY_CONVERSATIONS_PER_CUSTOMER:
             logger.warning('Chat limit: %s new requests today for one customer', created)
             raise ChatLimit('You’ve started the most new requests allowed today. Continue your current one, '
                             'or try again tomorrow.', 'chat-new-limit')
@@ -420,7 +420,7 @@ class ChatService:
             today = datetime.now(timezone.utc).date()
             if self._day != today:
                 self._day, self._turns_today = today, 0
-            if self._turns_today >= self.daily_turns_total:
+            if self.daily_turns_total and self._turns_today >= self.daily_turns_total:
                 logger.warning('Chat limit: app-wide daily messages reached (%s)', self._turns_today)
                 raise ChatLimit('The assistant has reached today’s limit. Try again tomorrow.', 'chat-daily-total')
             recent.append(now)
@@ -449,8 +449,9 @@ class ChatService:
             if customer_message_count(record['messages']) >= MAX_CUSTOMER_MESSAGES:
                 raise ChatLimit('This conversation is getting long. Send it for review or start a new request.',
                                 'chat-long')
-            _, turns_today = self.store.usage_since(customer_id=customer_id, since=_start_of_day())
-            if turns_today >= DAILY_TURNS_PER_CUSTOMER:
+            _, turns_today = (self.store.usage_since(customer_id=customer_id, since=_start_of_day())
+                              if DAILY_TURNS_PER_CUSTOMER else (0, 0))
+            if DAILY_TURNS_PER_CUSTOMER and turns_today >= DAILY_TURNS_PER_CUSTOMER:
                 logger.warning('Chat limit: %s messages today for one customer', turns_today)
                 raise ChatLimit('You’ve reached today’s message limit. Try again tomorrow.', 'chat-daily')
             if self._link_existing_quote(record, customer_id):

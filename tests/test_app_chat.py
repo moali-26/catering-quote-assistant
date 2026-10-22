@@ -456,8 +456,17 @@ class ChatTest(unittest.TestCase):
     def test_daily_limits_can_be_set_from_the_environment(self):
         from app.chat import _limit
         with mock.patch.dict(os.environ, {'X_LIMIT': '50', 'X_BAD': 'lots', 'X_ZERO': '0'}):
-            self.assertEqual((_limit('X_LIMIT', 6), _limit('X_BAD', 6), _limit('X_ZERO', 6), _limit('X_MISSING', 6)),
-                             (50, 6, 6, 6))
+            self.assertEqual((_limit('X_LIMIT'), _limit('X_BAD'), _limit('X_ZERO'), _limit('X_MISSING')),
+                             (50, None, None, None))
+
+    def test_no_daily_limits_by_default(self):
+        from app import chat as chat_module
+        self.assertIsNone(chat_module.DAILY_CONVERSATIONS_PER_CUSTOMER)
+        ana = self.client()
+        ana.get('/chat')
+        for _ in range(8):
+            self.assertEqual(ana.post('/chat/new').headers['location'], '/chat')
+        self.assertNotIn('most new requests allowed today', ana.get('/chat').text)
 
     def test_chat_off_without_model(self):
         from app.chat import ChatService, SQLiteConversationStore
